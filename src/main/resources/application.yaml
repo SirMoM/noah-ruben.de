@@ -1,0 +1,12 @@
+ktor:
+    deployment:
+        port: 42080
+        watch:
+            - classes
+            - resources
+    development: true
+    application:
+        modules:
+            - de.noah_ruben.ApplicationKt.module
+github:
+    token: $GITHUB_TOKEN

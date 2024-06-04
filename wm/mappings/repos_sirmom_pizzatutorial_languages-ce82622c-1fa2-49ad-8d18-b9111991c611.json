@@ -1,0 +1,43 @@
+{
+  "id" : "ce82622c-1fa2-49ad-8d18-b9111991c611",
+  "name" : "repos_sirmom_pizzatutorial_languages",
+  "request" : {
+    "url" : "/repos/SirMoM/PizzaTutorial/languages",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"Java\":23684}",
+    "headers" : {
+      "X-Accepted-OAuth-Scopes" : "",
+      "X-RateLimit-Resource" : "core",
+      "Server" : "GitHub.com",
+      "Access-Control-Allow-Origin" : "*",
+      "X-RateLimit-Used" : "44",
+      "Last-Modified" : "Thu, 01 Apr 2021 13:11:51 GMT",
+      "x-github-api-version-selected" : "2022-11-28",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "X-Frame-Options" : "deny",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "Access-Control-Expose-Headers" : "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset",
+      "X-RateLimit-Remaining" : "4956",
+      "X-GitHub-Media-Type" : "github.v3",
+      "Content-Security-Policy" : "default-src 'none'",
+      "X-XSS-Protection" : "0",
+      "X-GitHub-Request-Id" : "E630:2084BD:308FE930:30C9F076:6640F7A2",
+      "Content-Type" : "application/json; charset=utf-8",
+      "X-Content-Type-Options" : "nosniff",
+      "X-RateLimit-Reset" : "1715537231",
+      "Date" : "Sun, 12 May 2024 17:08:51 GMT",
+      "Cache-Control" : "private, max-age=60, s-maxage=60",
+      "ETag" : "\"b71a8a954afadaaa8932168f2f404d2cc4fc641572c6a38b61078972e321f956\"",
+      "Vary" : [ "Accept, Authorization, Cookie, X-GitHub-OTP", "Accept-Encoding, Accept, X-Requested-With" ],
+      "X-RateLimit-Limit" : "5000",
+      "X-OAuth-Scopes" : "read:user, repo",
+      "github-authentication-token-expiration" : "2024-07-18 17:30:59 UTC"
+    }
+  },
+  "uuid" : "ce82622c-1fa2-49ad-8d18-b9111991c611",
+  "persistent" : true,
+  "insertionIndex" : 10
+}

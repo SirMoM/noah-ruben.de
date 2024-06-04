@@ -1,0 +1,43 @@
+{
+  "id" : "6b39539e-c4e4-44a6-b854-d9e134f5e69b",
+  "name" : "repos_sirmom_godot-logger_languages",
+  "request" : {
+    "url" : "/repos/SirMoM/godot-logger/languages",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"GDScript\":27112}",
+    "headers" : {
+      "X-Accepted-OAuth-Scopes" : "",
+      "X-RateLimit-Resource" : "core",
+      "Server" : "GitHub.com",
+      "Access-Control-Allow-Origin" : "*",
+      "X-RateLimit-Used" : "33",
+      "Last-Modified" : "Sat, 11 May 2024 19:41:52 GMT",
+      "x-github-api-version-selected" : "2022-11-28",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "X-Frame-Options" : "deny",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "Access-Control-Expose-Headers" : "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset",
+      "X-RateLimit-Remaining" : "4967",
+      "X-GitHub-Media-Type" : "github.v3",
+      "Content-Security-Policy" : "default-src 'none'",
+      "X-XSS-Protection" : "0",
+      "X-GitHub-Request-Id" : "C2A5:2084BD:308FC846:30C9CF81:6640F7A0",
+      "Content-Type" : "application/json; charset=utf-8",
+      "X-Content-Type-Options" : "nosniff",
+      "X-RateLimit-Reset" : "1715537231",
+      "Date" : "Sun, 12 May 2024 17:08:48 GMT",
+      "Cache-Control" : "private, max-age=60, s-maxage=60",
+      "ETag" : "\"0e9a38a27cfcf53b8a4f1d710b0aa6725cdbdd15681ca6442d8363425bde1fe7\"",
+      "Vary" : [ "Accept, Authorization, Cookie, X-GitHub-OTP", "Accept-Encoding, Accept, X-Requested-With" ],
+      "X-RateLimit-Limit" : "5000",
+      "X-OAuth-Scopes" : "read:user, repo",
+      "github-authentication-token-expiration" : "2024-07-18 17:30:59 UTC"
+    }
+  },
+  "uuid" : "6b39539e-c4e4-44a6-b854-d9e134f5e69b",
+  "persistent" : true,
+  "insertionIndex" : 21
+}

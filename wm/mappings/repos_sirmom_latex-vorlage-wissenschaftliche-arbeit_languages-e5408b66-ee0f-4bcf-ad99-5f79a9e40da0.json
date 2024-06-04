@@ -1,0 +1,43 @@
+{
+  "id" : "e5408b66-ee0f-4bcf-ad99-5f79a9e40da0",
+  "name" : "repos_sirmom_latex-vorlage-wissenschaftliche-arbeit_languages",
+  "request" : {
+    "url" : "/repos/SirMoM/LaTeX-Vorlage-Wissenschaftliche-Arbeit/languages",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"TeX\":58115,\"Batchfile\":1146,\"Shell\":144}",
+    "headers" : {
+      "X-Accepted-OAuth-Scopes" : "",
+      "X-RateLimit-Resource" : "core",
+      "Server" : "GitHub.com",
+      "Access-Control-Allow-Origin" : "*",
+      "X-RateLimit-Used" : "39",
+      "Last-Modified" : "Tue, 12 Feb 2019 10:55:10 GMT",
+      "x-github-api-version-selected" : "2022-11-28",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "X-Frame-Options" : "deny",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "Access-Control-Expose-Headers" : "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset",
+      "X-RateLimit-Remaining" : "4961",
+      "X-GitHub-Media-Type" : "github.v3",
+      "Content-Security-Policy" : "default-src 'none'",
+      "X-XSS-Protection" : "0",
+      "X-GitHub-Request-Id" : "C2B1:2BE67D:3274CA87:32B0347E:6640F7A1",
+      "Content-Type" : "application/json; charset=utf-8",
+      "X-Content-Type-Options" : "nosniff",
+      "X-RateLimit-Reset" : "1715537231",
+      "Date" : "Sun, 12 May 2024 17:08:49 GMT",
+      "Cache-Control" : "private, max-age=60, s-maxage=60",
+      "ETag" : "\"e76540f819e2baaa8fe6a76bbb620eb40f3acfe5e55eaf04c72899d1b6bd9958\"",
+      "Vary" : [ "Accept, Authorization, Cookie, X-GitHub-OTP", "Accept-Encoding, Accept, X-Requested-With" ],
+      "X-RateLimit-Limit" : "5000",
+      "X-OAuth-Scopes" : "read:user, repo",
+      "github-authentication-token-expiration" : "2024-07-18 17:30:59 UTC"
+    }
+  },
+  "uuid" : "e5408b66-ee0f-4bcf-ad99-5f79a9e40da0",
+  "persistent" : true,
+  "insertionIndex" : 15
+}

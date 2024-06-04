@@ -1,0 +1,43 @@
+{
+  "id" : "dd5ba287-7395-43d1-ad3d-89433f73d21d",
+  "name" : "repos_sirmom_pgui_languages",
+  "request" : {
+    "url" : "/repos/SirMoM/PGUI/languages",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"Java\":77709}",
+    "headers" : {
+      "X-Accepted-OAuth-Scopes" : "",
+      "X-RateLimit-Resource" : "core",
+      "Server" : "GitHub.com",
+      "Access-Control-Allow-Origin" : "*",
+      "X-RateLimit-Used" : "43",
+      "Last-Modified" : "Fri, 27 Mar 2020 06:20:24 GMT",
+      "x-github-api-version-selected" : "2022-11-28",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "X-Frame-Options" : "deny",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "Access-Control-Expose-Headers" : "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset",
+      "X-RateLimit-Remaining" : "4957",
+      "X-GitHub-Media-Type" : "github.v3",
+      "Content-Security-Policy" : "default-src 'none'",
+      "X-XSS-Protection" : "0",
+      "X-GitHub-Request-Id" : "E62B:3299FD:2FE7F029:30231598:6640F7A2",
+      "Content-Type" : "application/json; charset=utf-8",
+      "X-Content-Type-Options" : "nosniff",
+      "X-RateLimit-Reset" : "1715537231",
+      "Date" : "Sun, 12 May 2024 17:08:50 GMT",
+      "Cache-Control" : "private, max-age=60, s-maxage=60",
+      "ETag" : "\"19406e7ec4d6ecca55a68041f6af0907501e4cbf298f609f7200f99cbf219e22\"",
+      "Vary" : [ "Accept, Authorization, Cookie, X-GitHub-OTP", "Accept-Encoding, Accept, X-Requested-With" ],
+      "X-RateLimit-Limit" : "5000",
+      "X-OAuth-Scopes" : "read:user, repo",
+      "github-authentication-token-expiration" : "2024-07-18 17:30:59 UTC"
+    }
+  },
+  "uuid" : "dd5ba287-7395-43d1-ad3d-89433f73d21d",
+  "persistent" : true,
+  "insertionIndex" : 11
+}
