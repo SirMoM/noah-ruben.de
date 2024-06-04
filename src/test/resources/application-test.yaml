@@ -1,0 +1,5 @@
+ktor:
+    deployment:
+        port: 42080
+github:
+    token: $GITHUB_TOKEN
