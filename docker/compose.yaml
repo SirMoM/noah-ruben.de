@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  website:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    ports:
+      - "42081:42081"
+    env_file:
+        - ${ENV_FILE:-.env}
+  wiremock:
+    profiles: [wm]
+    image: "wiremock/wiremock:latest"
+    container_name: website-wiremock
+    entrypoint: ["/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose"]
+    volumes:
+      - ../wm:/home/wiremock
+    ports:
+      - "8080:8080"
