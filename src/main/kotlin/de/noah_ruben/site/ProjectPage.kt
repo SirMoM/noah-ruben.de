@@ -3,9 +3,12 @@ package de.noah_ruben.site
 import de.noah_ruben.data.Cache
 import de.noah_ruben.data.Cache.getAllLanguages
 import de.noah_ruben.data.Cache.getAllTopics
-import de.noah_ruben.data.Project
-import de.noah_ruben.misc.hxSwap
+import de.noah_ruben.data.model.Project
+import de.noah_ruben.misc.borderGray
+import de.noah_ruben.misc.hxIndicator
+import de.noah_ruben.misc.hxPost
 import de.noah_ruben.misc.hxTarget
+import de.noah_ruben.misc.hxTrigger
 import io.ktor.server.application.Application
 import io.ktor.server.html.respondHtml
 import io.ktor.server.request.receive
@@ -16,13 +19,14 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.html.BODY
 import kotlinx.html.ButtonType
 import kotlinx.html.FlowContent
-import kotlinx.html.FormEncType
 import kotlinx.html.FormMethod
 import kotlinx.html.HTML
 import kotlinx.html.InputType
 import kotlinx.html.a
 import kotlinx.html.body
+import kotlinx.html.br
 import kotlinx.html.button
+import kotlinx.html.classes
 import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
@@ -30,11 +34,14 @@ import kotlinx.html.h2
 import kotlinx.html.head
 import kotlinx.html.hidden
 import kotlinx.html.id
+import kotlinx.html.img
 import kotlinx.html.input
 import kotlinx.html.label
 import kotlinx.html.option
 import kotlinx.html.p
 import kotlinx.html.select
+import kotlinx.html.span
+import java.lang.Thread.sleep
 
 private const val SEARCH_PATH = "/search"
 
@@ -46,6 +53,7 @@ fun Application.projectsPage() {
             }
         }
         post(SEARCH_PATH) {
+            sleep(2000)
             val payload = runBlocking {
                 call.receive<String>()
             }
@@ -78,7 +86,8 @@ fun BODY.projectsPageBody() {
 
     div("container mx-auto p-4") {
         h1("text-2xl font-bold mb-4") { +"Projects" }
-        searchBar()
+        mainSearchBar()
+        br
         projectList(projects)
         commandLineEmulation()
     }
@@ -138,101 +147,122 @@ fun FlowContent.languageTag(tag: String) {
     }
 }
 
-fun FlowContent.searchBar() {
-    input {
-        form="binaryForm"
-        type=InputType.search
-        name="binaryFile"
-    }
-    form {
-        method=FormMethod.post
-        id="binaryForm"
-        encType=FormEncType.multipartFormData
-        hxSwap("outerHTML")
-        hxTarget("#$SEARCH_RESULTS")
-
-        button {
-            type=ButtonType.submit
-            +"Submit"
-        }
-    }
-}
+private val borderGrey400 = borderGray("400")
 
 fun FlowContent.mainSearchBar() {
+    val inputClasses = setOf("flex-grow", "bg-gray-500", "border", borderGrey400, "rounded", "p-2")
+    val searchBoxClasses = setOf("flex-grow", "bg-gray-700", "border", borderGrey400, "rounded", "p-4", "mb-4")
+    val selectClasses = setOf("bg-gray-500", "border", borderGrey400, "rounded", "mx-2")
 
-    form( classes = "form-control border border-gray-300 rounded p-4 mb-4 max-w rounded overflow-hidden shadow-lg  text-gray-700", action = "/search", method = FormMethod.post) {
-        label {
-            htmlFor = "mainSearch"
-            text("Search:")
-        }
-
-        input(InputType.text, name = "query") { id = "mainSearch" }
-
-        label {
-            htmlFor = "topic"
-            text("Topic:")
-        }
-
-        select {
-            name = "topic"
-            option("<topic>") {
-                disabled = true
-                selected = true
-                hidden = true
-                +"<topic>"
+    div {
+        classes = searchBoxClasses
+        span("htmx-indicator") {
+            id = "spinner"
+            img(src = "/resources/bars.svg") {
+                +"Searching..."
             }
-            for (topic in getAllTopics()) {
-                option(topic) {
-                    +topic
+        }
+        form(action = SEARCH_PATH, method = FormMethod.post) {
+            classes = setOf("formControl", "justify-start", "flex-wrap")
+            hxTrigger("input changed delay:500ms, search")
+            hxIndicator("#spinner")
+            hxTarget("#search-results")
+
+            div(classes = "flex flex-col") {
+                label(classes = "order-0") {
+                    htmlFor = "mainSearch"
+                    text("Search:")
+                }
+                input(InputType.text, name = "query") {
+                    autoFocus = true
+                    classes = inputClasses
+                    id = "mainSearch"
+                    hxPost("/search")
+                    hxTrigger("input changed delay:500ms, search")
+                    hxTarget("#search-results")
+                    hxIndicator(".htmx-indicator")
                 }
             }
-        }
+            div {
+                label {
+                    htmlFor = "topic"
+                    text("Topic:")
+                }
 
-        label {
-            htmlFor = "language"
-            text("Language:")
-        }
+                select {
+                    hxPost(SEARCH_PATH)
+                    classes = selectClasses
+                    name = "topic"
+                    option("<topic>") {
+                        disabled = true
+                        selected = true
+                        hidden = true
+                        +"<topic>"
+                    }
+                    for (topic in getAllTopics()) {
+                        option(topic) {
+                            +topic
+                        }
+                    }
+                }
 
-        select {
-            name = "language"
-            option("<Language>") {
-                disabled = true
-                selected = true
-                hidden = true
-                +"<Language>"
-            }
-            for (language in getAllLanguages()) {
-                option {
-                    value = language
-                    +language
+                label {
+                    htmlFor = "language"
+                    text("Language:")
+                }
+
+                select {
+                    classes = selectClasses
+                    name = "language"
+                    option("<Language>") {
+                        disabled = true
+                        selected = true
+                        hidden = true
+                        +"<Language>"
+                    }
+                    for (language in getAllLanguages()) {
+                        option {
+                            value = language
+                            +language
+                        }
+                    }
+                }
+
+                label {
+                    htmlFor = "orderBy"
+                    text("Order by:")
+                }
+
+                select {
+                    classes = selectClasses
+                    name = "orderBy"
+                    option {
+                        value = "relevance"
+                        +"Relevance"
+                    }
+                    option {
+                        value = "date"
+                        +"Date"
+                    }
+                    option {
+                        value = "popularity"
+                        +"Popularity"
+                    }
                 }
             }
-        }
-
-        label {
-            htmlFor = "orderBy"
-            text("Order by:")
-        }
-
-        select {
-            name = "orderBy"
-            option {
-                value = "relevance"
-                +"Relevance"
+            button(type = ButtonType.submit) {
+                classes = setOf("bg-gray-700", "text-white", "rounded", "border", "p-2", "mt-4", "text-xl")
+                hxPost(SEARCH_PATH)
+                div(classes = "flex") {
+                    text("Search ")
+                    span("htmx-indicator ml-2") {
+                        id = "spinner"
+                        img(src = "/resources/bars.svg") {
+                            alt = "Searching..."
+                        }
+                    }
+                }
             }
-            option {
-                value = "date"
-                +"Date"
-            }
-            option {
-                value = "popularity"
-                +"Popularity"
-            }
-        }
-
-        button(type = ButtonType.submit) {
-            text("Search")
-            type=ButtonType.submit
         }
     }
 }

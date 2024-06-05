@@ -1,6 +1,6 @@
 ktor:
     deployment:
-        port: 42080
+        port: 42081
         watch:
             - classes
             - resources
@@ -10,3 +10,4 @@ ktor:
             - de.noah_ruben.ApplicationKt.module
 github:
     token: $GITHUB_TOKEN
+    url: $GITHUB_URL

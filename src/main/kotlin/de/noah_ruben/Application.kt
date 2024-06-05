@@ -49,7 +49,7 @@ fun Application.staticRouting() {
 }
 
 fun Application.module() {
-    Cache.githubClient = WiremockClient(token = getToken())
+    Cache.githubClient = WiremockClient(url = getGithubURL())
     Cache.initialize()
 
     configureHTTP()
@@ -66,4 +66,8 @@ fun Application.module() {
 private fun Application.getToken(): String {
     val tokenConfig = environment.config.propertyOrNull("github.token") ?: throw IllegalStateException("Did not provide github token as GITHUB_TOKEN in the environment.")
     return tokenConfig.getString()
+}
+private fun Application.getGithubURL(): String {
+    val url = environment.config.propertyOrNull("github.url") ?: throw IllegalStateException("Did not provide github URL as GITHUB_URL in the environment.")
+    return url.getString().trim()
 }

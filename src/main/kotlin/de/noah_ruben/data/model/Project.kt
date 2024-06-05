@@ -1,4 +1,4 @@
-package de.noah_ruben.data
+package de.noah_ruben.data.model
 
 import kotlinx.serialization.Serializable
 

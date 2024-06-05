@@ -1,6 +1,6 @@
 package de.noah_ruben.data
 
-import de.noah_ruben.data.model.Repository
+import de.noah_ruben.data.model.github.Repository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -12,7 +12,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as CN
 
-private const val BASE_URL = "https://api.github.com"
 private const val USERS_PATH = "users"
 private const val OWNER = "SirMoM"
 private const val REPOSITORY_PATH = "repos"
@@ -28,6 +27,7 @@ fun HttpRequestBuilder.authHeader(token: String) {
 }
 
 class GitHubClient(private val token: String) : RepositoryClient {
+    private val baseUrl = "https://api.github.com"
 
     private val newHttpClient: () -> HttpClient = {
         HttpClient(CIO) {
@@ -45,7 +45,7 @@ class GitHubClient(private val token: String) : RepositoryClient {
 
     override suspend fun getRepositories(): List<Repository> {
         newHttpClient().use {
-            val req = it.get("$BASE_URL/$USERS_PATH/$OWNER/$REPOSITORY_PATH") {
+            val req = it.get("$baseUrl/$USERS_PATH/$OWNER/$REPOSITORY_PATH") {
                 headers.append("Authorization", "Bearer $token")
             }
             if (req.status != HttpStatusCode.OK) {
@@ -59,7 +59,7 @@ class GitHubClient(private val token: String) : RepositoryClient {
 
     override suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String> {
         return with(newHttpClient()) {
-            val languages: Map<String, Int> = get("$BASE_URL/$REPOSITORY_PATH/$OWNER/$repositoryName/$LANGUAGES_PATH") {
+            val languages: Map<String, Int> = get("$baseUrl/$REPOSITORY_PATH/$OWNER/$repositoryName/$LANGUAGES_PATH") {
                 authHeader(token)
             }.body()
             languages.keys.toList()

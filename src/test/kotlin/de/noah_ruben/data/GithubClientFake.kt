@@ -1,7 +1,7 @@
 package de.noah_ruben.data
 
-import de.noah_ruben.data.model.Repository
-import de.noah_ruben.data.model.SimpleUser
+import de.noah_ruben.data.model.github.Repository
+import de.noah_ruben.data.model.github.SimpleUser
 
 val fakeUser = SimpleUser(
     login = "user",
