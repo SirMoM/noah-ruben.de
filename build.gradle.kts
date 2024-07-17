@@ -3,9 +3,9 @@ val kotlin_version: String by project
 val logback_version: String by project
 
 plugins {
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.serialization") version "1.4.21"
     application
+    kotlin("jvm") version "2.0.0"
+    kotlin("plugin.serialization") version "1.4.21"
     id("org.jmailen.kotlinter") version "4.3.0"
 }
 
@@ -50,8 +50,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.10.1")
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
+    testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+//    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.2")
 }
@@ -68,7 +69,10 @@ tasks {
             sourcesMain.output
         from(contents)
     }
-    build {
-        dependsOn(fatJar) // Trigger fat jar creation during build
+//    build {
+//        dependsOn(fatJar) // Trigger fat jar creation during build
+//    }
+    test {
+        useJUnitPlatform()
     }
 }

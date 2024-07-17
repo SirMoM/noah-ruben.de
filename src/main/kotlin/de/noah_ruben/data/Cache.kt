@@ -34,10 +34,11 @@ object Cache {
         return languages
     }
 
+    // TODO: responde directly and repopulate cache afterwards?
     fun getProjects(): List<Project> {
         val (lastCached: LocalDateTime, projects: List<Project>) = projectsCache
 
-        if (projects.isEmpty() || lastCached.isBefore(LocalDateTime.now().minusMinutes(5))) {
+        if (projects.isEmpty() || lastCached.isBefore(LocalDateTime.now().minusMinutes(15))) {
             logger.info("Cache miss for projects! Last fetch: $lastCached")
 
             // TODO: Error handling
@@ -47,6 +48,7 @@ object Cache {
                     val languages = githubClient.getRepositoryLanguages(it.name) {
                         sleep(200)
                     }
+                    if (it.created_at.isNullOrBlank() || it.pushed_at.isNullOrBlank()) throw Error("Invalid repository")
                     Project(
                         stars = it.stargazers_count,
                         topics = it.topics,
@@ -56,6 +58,8 @@ object Cache {
                         description = it.description.orEmpty(),
                         githubLink = it.html_url.orEmpty(),
                         link = it.language.orEmpty(),
+                        lastModified = LocalDateTime.parse(it.pushed_at),
+                        created = LocalDateTime.parse(it.created_at),
                     )
                 }
             }

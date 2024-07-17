@@ -5,6 +5,7 @@ import de.noah_ruben.misc.hxPost
 import de.noah_ruben.misc.hxSwap
 import de.noah_ruben.misc.hxTarget
 import de.noah_ruben.misc.parseCommand
+import de.noah_ruben.site.projects.projectsPageBody
 import io.ktor.server.application.Application
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.header

@@ -9,7 +9,7 @@ import de.noah_ruben.site.commandLineEmulation
 import de.noah_ruben.site.defaultBody
 import de.noah_ruben.site.defaultHeader
 import de.noah_ruben.site.landingPage
-import de.noah_ruben.site.projectsPage
+import de.noah_ruben.site.projects.projectsPageRouting
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.html.respondHtml
@@ -60,7 +60,7 @@ fun Application.module() {
     landingPage()
     commandLineEmulation()
     staticRouting()
-    projectsPage()
+    projectsPageRouting()
 }
 
 private fun Application.getToken(): String {

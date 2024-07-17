@@ -1,21 +1,19 @@
-package de.noah_ruben.site
+package de.noah_ruben.site.projects
 
 import de.noah_ruben.data.Cache
 import de.noah_ruben.data.Cache.getAllLanguages
 import de.noah_ruben.data.Cache.getAllTopics
 import de.noah_ruben.data.model.Project
 import de.noah_ruben.misc.borderGray
+import de.noah_ruben.misc.colorFromString
 import de.noah_ruben.misc.hxIndicator
 import de.noah_ruben.misc.hxPost
 import de.noah_ruben.misc.hxTarget
 import de.noah_ruben.misc.hxTrigger
-import io.ktor.server.application.Application
-import io.ktor.server.html.respondHtml
-import io.ktor.server.request.receive
-import io.ktor.server.routing.get
-import io.ktor.server.routing.post
-import io.ktor.server.routing.routing
-import kotlinx.coroutines.runBlocking
+import de.noah_ruben.misc.invertedFromString
+import de.noah_ruben.site.commandLineEmulation
+import de.noah_ruben.site.defaultBody
+import de.noah_ruben.site.defaultHeader
 import kotlinx.html.BODY
 import kotlinx.html.ButtonType
 import kotlinx.html.FlowContent
@@ -23,14 +21,12 @@ import kotlinx.html.FormMethod
 import kotlinx.html.HTML
 import kotlinx.html.InputType
 import kotlinx.html.a
-import kotlinx.html.body
 import kotlinx.html.br
 import kotlinx.html.button
 import kotlinx.html.classes
 import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
-import kotlinx.html.h2
 import kotlinx.html.head
 import kotlinx.html.hidden
 import kotlinx.html.id
@@ -41,34 +37,6 @@ import kotlinx.html.option
 import kotlinx.html.p
 import kotlinx.html.select
 import kotlinx.html.span
-import java.lang.Thread.sleep
-
-private const val SEARCH_PATH = "/search"
-
-fun Application.projectsPage() {
-    routing {
-        get("/projects") {
-            call.respondHtml {
-                projectsPage()
-            }
-        }
-        post(SEARCH_PATH) {
-            sleep(2000)
-            val payload = runBlocking {
-                call.receive<String>()
-            }
-            println("payload: $payload")
-            call.respondHtml {
-                body {
-                    h2 {
-                        +payload
-                    }
-                    projectList(Cache.getProjects())
-                }
-            }
-        }
-    }
-}
 
 fun HTML.projectsPage() {
     head {
@@ -78,8 +46,6 @@ fun HTML.projectsPage() {
         projectsPageBody()
     }
 }
-
-private const val SEARCH_RESULTS = "search-results"
 
 fun BODY.projectsPageBody() {
     val projects = Cache.getProjects()
@@ -93,7 +59,11 @@ fun BODY.projectsPageBody() {
     }
 }
 
-fun FlowContent.projectList(projects: List<Project>, orderBy: String = "") {
+fun FlowContent.projectList(
+    projects: List<Project>,
+    orderBy: String = "",
+) {
+    +orderBy
     div {
         id = SEARCH_RESULTS
         projects.forEach {
@@ -142,7 +112,7 @@ fun FlowContent.projectTile(project: Project) {
 }
 
 fun FlowContent.languageTag(tag: String) {
-    a(classes = "mx-0.5 inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700") {
+    a(classes = "mx-0.5 inline-block bg-[#${tag.colorFromString()}] rounded-full px-3 py-1 text-sm font-semibold text-[#${tag.colorFromString().invertedFromString()}]") {
         +tag
     }
 }
@@ -193,11 +163,11 @@ fun FlowContent.mainSearchBar() {
                     hxPost(SEARCH_PATH)
                     classes = selectClasses
                     name = "topic"
-                    option("<topic>") {
+                    option(TOPIC_PLACEHOLDER) {
                         disabled = true
                         selected = true
                         hidden = true
-                        +"<topic>"
+                        +TOPIC_PLACEHOLDER
                     }
                     for (topic in getAllTopics()) {
                         option(topic) {
@@ -236,17 +206,11 @@ fun FlowContent.mainSearchBar() {
                 select {
                     classes = selectClasses
                     name = "orderBy"
-                    option {
-                        value = "relevance"
-                        +"Relevance"
-                    }
-                    option {
-                        value = "date"
-                        +"Date"
-                    }
-                    option {
-                        value = "popularity"
-                        +"Popularity"
+                    OrderBy.entries.forEach {
+                        option {
+                            value = it.name
+                            +it.toString()
+                        }
                     }
                 }
             }

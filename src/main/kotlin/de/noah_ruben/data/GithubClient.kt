@@ -57,12 +57,10 @@ class GitHubClient(private val token: String) : RepositoryClient {
         }
     }
 
-    override suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String> {
-        return with(newHttpClient()) {
-            val languages: Map<String, Int> = get("$baseUrl/$REPOSITORY_PATH/$OWNER/$repositoryName/$LANGUAGES_PATH") {
-                authHeader(token)
-            }.body()
-            languages.keys.toList()
-        }
+    override suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String> = with(newHttpClient()) {
+        val languages: Map<String, Int> = get("$baseUrl/$REPOSITORY_PATH/$OWNER/$repositoryName/$LANGUAGES_PATH") {
+            authHeader(token)
+        }.body()
+        languages.keys.toList()
     }
 }
