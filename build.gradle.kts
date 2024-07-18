@@ -12,6 +12,15 @@ plugins {
 group = "de.noah_ruben"
 version = "0.0.1"
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+kotlin {
+    jvmToolchain(21)
+}
+
 application {
     mainClass.set("de.noah_ruben.ApplicationKt")
 
