@@ -11,7 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ProjectsPageTest {
+class ProjectsQueryTest {
     private lateinit var projects: List<Project>
 
     @Test
@@ -31,8 +31,8 @@ class ProjectsPageTest {
     @Test
     fun sortedByDate() {
         val result = this.projects.sortedBy(OrderBy.Date)
-
-        assertEquals(listOf(projects[4], projects[0], projects[3], projects[1], projects[2]), result)
+        val expected = listOf(projects[4], projects[0], projects[3], projects[1], projects[2])
+        assertEquals(expected = expected, actual = result)
     }
 
     @Test
@@ -65,7 +65,6 @@ class ProjectsPageTest {
                 link = "https://awesomeapp.com",
                 created = now().minusYears(1),
                 lastModified = now().minusDays(1),
-
             ),
             Project(
                 stars = 300,

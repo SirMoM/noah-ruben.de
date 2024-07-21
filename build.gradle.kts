@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -5,6 +7,7 @@ val logback_version: String by project
 plugins {
     application
     kotlin("jvm") version "2.0.0"
+    kotlin("plugin.power-assert") version "2.0.0"
     kotlin("plugin.serialization") version "1.4.21"
     id("org.jmailen.kotlinter") version "4.3.0"
 }
@@ -31,6 +34,11 @@ application {
 
 repositories {
     mavenCentral()
+}
+
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
+powerAssert {
+    functions = listOf("kotlin.assert", "kotlin.test.assertEquals", "kotlin.test.assertTrue", "kotlin.test.assertNull", "kotlin.require", "org.example.AssertScope.assert")
 }
 
 dependencies {
@@ -62,8 +70,8 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
 //    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+//    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+//    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.2")
 }
 
 tasks {

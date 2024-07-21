@@ -71,7 +71,7 @@ fun List<Project>.sortedBy(selector: OrderBy): List<Project> = when (selector) {
     Relevance -> this.sortedBy {
         it.releases
     }
-    Date -> this.sortedBy {
+    Date -> this.sortedByDescending {
         it.lastModified
     }
     Popularity -> this.sortedByDescending {
