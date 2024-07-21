@@ -120,6 +120,13 @@ fun FlowContent.languageTag(tag: String) {
 private val borderGrey400 = borderGray("400")
 
 fun FlowContent.mainSearchBar() {
+    fun FlowContent.addHxSearchConfig(delay: String = "500") {
+        hxPost(SEARCH_PATH)
+        hxTrigger("input changed delay:${delay}ms, search")
+        hxIndicator("#spinner")
+        hxTarget("#search-results")
+    }
+
     val inputClasses = setOf("flex-grow", "bg-gray-500", "border", borderGrey400, "rounded", "p-2")
     val searchBoxClasses = setOf("flex-grow", "bg-gray-700", "border", borderGrey400, "rounded", "p-4", "mb-4")
     val selectClasses = setOf("bg-gray-500", "border", borderGrey400, "rounded", "mx-2")
@@ -134,9 +141,7 @@ fun FlowContent.mainSearchBar() {
         }
         form(action = SEARCH_PATH, method = FormMethod.post) {
             classes = setOf("formControl", "justify-start", "flex-wrap")
-            hxTrigger("input changed delay:500ms, search")
-            hxIndicator("#spinner")
-            hxTarget("#search-results")
+            addHxSearchConfig()
 
             div(classes = "flex flex-col") {
                 label(classes = "order-0") {
@@ -147,10 +152,7 @@ fun FlowContent.mainSearchBar() {
                     autoFocus = true
                     classes = inputClasses
                     id = "mainSearch"
-                    hxPost("/search")
-                    hxTrigger("input changed delay:500ms, search")
-                    hxTarget("#search-results")
-                    hxIndicator(".htmx-indicator")
+                    addHxSearchConfig()
                 }
             }
             div {
@@ -182,6 +184,7 @@ fun FlowContent.mainSearchBar() {
                 }
 
                 select {
+                    addHxSearchConfig("10")
                     classes = selectClasses
                     name = "language"
                     option("<Language>") {
@@ -204,6 +207,7 @@ fun FlowContent.mainSearchBar() {
                 }
 
                 select {
+                    addHxSearchConfig("10")
                     classes = selectClasses
                     name = "orderBy"
                     OrderBy.entries.forEach {
@@ -213,10 +217,19 @@ fun FlowContent.mainSearchBar() {
                         }
                     }
                 }
+                input(
+                    type = InputType.checkBox,
+                    name = "dir",
+                ) {
+                    classes = setOf("bg-gray-700", "text-white", "rounded", "border", "p-2", "mt-4", "text-xl")
+                    addHxSearchConfig("100")
+                    value = "↕"
+                    // TODO animation on click
+                }
             }
             button(type = ButtonType.submit) {
                 classes = setOf("bg-gray-700", "text-white", "rounded", "border", "p-2", "mt-4", "text-xl")
-                hxPost(SEARCH_PATH)
+                addHxSearchConfig("0")
                 div(classes = "flex") {
                     text("Search ")
                     span("htmx-indicator ml-2") {

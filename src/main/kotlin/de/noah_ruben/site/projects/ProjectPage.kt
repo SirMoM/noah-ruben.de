@@ -43,6 +43,7 @@ fun Application.projectsPageRouting() {
             val payload = runBlocking {
                 call.receive<String>()
             }
+            println(payload)
             val params = payload.parseUrlEncodedParameters()
             val query = params.getOrFail(QP_QUERY)
             val topic = params.getOrFail(QP_TOPIC)
