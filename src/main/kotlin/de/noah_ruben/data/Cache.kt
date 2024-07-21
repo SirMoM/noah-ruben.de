@@ -5,6 +5,7 @@ import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import java.lang.Thread.sleep
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 typealias ProjectsCache = Pair<LocalDateTime, List<Project>>
 
@@ -58,8 +59,9 @@ object Cache {
                         description = it.description.orEmpty(),
                         githubLink = it.html_url.orEmpty(),
                         link = it.language.orEmpty(),
-                        lastModified = LocalDateTime.parse(it.pushed_at),
-                        created = LocalDateTime.parse(it.created_at),
+
+                        lastModified = LocalDateTime.parse(it.pushed_at, DateTimeFormatter.ISO_DATE_TIME),
+                        created = LocalDateTime.parse(it.created_at, DateTimeFormatter.ISO_DATE_TIME),
                     )
                 }
             }
