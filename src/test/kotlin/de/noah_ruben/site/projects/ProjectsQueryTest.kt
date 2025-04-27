@@ -1,5 +1,3 @@
-@file:Suppress("ktlint:standard:no-wildcard-imports")
-
 package de.noah_ruben.site.projects
 
 import de.noah_ruben.data.model.Project
@@ -16,23 +14,41 @@ class ProjectsQueryTest {
 
     @Test
     fun sortedByPopularity() {
-        val result = this.projects.sortedBy(OrderBy.Popularity)
+        val expectedAscending = listOf(projects[4], projects[2], projects[0], projects[3], projects[1])
 
-        assertEquals(listOf(projects[1], projects[3], projects[0], projects[2], projects[4]), result, "Lists should be ordered the same")
+        // Test descending order (highest stars first)
+        val resultDescending = this.projects.sortedBy(OrderBy.Popularity, true)
+        assertEquals(expectedAscending.reversed(), resultDescending, "Lists should be ordered the same (descending by popularity)")
+
+        // Test ascending order (lowest stars first)
+        val resultAscending = this.projects.sortedBy(OrderBy.Popularity, false)
+        assertEquals(expectedAscending, resultAscending, "Lists should be ordered the same (ascending by popularity)")
     }
 
     @Test
     fun sortedByRelevance() {
-        val result = this.projects.sortedBy(OrderBy.Relevance)
+        val expectedAscending = listOf(projects[4], projects[2], projects[0], projects[3], projects[1])
 
-        assertEquals(TODO("THIS NEEDS TO BE IMPLEMENTED"), true)
+        // Test descending order (based on the original test's expected list for descending=false)
+        val resultDescending = this.projects.sortedBy(OrderBy.Relevance, true)
+        assertEquals(expectedAscending.reversed(), resultDescending, "Lists should be ordered the same (descending by relevance)")
+
+        // Test ascending order
+        val resultAscending = this.projects.sortedBy(OrderBy.Relevance, false)
+        assertEquals(expectedAscending, resultAscending, "Lists should be ordered the same (ascending by relevance)")
     }
 
     @Test
     fun sortedByDate() {
-        val result = this.projects.sortedBy(OrderBy.Date)
-        val expected = listOf(projects[4], projects[0], projects[3], projects[1], projects[2])
-        assertEquals(expected = expected, actual = result)
+        val expectedAscending = listOf(projects[3], projects[1], projects[2], projects[0], projects[4])
+
+        // Test descending order (newest created date first)
+        val resultDescending = this.projects.sortedBy(OrderBy.Date, true)
+        assertEquals(expectedAscending.reversed(), resultDescending, "Lists should be ordered the same (descending by date)")
+
+        // Test ascending order (oldest created date first)
+        val resultAscending = this.projects.sortedBy(OrderBy.Date, false)
+        assertEquals(expectedAscending, resultAscending, "Lists should be ordered the same (ascending by date)")
     }
 
     @Test
@@ -44,11 +60,14 @@ class ProjectsQueryTest {
     @Test
     fun filerByLanguage() {
         val result = this.projects.filerByLanguage("Kotlin")
-        assertEquals(listOf(projects.first(), projects[1]), result, "Lists should be equal")
+        // Projects 0 and 1 use Kotlin
+        assertEquals(listOf(projects[0], projects[1]), result, "Lists should be equal")
     }
 
     @Test
     fun query() {
+        val result = this.projects.query("Android")
+        assertEquals(listOf(projects[4]), result, "Lists should be equal")
     }
 
     @BeforeEach
@@ -96,7 +115,7 @@ class ProjectsQueryTest {
                 languages = listOf("go"),
                 releases = "v1.2.5",
                 name = "NetLib",
-                description = "A networking library for Kotlin.",
+                description = "A networking library for Kotlin.", // Note: uses Kotlin in description but not language list
                 githubLink = "https://github.com/user/netlib",
                 link = "https://netlib.com",
                 created = now().minusYears(5).plusWeeks(8),

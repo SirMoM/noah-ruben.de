@@ -14,29 +14,7 @@ import de.noah_ruben.misc.invertedFromString
 import de.noah_ruben.site.commandLineEmulation
 import de.noah_ruben.site.defaultBody
 import de.noah_ruben.site.defaultHeader
-import kotlinx.html.BODY
-import kotlinx.html.ButtonType
-import kotlinx.html.FlowContent
-import kotlinx.html.FormMethod
-import kotlinx.html.HTML
-import kotlinx.html.InputType
-import kotlinx.html.a
-import kotlinx.html.br
-import kotlinx.html.button
-import kotlinx.html.classes
-import kotlinx.html.div
-import kotlinx.html.form
-import kotlinx.html.h1
-import kotlinx.html.head
-import kotlinx.html.hidden
-import kotlinx.html.id
-import kotlinx.html.img
-import kotlinx.html.input
-import kotlinx.html.label
-import kotlinx.html.option
-import kotlinx.html.p
-import kotlinx.html.select
-import kotlinx.html.span
+import kotlinx.html.*
 
 fun HTML.projectsPage() {
     head {
@@ -53,7 +31,7 @@ fun BODY.projectsPageBody() {
     div("container mx-auto p-4") {
         h1("text-2xl font-bold mb-4") { +"Projects" }
         mainSearchBar()
-        br
+        br()
         projectList(projects)
         commandLineEmulation()
     }
@@ -61,9 +39,7 @@ fun BODY.projectsPageBody() {
 
 fun FlowContent.projectList(
     projects: List<Project>,
-    orderBy: String = "",
 ) {
-    +orderBy
     div {
         id = SEARCH_RESULTS
         projects.forEach {
@@ -104,8 +80,10 @@ fun FlowContent.projectTile(project: Project) {
             a(href = githubLink, classes = "inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2") {
                 +"GitHub"
             }
-            a(href = link, classes = "inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700") {
-                +"Visit"
+            if (link.isNotBlank() && link != "#") { // Example check
+                a(href = link, classes = "inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700") {
+                    +"Visit"
+                }
             }
         }
     }
@@ -120,80 +98,78 @@ fun FlowContent.languageTag(tag: String) {
 private val borderGrey400 = borderGray("400")
 
 fun FlowContent.mainSearchBar() {
-    fun FlowContent.addHxSearchConfig(delay: String = "500") {
-        hxPost(SEARCH_PATH)
-        hxTrigger("input changed delay:${delay}ms, search")
-        hxIndicator("#spinner")
-        hxTarget("#search-results")
-    }
-
     val inputClasses = setOf("flex-grow", "bg-gray-500", "border", borderGrey400, "rounded", "p-2")
     val searchBoxClasses = setOf("flex-grow", "bg-gray-700", "border", borderGrey400, "rounded", "p-4", "mb-4")
     val selectClasses = setOf("bg-gray-500", "border", borderGrey400, "rounded", "mx-2")
+    val checkboxClasses = setOf("bg-gray-700", "text-white", "rounded", "border", "p-2", "mt-4", "text-xl", "align-middle") // Added align-middle
+    val labelClasses = setOf("mr-1", "align-middle")
 
     div {
         classes = searchBoxClasses
         span("htmx-indicator") {
             id = "spinner"
-            img(src = "/resources/bars.svg") {
-                +"Searching..."
-            }
+            img(src = "/resources/bars.svg", alt = "Searching...") // Use alt attribute
+            +"Searching..."
         }
+
         form(action = SEARCH_PATH, method = FormMethod.post) {
             classes = setOf("formControl", "justify-start", "flex-wrap")
-            addHxSearchConfig()
+            hxPost(SEARCH_PATH)
+            hxTarget("#search-results")
+            hxIndicator("#spinner")
+            hxTrigger("submit, change from:select, change from:input[type='checkbox'] delay:100ms, input from:input[type='text'] changed delay:500ms")
 
             div(classes = "flex flex-col") {
                 label(classes = "order-0") {
                     htmlFor = "mainSearch"
-                    text("Search:")
+                    +"Search:"
                 }
-                input(InputType.text, name = "query") {
+                input(InputType.text, name = QP_QUERY) {
+                    // Use constants
                     autoFocus = true
                     classes = inputClasses
                     id = "mainSearch"
-                    addHxSearchConfig()
+                    placeholder = "Search"
+                    value = ""
                 }
             }
-            div {
-                label {
-                    htmlFor = "topic"
-                    text("Topic:")
-                }
 
+            div {
+                label(classes = labelClasses.joinToString(separator = " ")) {
+                    htmlFor = QP_TOPIC
+                    +"Topic:"
+                }
                 select {
-                    hxPost(SEARCH_PATH)
                     classes = selectClasses
-                    name = "topic"
-                    option(TOPIC_PLACEHOLDER) {
-                        disabled = true
+                    name = QP_TOPIC
+                    id = QP_TOPIC
+                    option {
+                        value = TOPIC_PLACEHOLDER
                         selected = true
-                        hidden = true
                         +TOPIC_PLACEHOLDER
                     }
-                    for (topic in getAllTopics()) {
-                        option(topic) {
+                    getAllTopics().forEach { topic ->
+                        option {
+                            value = topic
                             +topic
                         }
                     }
                 }
 
-                label {
-                    htmlFor = "language"
-                    text("Language:")
+                label(classes = labelClasses.joinToString(separator = " ")) {
+                    htmlFor = QP_LANGUAGE
+                    +"Language:"
                 }
-
                 select {
-                    addHxSearchConfig("10")
                     classes = selectClasses
-                    name = "language"
-                    option("<Language>") {
-                        disabled = true
+                    name = QP_LANGUAGE
+                    id = QP_LANGUAGE
+                    option {
+                        value = LANGUAGE_PLACEHOLDER
                         selected = true
-                        hidden = true
-                        +"<Language>"
+                        +LANGUAGE_PLACEHOLDER
                     }
-                    for (language in getAllLanguages()) {
+                    getAllLanguages().forEach { language ->
                         option {
                             value = language
                             +language
@@ -201,42 +177,39 @@ fun FlowContent.mainSearchBar() {
                     }
                 }
 
-                label {
-                    htmlFor = "orderBy"
-                    text("Order by:")
+                label(classes = labelClasses.joinToString(separator = " ")) {
+                    htmlFor = QP_ORDER_BY
+                    +"Order by:"
                 }
-
                 select {
-                    addHxSearchConfig("10")
                     classes = selectClasses
-                    name = "orderBy"
+                    name = QP_ORDER_BY
+                    id = QP_ORDER_BY
                     OrderBy.entries.forEach {
                         option {
                             value = it.name
-                            +it.toString()
+                            +it.name
                         }
                     }
                 }
-                input(
-                    type = InputType.checkBox,
-                    name = "dir",
-                ) {
-                    classes = setOf("bg-gray-700", "text-white", "rounded", "border", "p-2", "mt-4", "text-xl")
-                    addHxSearchConfig("100")
-                    value = "↕"
-                    // TODO animation on click
+
+                input(type = InputType.checkBox, name = QP_DIR) {
+                    id = QP_DIR
+                    classes = checkboxClasses
+                    value = "desc"
+                }
+                label(classes = labelClasses.joinToString(separator = " ")) {
+                    htmlFor = QP_DIR
+                    +"Descending"
                 }
             }
+
             button(type = ButtonType.submit) {
                 classes = setOf("bg-gray-700", "text-white", "rounded", "border", "p-2", "mt-4", "text-xl")
-                addHxSearchConfig("0")
-                div(classes = "flex") {
-                    text("Search ")
+                div(classes = "flex items-center") {
+                    +"Search "
                     span("htmx-indicator ml-2") {
-                        id = "spinner"
-                        img(src = "/resources/bars.svg") {
-                            alt = "Searching..."
-                        }
+                        img(src = "/resources/bars.svg", alt = "Searching...")
                     }
                 }
             }
