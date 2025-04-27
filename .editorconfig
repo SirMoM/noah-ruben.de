@@ -10,3 +10,4 @@ indent_style = space
 [*.{kt,kts}]
 ktlint_code_style = intellij_idea
 ktlint_standard_package-name = disabled
+ij_kotlin_packages_to_use_import_on_demand = kotlinx.html
