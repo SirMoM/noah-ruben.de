@@ -6,6 +6,7 @@ import de.noah_ruben.data.Cache.getAllTopics
 import de.noah_ruben.data.model.Project
 import de.noah_ruben.misc.borderGray
 import de.noah_ruben.misc.colorFromString
+import de.noah_ruben.misc.css
 import de.noah_ruben.misc.hxIndicator
 import de.noah_ruben.misc.hxPost
 import de.noah_ruben.misc.hxTarget
@@ -28,8 +29,8 @@ fun HTML.projectsPage() {
 fun BODY.projectsPageBody() {
     val projects = Cache.getProjects()
 
-    div("container mx-auto p-4") {
-        h1("text-2xl font-bold mb-4") { +"Projects" }
+    div(classes = css { container().mxAuto().p4() }) {
+        h1(classes = css { text2xl().fontBold().mb4() }) { +"Projects" }
         mainSearchBar()
         br()
         projectList(projects)
@@ -50,38 +51,38 @@ fun FlowContent.projectList(
 
 fun FlowContent.projectTile(project: Project) {
     with(project) {
-        div("border border-gray-300 rounded p-4 mb-4 max-w rounded overflow-hidden shadow-lg bg-white") {
+        div(classes = css { projectTileClasses() }) {
             div {
-                div("font-bold text-xl mb-2") {
+                div(classes = css { fontBold().textXl().mb2() }) {
                     +name
                 }
-                p("text-gray-700 text-base") {
+                p(classes = css { textGray700().textBase() }) {
                     +description
                 }
-                div("flex items-center mt-2 text-gray-600 text-sm") {
+                div(classes = css { metadataClasses() }) {
                     +"Released at: $releases"
                 }
-                div("flex items-center mt-4 text-gray-600 text-sm") {
+                div(classes = css { metadataClassesMt4() }) {
                     +"Stars: "
                     +stars.toString()
                 }
                 if (topics.isNotEmpty()) {
-                    div("flex items-center mt-2 text-gray-600 text-sm") {
+                    div(classes = css { metadataClasses() }) {
                         +"Topics: "
                         +topics.joinToString(", ")
                     }
                 }
-                div("flex items-center mt-2") {
+                div(classes = css { metadataClasses() }) {
                     for (lang in languages) {
                         languageTag(lang)
                     }
                 }
             }
-            a(href = githubLink, classes = "inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2") {
+            a(href = githubLink, classes = css { actionButtonClasses().mr2() }) {
                 +"GitHub"
             }
             if (link.isNotBlank() && link != "#") { // Example check
-                a(href = link, classes = "inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700") {
+                a(href = link, classes = css { actionButtonClasses() }) {
                     +"Visit"
                 }
             }
@@ -90,7 +91,13 @@ fun FlowContent.projectTile(project: Project) {
 }
 
 fun FlowContent.languageTag(tag: String) {
-    a(classes = "mx-0.5 inline-block bg-[#${tag.colorFromString()}] rounded-full px-3 py-1 text-sm font-semibold text-[#${tag.colorFromString().invertedFromString()}]") {
+    val cssBuilder = css {
+        languageTagBaseClasses()
+        custom("bg-[#${tag.colorFromString()}]")
+        custom("text-[#${tag.colorFromString().invertedFromString()}]")
+    }
+
+    a(classes = cssBuilder) {
         +tag
     }
 }
@@ -98,29 +105,29 @@ fun FlowContent.languageTag(tag: String) {
 private val borderGrey400 = borderGray("400")
 
 fun FlowContent.mainSearchBar() {
-    val inputClasses = setOf("flex-grow", "bg-gray-500", "border", borderGrey400, "rounded", "p-2")
-    val searchBoxClasses = setOf("flex-grow", "bg-gray-700", "border", borderGrey400, "rounded", "p-4", "mb-4")
-    val selectClasses = setOf("bg-gray-500", "border", borderGrey400, "rounded", "mx-2")
-    val checkboxClasses = setOf("bg-gray-700", "text-white", "rounded", "border", "p-2", "mt-4", "text-xl", "align-middle") // Added align-middle
-    val labelClasses = setOf("mr-1", "align-middle")
+    val inputClasses = css().inputClasses().build()
+    val searchBoxClasses = css().searchBoxClasses().build()
+    val selectClasses = css().selectClasses().build()
+    val checkboxClasses = css().checkboxClasses().build()
+    val labelClasses = css().labelClasses().build()
 
     div {
         classes = searchBoxClasses
-        span("htmx-indicator") {
+        span(classes = css { custom("htmx-indicator") }) {
             id = "spinner"
             img(src = "/resources/bars.svg", alt = "Searching...") // Use alt attribute
             +"Searching..."
         }
 
         form(action = SEARCH_PATH, method = FormMethod.post) {
-            classes = setOf("formControl", "justify-start", "flex-wrap")
+            classes = css().custom("formControl").justifyStart().flexWrap().build()
             hxPost(SEARCH_PATH)
             hxTarget("#search-results")
             hxIndicator("#spinner")
             hxTrigger("submit, change from:select, change from:input[type='checkbox'] delay:100ms, input from:input[type='text'] changed delay:500ms")
 
-            div(classes = "flex flex-col") {
-                label(classes = "order-0") {
+            div(classes = css { flex().flexCol() }) {
+                label(classes = css { order0() }) {
                     htmlFor = "mainSearch"
                     +"Search:"
                 }
@@ -135,7 +142,7 @@ fun FlowContent.mainSearchBar() {
             }
 
             div {
-                label(classes = labelClasses.joinToString(separator = " ")) {
+                label(classes = css { labelClasses() }) {
                     htmlFor = QP_TOPIC
                     +"Topic:"
                 }
@@ -156,7 +163,7 @@ fun FlowContent.mainSearchBar() {
                     }
                 }
 
-                label(classes = labelClasses.joinToString(separator = " ")) {
+                label(classes = css { labelClasses() }) {
                     htmlFor = QP_LANGUAGE
                     +"Language:"
                 }
@@ -177,7 +184,7 @@ fun FlowContent.mainSearchBar() {
                     }
                 }
 
-                label(classes = labelClasses.joinToString(separator = " ")) {
+                label(classes = css { labelClasses() }) {
                     htmlFor = QP_ORDER_BY
                     +"Order by:"
                 }
@@ -198,17 +205,17 @@ fun FlowContent.mainSearchBar() {
                     classes = checkboxClasses
                     value = "desc"
                 }
-                label(classes = labelClasses.joinToString(separator = " ")) {
+                label(classes = css { labelClasses() }) {
                     htmlFor = QP_DIR
                     +"Descending"
                 }
             }
 
             button(type = ButtonType.submit) {
-                classes = setOf("bg-gray-700", "text-white", "rounded", "border", "p-2", "mt-4", "text-xl")
-                div(classes = "flex items-center") {
+                classes = css().buttonClasses().build()
+                div(classes = css { flex().itemsCenter() }) {
                     +"Search "
-                    span("htmx-indicator ml-2") {
+                    span(classes = css { custom("htmx-indicator").ml2() }) {
                         img(src = "/resources/bars.svg", alt = "Searching...")
                     }
                 }

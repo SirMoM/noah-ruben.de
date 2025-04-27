@@ -2,6 +2,7 @@ package de.noah_ruben.site.projects
 
 import de.noah_ruben.data.Cache
 import de.noah_ruben.data.model.Project
+import de.noah_ruben.misc.css
 import de.noah_ruben.site.projects.OrderBy.Date
 import de.noah_ruben.site.projects.OrderBy.Popularity
 import de.noah_ruben.site.projects.OrderBy.Relevance
@@ -80,7 +81,7 @@ fun Application.projectsPageRouting() {
                 log.warn("Missing parameter in search query. Payload: '{}'. Error: {}", payload, e.message)
                 call.respondHtml {
                     body {
-                        div(classes = "text-red-500 p-4") {
+                        div(classes = css { errorMessageClasses() }) {
                             +"Error: Missing required search parameter (${e.parameterName}). Please try again."
                             br()
                             +"Received: ${URLDecoder.decode(payload, "UTF-8")}"
@@ -92,7 +93,7 @@ fun Application.projectsPageRouting() {
                 log.warn("Invalid parameter value in search query. Payload: '{}'. Error: {}", payload, e.message)
                 call.respondHtml {
                     body {
-                        div(classes = "text-red-500 p-4") {
+                        div(classes = css { errorMessageClasses() }) {
                             +"Error: Invalid value for a search parameter (e.g., Order By). Please try again."
                             br()
                             +"Received: ${URLDecoder.decode(payload, "UTF-8")}"
@@ -104,7 +105,7 @@ fun Application.projectsPageRouting() {
                 log.error("Error processing search query. Payload: '{}'", payload, e)
                 call.respondHtml {
                     body {
-                        div(classes = "text-red-500 p-4") {
+                        div(classes = css { errorMessageClasses() }) {
                             +"An unexpected error occurred. Please try again later."
                         }
                         projectList(Cache.getProjects())

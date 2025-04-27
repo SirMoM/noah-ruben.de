@@ -1,6 +1,7 @@
 package de.noah_ruben.site
 
 import de.noah_ruben.misc.Commands
+import de.noah_ruben.misc.css
 import de.noah_ruben.misc.hxPost
 import de.noah_ruben.misc.hxSwap
 import de.noah_ruben.misc.hxTarget
@@ -66,7 +67,7 @@ suspend fun handleCommand(call: RoutingCall) {
             Commands.unknownCommand -> htmlBase.div {
                 call.response.header("HX-Retarget", "#cle")
                 br
-                div("ml-4") {
+                div(classes = css { ml4() }) {
                     +">> $cmd: command not found"
                 }
                 commandLineEmulation()
@@ -84,7 +85,7 @@ suspend fun handleCommand(call: RoutingCall) {
 }
 
 fun FlowContent.commandLineEmulation() {
-    div("w-full inline-flex dark:bg-gray-900 dark:text-white outline-none focus:outline-none p-4") {
+    div(classes = css { wFull().custom("inline-flex").darkBgGray900().textWhite().outlineNone().custom("focus:outline-none").p4() }) {
         id = "cle"
         div {
             +">>\u00A0"
@@ -94,7 +95,7 @@ fun FlowContent.commandLineEmulation() {
         input(
             name = "command",
             type = InputType.text,
-            classes = "w-full dark:bg-gray-900 border-none outline-none",
+            classes = css { commandLineInputClasses() },
         ) {
             placeholder = "noahruben projects"
             attributes["autocomplete"] = "off"
@@ -109,23 +110,23 @@ fun FlowContent.commandLineEmulation() {
 }
 
 fun FlowContent.cleUsage() {
-    div(classes = "ml-6") {
+    div(classes = css { ml6() }) {
         p {
             +"Usage: noahruben <subpage>"
         }
-        p(classes = "ml-4") {
+        p(classes = css { ml4() }) {
             +"noahruben is the personal website of Noah Ruben"
         }
-        p(classes = "ml-4") {
+        p(classes = css { ml4() }) {
             +"It displays information about "
         }
-        p(classes = "ml-4") {
+        p(classes = css { ml4() }) {
             +"TODO"
         }
 
         h1 { +"SUB-PAGES" }
 
-        div(classes = "ml-4") {
+        div(classes = css { ml4() }) {
             selfLink("/projects", "projects")
             br
             selfLink("https://github.com/SirMoM", "github")

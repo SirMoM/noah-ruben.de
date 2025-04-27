@@ -1,5 +1,6 @@
 package de.noah_ruben.site
 
+import de.noah_ruben.misc.css
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.html.respondHtml
@@ -35,50 +36,54 @@ fun Application.landingPage() {
 }
 
 fun BODY.index() {
-    div("flex items-center") {
-        img(src = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Van_Gogh_self-portrait.svg/1508px-Van_Gogh_self-portrait.svg.png", classes = "m-4 aspect-square w-1/4 rounded-full bg-yellow-500")
-        div("w-3/4 xl:text-xl md:text-xl") {
-            div("grid grid-cols-1 m-4 space-y-1") {
+    div(classes = css { flex().itemsCenter() }) {
+        img(
+            src = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Van_Gogh_self-portrait.svg/1508px-Van_Gogh_self-portrait.svg.png",
+            classes = css { custom("m-4").custom("aspect-square").custom("w-1/4").roundedFull().custom("bg-yellow-500") },
+        )
+        div(classes = css { custom("w-3/4").custom("xl:text-xl").custom("md:text-xl") }) {
+            div(classes = css { custom("grid").custom("grid-cols-1").custom("m-4").custom("space-y-1") }) {
                 div { +"Noah Ruben @ Reutlingen" }
                 hr { }
                 div {
-                    span(classes = "text-red-500") { +"Name" }
+                    span(classes = css { textRed500() }) { +"Name" }
                     +": Noah Ruben"
                 }
                 div {
-                    span(classes = "text-red-500") { +"Uptime" }
+                    span(classes = css { textRed500() }) { +"Uptime" }
                     +": ${ChronoUnit.YEARS.between(startDate, LocalDate.now())} Years"
                 }
                 div {
-                    span(classes = "text-red-500") { +"Projects" }
+                    span(classes = css { textRed500() }) { +"Projects" }
                     +": "
                     githubLink()
                 }
                 div {
-                    span(classes = "text-red-500") { +"Twitter" }
+                    span(classes = css { textRed500() }) { +"Twitter" }
                     +" : link"
                 }
                 div {
-                    span(classes = "text-red-500") { +"Github" }
+                    span(classes = css { textRed500() }) { +"Github" }
                     +" : link"
                 }
                 div {
-                    span(classes = "text-red-500") { +"CV" }
+                    span(classes = css { textRed500() }) { +"CV" }
                     +" : link"
                 }
                 div {
-                    span(classes = "text-red-500") { +"Twitter" }
+                    span(classes = css { textRed500() }) { +"Twitter" }
                     +" : link"
                 }
             }
-            div("inline-grid flex-none grid-cols-8 grid-rows-2") {
+            div(classes = css { custom("inline-grid").custom("flex-none").custom("grid-cols-8").custom("grid-rows-2") }) {
                 repeat(16) {
-                    div(classes = "border border-black hover:border-2 h-10 w-10 bg-${it.let { index -> listOf("rose", "red", "green", "purple", "indigo", "blue", "cyan", "teal", "emerald", "green", "lime", "yellow", "orange", "red", "gray", "black")[index] }}-500") {}
+                    val color = it.let { index -> listOf("rose", "red", "green", "purple", "indigo", "blue", "cyan", "teal", "emerald", "green", "lime", "yellow", "orange", "red", "gray", "black")[index] }
+                    div(classes = css { border().borderBlack().custom("hover:border-2").h10().w10().custom("bg-$color-500") }) {}
                 }
             }
         }
     }
-    div("IDK") {
+    div(classes = css { custom("IDK") }) {
         +"🔭I’m currently working on a royal game of Ur replica in Godot"
         br
         +"It is playable here."
@@ -111,4 +116,4 @@ fun HTML.landingpage() {
 }
 
 @HtmlTagMarker
-inline fun HTML.defaultBody(crossinline block: BODY.() -> Unit = {}): Unit = BODY(attributesMapOf("class", "dark:bg-gray-900 dark:text-white"), consumer).visit(block)
+inline fun HTML.defaultBody(crossinline block: BODY.() -> Unit = {}): Unit = BODY(attributesMapOf("class", css { darkBgGray900().textWhite() }), consumer).visit(block)
