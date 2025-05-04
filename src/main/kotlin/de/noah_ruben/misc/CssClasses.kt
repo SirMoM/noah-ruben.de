@@ -295,9 +295,9 @@ class CssBuilder {
     fun add(classNames: Set<String>) = apply { classes.addAll(classNames) }
 
     fun toCssString(): String = classes.joinToString(separator = " ")
+
+    fun toSet(): Set<String> = classes.toSet()
 }
 
-/**
- * Create a new CSS builder.
- */
 fun css(block: CssBuilder.() -> Unit): String = CssBuilder().apply(block).toCssString()
+fun cssSet(block: CssBuilder.() -> Unit): Set<String> = CssBuilder().apply(block).toSet()

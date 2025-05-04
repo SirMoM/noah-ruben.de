@@ -1,17 +1,12 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package de.noah_ruben.site.projects
 
 import de.noah_ruben.data.Cache
 import de.noah_ruben.data.Cache.getAllLanguages
 import de.noah_ruben.data.Cache.getAllTopics
 import de.noah_ruben.data.model.Project
-import de.noah_ruben.misc.borderGray
-import de.noah_ruben.misc.colorFromString
-import de.noah_ruben.misc.css
-import de.noah_ruben.misc.hxIndicator
-import de.noah_ruben.misc.hxPost
-import de.noah_ruben.misc.hxTarget
-import de.noah_ruben.misc.hxTrigger
-import de.noah_ruben.misc.invertedFromString
+import de.noah_ruben.misc.*
 import de.noah_ruben.site.commandLineEmulation
 import de.noah_ruben.site.defaultBody
 import de.noah_ruben.site.defaultHeader
@@ -105,11 +100,11 @@ fun FlowContent.languageTag(tag: String) {
 private val borderGrey400 = borderGray("400")
 
 fun FlowContent.mainSearchBar() {
-    val inputClasses = css().inputClasses().build()
-    val searchBoxClasses = css().searchBoxClasses().build()
-    val selectClasses = css().selectClasses().build()
-    val checkboxClasses = css().checkboxClasses().build()
-    val labelClasses = css().labelClasses().build()
+    val inputClasses = cssSet { inputClasses() }
+    val searchBoxClasses = cssSet { searchBoxClasses() }
+    val selectClasses = cssSet { selectClasses() }
+    val checkboxClasses = cssSet { checkboxClasses() }
+    val labelClasses = cssSet { labelClasses() }
 
     div {
         classes = searchBoxClasses
@@ -120,7 +115,7 @@ fun FlowContent.mainSearchBar() {
         }
 
         form(action = SEARCH_PATH, method = FormMethod.post) {
-            classes = css().custom("formControl").justifyStart().flexWrap().build()
+            classes = cssSet { custom("formControl").justifyStart().flexWrap() }
             hxPost(SEARCH_PATH)
             hxTarget("#search-results")
             hxIndicator("#spinner")
@@ -211,8 +206,7 @@ fun FlowContent.mainSearchBar() {
                 }
             }
 
-            button(type = ButtonType.submit) {
-                classes = css().buttonClasses().build()
+            button(type = ButtonType.submit, classes = css { buttonClasses() }) {
                 div(classes = css { flex().itemsCenter() }) {
                     +"Search "
                     span(classes = css { custom("htmx-indicator").ml2() }) {
