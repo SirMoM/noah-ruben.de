@@ -233,3 +233,6 @@ bin/
 
 **/.env
 .sdkmanrc
+
+# Ignore Node modules
+tailwind/node_modules/

@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@config "./tailwind.config.js";
+body{
+    font-family: 'Cascadia Code', monospace;
+}
+

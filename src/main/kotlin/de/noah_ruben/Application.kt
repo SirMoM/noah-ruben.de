@@ -69,5 +69,6 @@ private fun Application.getToken(): String {
 }
 private fun Application.getGithubURL(): String {
     val url = environment.config.propertyOrNull("github.url") ?: throw IllegalStateException("Did not provide github URL as GITHUB_URL in the environment.")
+    println("Using GitHub URL: ${url.getString()}")
     return url.getString().trim()
 }

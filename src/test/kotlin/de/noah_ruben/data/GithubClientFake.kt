@@ -52,11 +52,7 @@ val fakeRepositoryData = Repository(
 
 class GithubClientFake : RepositoryClient {
 
-    override suspend fun getRepositories(): List<Repository> {
-        return listOf(fakeRepositoryData)
-    }
+    override suspend fun getRepositories(): List<Repository> = listOf(fakeRepositoryData)
 
-    override suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String> {
-        return listOf("Lua")
-    }
+    override suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String> = listOf("Lua")
 }

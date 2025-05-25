@@ -11,7 +11,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as CN
 
-private const val BASE_URL = "http://website-wiremock:8080"
+private const val BASE_URL = "http://localhost:42069"
 private const val USERS_PATH = "users"
 private const val OWNER = "SirMoM"
 private const val REPOSITORY_PATH = "repos"
@@ -45,10 +45,8 @@ class WiremockClient(private val url: String = BASE_URL) : RepositoryClient {
         }
     }
 
-    override suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String> {
-        return with(newHttpClient()) {
-            val languages: Map<String, Int> = get("$url/$REPOSITORY_PATH/$OWNER/$repositoryName/$LANGUAGES_PATH").body()
-            languages.keys.toList()
-        }
+    override suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String> = with(newHttpClient()) {
+        val languages: Map<String, Int> = get("$url/$REPOSITORY_PATH/$OWNER/$repositoryName/$LANGUAGES_PATH").body()
+        languages.keys.toList()
     }
 }
