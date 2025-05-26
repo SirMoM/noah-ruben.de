@@ -7,6 +7,8 @@ const val HX_TARGET = "hx-target"
 const val HX_SWAP = "hx-swap"
 const val HX_TRIGGER = "hx-trigger"
 const val HX_INDICATOR = "hx-indicator"
+const val HX_INCLUDE = "hx-include"
+const val HX_VALS = "hx-vals"
 
 fun FlowContent.hxPost(url: String) {
     this.attributes[HX_POST] = url
@@ -25,4 +27,10 @@ fun FlowContent.hxTrigger(trigger: String) {
 }
 fun FlowContent.hxIndicator(indicator: String) {
     this.attributes[HX_INDICATOR] = indicator
+}
+fun FlowContent.hxInclude(include: String) {
+    this.attributes[HX_INCLUDE] = include
+}
+fun FlowContent.hxVals(vals: String) {
+    this.attributes[HX_VALS] = vals
 }

@@ -22,6 +22,7 @@ import io.ktor.server.util.getOrFail
 import kotlinx.html.body
 import kotlinx.html.br
 import kotlinx.html.div
+import kotlinx.html.id
 import kotlinx.html.stream.createHTML
 import java.net.URLDecoder
 
@@ -31,6 +32,7 @@ internal const val QP_TOPIC = "topic"
 internal const val QP_LANGUAGE = "language"
 internal const val QP_ORDER_BY = "orderBy"
 internal const val QP_DIR = "dir"
+internal const val QP_WITH_SEARCHBAR = "withSearchBar"
 internal const val TOPIC_PLACEHOLDER = "<topic>"
 internal const val LANGUAGE_PLACEHOLDER = "<Language>"
 internal const val SEARCH_RESULTS = "search-results"
@@ -58,22 +60,34 @@ fun Application.projectsPageRouting() {
                 val topic: String = params[QP_TOPIC] ?: TOPIC_PLACEHOLDER
                 val language: String = params[QP_LANGUAGE] ?: LANGUAGE_PLACEHOLDER
                 val orderBy: OrderBy = params[QP_ORDER_BY]?.let { OrderBy.valueOf(it) } ?: Relevance
+                val withSearchbar: Boolean = params[QP_WITH_SEARCHBAR].toBoolean()
 
                 val descending: Boolean = params[QP_DIR] == "desc"
 
                 log.debug(
-                    "Search Params: query='{}', topic='{}', language='{}', orderBy='{}', descending='{}'",
+                    "Search Params: query='{}', topic='{}', language='{}', orderBy='{}', descending='{}', withSearchbar='{}",
                     query,
                     topic,
                     language,
                     orderBy,
                     descending,
+                    withSearchbar,
                 )
 
                 val projects = Cache.getProjects().filerByTopic(topic).filerByLanguage(language).query(query).sortedBy(orderBy, descending)
-
-                val htmlFragment = createHTML().div {
-                    projectList(projects)
+                val htmlFragment = if (withSearchbar) {
+                    // TODO: Add parameters to search bar from / search query parameter
+                    createHTML().div(classes = css { container().mxAuto().p4() }) {
+                        id = "search-replace"
+                        mainSearchBar()
+                        br()
+                        projectList(projects)
+                    }
+                } else {
+                    createHTML().div {
+                        id = "search-replace"
+                        projectList(projects)
+                    }
                 }
 
                 call.respondText(htmlFragment, ContentType.Text.Html)

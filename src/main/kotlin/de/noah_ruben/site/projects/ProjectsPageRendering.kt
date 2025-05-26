@@ -7,6 +7,7 @@ import de.noah_ruben.data.Cache.getAllLanguages
 import de.noah_ruben.data.Cache.getAllTopics
 import de.noah_ruben.data.model.Project
 import de.noah_ruben.misc.*
+import de.noah_ruben.misc.CssClasses.Components
 import de.noah_ruben.site.commandLineEmulation
 import de.noah_ruben.site.defaultBody
 import de.noah_ruben.site.defaultHeader
@@ -23,9 +24,11 @@ fun HTML.projectsPage() {
 
 fun BODY.projectsPageBody() {
     val projects = Cache.getProjects()
-
-    div(classes = css { container().mxAuto().p4() }) {
-        h1(classes = css { text2xl().fontBold().mb4() }) { +"Projects" }
+    h1(
+        classes = css { pageTitle().custom("mt-32") },
+    ) { +"Projects" }
+    div(classes = css { pageBody().pageContainer() }) {
+        id = "search-replace"
         mainSearchBar()
         br()
         projectList(projects)
@@ -164,8 +167,9 @@ fun FlowContent.projectTile(project: Project) {
 }
 
 fun FlowContent.languageTag(tag: String) {
-    span(
+    div(
         classes = css {
+            // Margins are handled by the parent div's "gap-2" class
             custom("bg-[#${tag.colorFromString()}]")
             custom("text-[#${tag.colorFromString().invertedFromString()}]")
             add(CssClasses.Border.ROUNDED_FULL) // Use add() for single class string from CssClasses
@@ -174,18 +178,24 @@ fun FlowContent.languageTag(tag: String) {
             textSm() // Small text
             fontSemibold() // Slightly bolder text for the tag
             custom("inline-block") // Ensures padding and margins are applied correctly
-            // Margins are handled by the parent div's "gap-2" class
+            custom("cursor-pointer")
         },
     ) {
+        hxPost(SEARCH_PATH)
+        hxTarget("#search-replace")
+        hxSwap("outerHTML")
+        hxIndicator("#spinner")
+        hxTrigger("click")
+        hxInclude("#search")
+        hxVals("""{"$QP_LANGUAGE": "$tag", "$QP_WITH_SEARCHBAR": true}""")
+
         +tag
     }
 }
 
-private val borderGrey400 = borderGray("400") // This seems unused in the context of projectTile
-
 fun FlowContent.mainSearchBar() {
     div {
-        classes = CssClasses.Components.SEARCH_INPUT_CONTAINER
+        classes = Components.SEARCH_INPUT_CONTAINER
         span(classes = css { custom("htmx-indicator") }) {
             id = "spinner"
             img(src = "/resources/bars.svg", alt = "Searching...")
@@ -193,6 +203,7 @@ fun FlowContent.mainSearchBar() {
         }
 
         form(action = SEARCH_PATH, method = FormMethod.post) {
+            id = "search"
             hxPost(SEARCH_PATH)
             hxTarget("#search-results")
             hxIndicator("#spinner")

@@ -51,7 +51,7 @@ suspend fun handleCommand(call: RoutingCall) {
                 head {
                     defaultHeader()
                 }
-                body {
+                body(classes = css { container() }) {
                     projectsPageBody()
                 }
             }
