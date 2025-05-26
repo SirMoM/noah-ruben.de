@@ -225,7 +225,7 @@ object CssClasses {
         // --- Project Tile / Cards ---
         val CARD_DEFAULT = setOf(
             Border.BORDER, Border.BORDER_GRAY_300, Border.ROUNDED, Layout.P_4, Layout.MB_4,
-            Layout.MAX_W_LG, Border.OVERFLOW_HIDDEN, Effect.SHADOW_LG, Color.BG_WHITE,
+            Layout.MAX_W_NONE, Border.OVERFLOW_HIDDEN, Effect.SHADOW_LG, Color.BG_WHITE,
         )
         val CARD_TITLE = setOf(Typography.FONT_BOLD, Typography.TEXT_XL, Layout.MB_2, Color.TEXT_BLACK)
         val CARD_DESCRIPTION = setOf(Color.TEXT_GRAY_700, Typography.TEXT_BASE, Color.TEXT_BLACK)

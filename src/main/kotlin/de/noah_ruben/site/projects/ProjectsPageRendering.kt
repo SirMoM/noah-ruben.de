@@ -38,6 +38,8 @@ fun FlowContent.projectList(
 ) {
     div {
         id = SEARCH_RESULTS
+        // If you want a grid layout for projects, you'd apply grid classes here.
+        // For example: custom("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4")
         projects.forEach {
             projectTile(it)
         }
@@ -46,39 +48,115 @@ fun FlowContent.projectList(
 
 fun FlowContent.projectTile(project: Project) {
     with(project) {
-        div(classes = css { projectTileClasses() }) {
-            div {
-                div(classes = css { fontBold().textXl().mb2() }) {
+        // Main card container
+        div(
+            classes = css {
+                cardDefault() // Base styles: border, rounded, p-4, mb-4, shadow, bg-white
+                flex()
+                flexCol()
+                custom("h-full")
+                // Add custom("h-full") if cards are in a grid and you want them to have equal height.
+                // e.g., custom("h-full")
+            },
+        ) {
+            // Content area - this will grow to fill available space
+            div(classes = css { flexGrow() }) {
+                // Project Name
+                h3(classes = css { cardTitle() }) {
+                    // Uses Components.CARD_TITLE
                     +name
                 }
-                p(classes = css { textGray700().textBase() }) {
+
+                // Description
+                p(
+                    classes = css {
+                        cardDescription() // Uses Components.CARD_DESCRIPTION
+                        textBase() // Ensure base text size
+                        custom("text-gray-700") // Explicit text color
+                        mb4()
+                    },
+                ) {
                     +description
                 }
-                div(classes = css { metadataClasses() }) {
-                    +"Released at: $releases"
-                }
-                div(classes = css { metadataClassesMt4() }) {
-                    +"Stars: "
-                    +stars.toString()
-                }
-                if (topics.isNotEmpty()) {
-                    div(classes = css { metadataClasses() }) {
-                        +"Topics: "
-                        +topics.joinToString(", ")
+
+                // Metadata Section
+                div(
+                    classes = css {
+                        textSm()
+                        custom("text-gray-600")
+                        mb4()
+                    },
+                ) {
+                    div(classes = css { cardMetadataMt2() }) {
+                        // mt-2
+                        strong(
+                            classes = css {
+                                fontSemibold()
+                                custom("text-gray-800")
+                            },
+                        ) { +"Stars: " }
+                        +stars.toString()
+                    }
+                    if (releases.isNotBlank()) {
+                        div(classes = css { cardMetadataMt2() }) {
+                            strong(
+                                classes = css {
+                                    fontSemibold()
+                                    custom("text-gray-800")
+                                },
+                            ) { +"Released: " }
+                            +releases
+                        }
+                    }
+                    if (topics.isNotEmpty()) {
+                        div(classes = css { cardMetadataMt2() }) {
+                            strong(
+                                classes = css {
+                                    fontSemibold()
+                                    custom("text-gray-800")
+                                },
+                            ) { +"Topics: " }
+                            span { +topics.joinToString(", ") }
+                        }
                     }
                 }
-                div(classes = css { metadataClasses() }) {
-                    for (lang in languages) {
-                        languageTag(lang)
+
+                // Languages/Tags Section
+                if (languages.isNotEmpty()) {
+                    div(
+                        classes = css {
+                            flex()
+                            custom("flex-wrap") // Allow tags to wrap
+                            custom("gap-2") // Space between tags (both x and y)
+                            mb4()
+                        },
+                    ) {
+                        languages.forEach { lang ->
+                            languageTag(lang)
+                        }
                     }
                 }
             }
-            a(href = githubLink, classes = css { actionButtonClasses().mr2() }) {
-                +"GitHub"
-            }
-            if (link.isNotBlank() && link != "#") { // Example check
-                a(href = link, classes = css { actionButtonClasses() }) {
-                    +"Visit"
+
+            // Action Buttons Section (at the bottom of the card)
+            // This section is within the card's default padding (p-4 from cardDefault)
+            div(
+                classes = css {
+                    custom("border-t") // Add a top border for separation
+                    custom("border-gray-200") // Light border color
+                    custom("pt-4") // Padding top for this button section
+                    flex()
+                    custom("justify-start") // Align buttons to the left
+                    custom("gap-3") // Space between buttons
+                },
+            ) {
+                a(href = githubLink, classes = css { actionButtonLight() }) {
+                    +"GitHub"
+                }
+                if (link.isNotBlank() && link != "#") {
+                    a(href = link, classes = css { actionButtonLight() }) {
+                        +"Visit"
+                    }
                 }
             }
         }
@@ -86,127 +164,166 @@ fun FlowContent.projectTile(project: Project) {
 }
 
 fun FlowContent.languageTag(tag: String) {
-    val cssBuilder = css {
-        languageTagBaseClasses()
-        custom("bg-[#${tag.colorFromString()}]")
-        custom("text-[#${tag.colorFromString().invertedFromString()}]")
-    }
-
-    a(classes = cssBuilder) {
+    span(
+        classes = css {
+            custom("bg-[#${tag.colorFromString()}]")
+            custom("text-[#${tag.colorFromString().invertedFromString()}]")
+            add(CssClasses.Border.ROUNDED_FULL) // Use add() for single class string from CssClasses
+            px3() // Horizontal padding
+            py1() // Vertical padding
+            textSm() // Small text
+            fontSemibold() // Slightly bolder text for the tag
+            custom("inline-block") // Ensures padding and margins are applied correctly
+            // Margins are handled by the parent div's "gap-2" class
+        },
+    ) {
         +tag
     }
 }
 
-private val borderGrey400 = borderGray("400")
+private val borderGrey400 = borderGray("400") // This seems unused in the context of projectTile
 
 fun FlowContent.mainSearchBar() {
-    val inputClasses = cssSet { inputClasses() }
-    val searchBoxClasses = cssSet { searchBoxClasses() }
-    val selectClasses = cssSet { selectClasses() }
-    val checkboxClasses = cssSet { checkboxClasses() }
-    val labelClasses = cssSet { labelClasses() }
-
     div {
-        classes = searchBoxClasses
+        classes = CssClasses.Components.SEARCH_INPUT_CONTAINER
         span(classes = css { custom("htmx-indicator") }) {
             id = "spinner"
-            img(src = "/resources/bars.svg", alt = "Searching...") // Use alt attribute
+            img(src = "/resources/bars.svg", alt = "Searching...")
             +"Searching..."
         }
 
         form(action = SEARCH_PATH, method = FormMethod.post) {
-            classes = cssSet { custom("formControl").justifyStart().flexWrap() }
             hxPost(SEARCH_PATH)
             hxTarget("#search-results")
             hxIndicator("#spinner")
             hxTrigger("submit, change from:select, change from:input[type='checkbox'] delay:100ms, input from:input[type='text'] changed delay:500ms")
 
             div(classes = css { flex().flexCol() }) {
-                label(classes = css { order0() }) {
+                // Consider adding gap or margin bottom to this div
+                label {
                     htmlFor = "mainSearch"
                     +"Search:"
                 }
-                input(InputType.text, name = QP_QUERY) {
-                    // Use constants
+                input(
+                    InputType.text,
+                    name = QP_QUERY,
+                    classes = css {
+                        inputTextDefault()
+                        mb2()
+                    },
+                ) {
+                    // Added inputTextDefault and mb2
                     autoFocus = true
-                    classes = inputClasses
                     id = "mainSearch"
                     placeholder = "Search"
                     value = ""
                 }
             }
 
-            div {
-                label(classes = css { labelClasses() }) {
-                    htmlFor = QP_TOPIC
-                    +"Topic:"
-                }
-                select {
-                    classes = selectClasses
-                    name = QP_TOPIC
-                    id = QP_TOPIC
-                    option {
-                        value = TOPIC_PLACEHOLDER
-                        selected = true
-                        +TOPIC_PLACEHOLDER
+            // Grouping filter controls for better layout potential
+            div(
+                classes = css {
+                    flex()
+                    custom("flex-wrap")
+                    custom("gap-4")
+                    custom("items-end")
+                    mb4()
+                },
+            ) {
+                div(classes = css { flexCol() }) {
+                    label(classes = css { labelDefault() }) {
+                        // Added labelDefault
+                        htmlFor = QP_TOPIC
+                        +"Topic:"
                     }
-                    getAllTopics().forEach { topic ->
+                    select(classes = css { selectDefault() }) {
+                        // Added selectDefault
+                        name = QP_TOPIC
+                        id = QP_TOPIC
                         option {
-                            value = topic
-                            +topic
+                            value = TOPIC_PLACEHOLDER
+                            selected = true
+                            +TOPIC_PLACEHOLDER
+                        }
+                        getAllTopics().forEach { topic ->
+                            option {
+                                value = topic
+                                +topic
+                            }
                         }
                     }
                 }
 
-                label(classes = css { labelClasses() }) {
-                    htmlFor = QP_LANGUAGE
-                    +"Language:"
-                }
-                select {
-                    classes = selectClasses
-                    name = QP_LANGUAGE
-                    id = QP_LANGUAGE
-                    option {
-                        value = LANGUAGE_PLACEHOLDER
-                        selected = true
-                        +LANGUAGE_PLACEHOLDER
+                div(classes = css { flexCol() }) {
+                    label(classes = css { labelDefault() }) {
+                        htmlFor = QP_LANGUAGE
+                        +"Language:"
                     }
-                    getAllLanguages().forEach { language ->
+                    select(classes = css { selectDefault() }) {
+                        name = QP_LANGUAGE
+                        id = QP_LANGUAGE
                         option {
-                            value = language
-                            +language
+                            value = LANGUAGE_PLACEHOLDER
+                            selected = true
+                            +LANGUAGE_PLACEHOLDER
+                        }
+                        getAllLanguages().forEach { language ->
+                            option {
+                                value = language
+                                +language
+                            }
                         }
                     }
                 }
 
-                label(classes = css { labelClasses() }) {
-                    htmlFor = QP_ORDER_BY
-                    +"Order by:"
-                }
-                select {
-                    classes = selectClasses
-                    name = QP_ORDER_BY
-                    id = QP_ORDER_BY
-                    OrderBy.entries.forEach {
-                        option {
-                            value = it.name
-                            +it.name
+                div(classes = css { flexCol() }) {
+                    label(classes = css { labelDefault() }) {
+                        htmlFor = QP_ORDER_BY
+                        +"Order by:"
+                    }
+                    select(classes = css { selectDefault() }) {
+                        name = QP_ORDER_BY
+                        id = QP_ORDER_BY
+                        OrderBy.entries.forEach {
+                            option {
+                                value = it.name
+                                +it.name
+                            }
                         }
                     }
                 }
 
-                input(type = InputType.checkBox, name = QP_DIR) {
-                    id = QP_DIR
-                    classes = checkboxClasses
-                    value = "desc"
-                }
-                label(classes = css { labelClasses() }) {
-                    htmlFor = QP_DIR
-                    +"Descending"
+                div(
+                    classes = css {
+                        flex()
+                        itemsCenter()
+                        mt2()
+                    },
+                ) {
+                    // Align checkbox and label
+                    input(
+                        type = InputType.checkBox,
+                        name = QP_DIR,
+                        classes = css {
+                            checkboxDefault()
+                            mr1()
+                        },
+                    ) {
+                        // Added checkboxDefault and mr1
+                        id = QP_DIR
+                        value = "desc" // This should probably be "true" or "desc" and handled server-side
+                        // For a "descending" checkbox, it's common to check its presence.
+                        // If you want it to toggle between "asc" and "desc", you'd need more logic.
+                    }
+                    label(classes = css { labelDefault() }) {
+                        htmlFor = QP_DIR
+                        +"Descending"
+                    }
                 }
             }
 
-            button(type = ButtonType.submit, classes = css { buttonClasses() }) {
+            button(type = ButtonType.submit, classes = css { buttonPrimary() }) {
+                // Added buttonPrimary
                 div(classes = css { flex().itemsCenter() }) {
                     +"Search "
                     span(classes = css { custom("htmx-indicator").ml2() }) {

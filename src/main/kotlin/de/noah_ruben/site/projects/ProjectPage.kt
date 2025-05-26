@@ -81,7 +81,7 @@ fun Application.projectsPageRouting() {
                 log.warn("Missing parameter in search query. Payload: '{}'. Error: {}", payload, e.message)
                 call.respondHtml {
                     body {
-                        div(classes = css { errorMessageClasses() }) {
+                        div(classes = css { errorMessage() }) {
                             +"Error: Missing required search parameter (${e.parameterName}). Please try again."
                             br()
                             +"Received: ${URLDecoder.decode(payload, "UTF-8")}"
@@ -93,7 +93,7 @@ fun Application.projectsPageRouting() {
                 log.warn("Invalid parameter value in search query. Payload: '{}'. Error: {}", payload, e.message)
                 call.respondHtml {
                     body {
-                        div(classes = css { errorMessageClasses() }) {
+                        div(classes = css { errorMessage() }) {
                             +"Error: Invalid value for a search parameter (e.g., Order By). Please try again."
                             br()
                             +"Received: ${URLDecoder.decode(payload, "UTF-8")}"
@@ -105,7 +105,7 @@ fun Application.projectsPageRouting() {
                 log.error("Error processing search query. Payload: '{}'", payload, e)
                 call.respondHtml {
                     body {
-                        div(classes = css { errorMessageClasses() }) {
+                        div(classes = css { errorMessage() }) {
                             +"An unexpected error occurred. Please try again later."
                         }
                         projectList(Cache.getProjects())

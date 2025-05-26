@@ -1,5 +1,8 @@
 package de.noah_ruben.misc
 
+import de.noah_ruben.misc.CssClasses.Border
+import de.noah_ruben.misc.CssClasses.Components
+
 /**
  * CSS Builder class for creating CSS class combinations using a builder pattern.
  */
@@ -10,55 +13,58 @@ class CssBuilder {
     private fun addComponent(componentClasses: Set<String>) = apply { classes.addAll(componentClasses) }
 
     // --- Global Components ---
-    fun pageBody() = addComponent(CssClasses.Components.PAGE_BODY)
-    fun pageContainer() = addComponent(CssClasses.Components.PAGE_CONTAINER)
-    fun pageTitle() = addComponent(CssClasses.Components.PAGE_TITLE)
+    fun pageBody() = addComponent(Components.PAGE_BODY)
+    fun pageContainer() = addComponent(Components.PAGE_CONTAINER)
+    fun pageTitle() = addComponent(Components.PAGE_TITLE)
 
     // --- Form & Input Components ---
-    fun inputBase() = addComponent(CssClasses.Components.INPUT_BASE)
-    fun inputTextDefault() = addComponent(CssClasses.Components.INPUT_TEXT_DEFAULT)
-    fun selectDefault() = addComponent(CssClasses.Components.SELECT_DEFAULT)
-    fun checkboxDefault() = addComponent(CssClasses.Components.CHECKBOX_DEFAULT)
-    fun labelDefault() = addComponent(CssClasses.Components.LABEL_DEFAULT)
-    fun buttonBase() = addComponent(CssClasses.Components.BUTTON_BASE)
-    fun buttonPrimary() = addComponent(CssClasses.Components.BUTTON_PRIMARY)
-    fun actionTag() = addComponent(CssClasses.Components.ACTION_TAG)
-    fun actionButtonLight() = addComponent(CssClasses.Components.ACTION_BUTTON_LIGHT)
-    fun searchBoxWrapper() = addComponent(CssClasses.Components.SEARCH_BOX_WRAPPER)
-    fun searchInputContainer() = addComponent(CssClasses.Components.SEARCH_INPUT_CONTAINER)
+    fun inputBase() = addComponent(Components.INPUT_BASE)
+    fun inputTextDefault() = addComponent(Components.INPUT_TEXT_DEFAULT)
+    fun selectDefault() = addComponent(Components.SELECT_DEFAULT)
+    fun checkboxDefault() = addComponent(Components.CHECKBOX_DEFAULT)
+    fun labelDefault() = addComponent(Components.LABEL_DEFAULT)
+    fun buttonBase() = addComponent(Components.BUTTON_BASE)
+    fun buttonPrimary() = addComponent(Components.BUTTON_PRIMARY)
+    fun actionTag() = addComponent(Components.ACTION_TAG)
+    fun actionButtonLight() = addComponent(Components.ACTION_BUTTON_LIGHT)
+    fun searchBoxWrapper() = addComponent(Components.SEARCH_BOX_WRAPPER)
+    fun searchInputContainer() = addComponent(Components.SEARCH_INPUT_CONTAINER)
 
     // --- Profile / Index Page Components ---
-    fun promptText() = addComponent(CssClasses.Components.PROMPT_TEXT)
-    fun profileLayout() = addComponent(CssClasses.Components.PROFILE_LAYOUT)
-    fun profileImage() = addComponent(CssClasses.Components.PROFILE_IMAGE)
-    fun profileDetailsContainer() = addComponent(CssClasses.Components.PROFILE_DETAILS_CONTAINER)
-    fun profileInfoGrid() = addComponent(CssClasses.Components.PROFILE_INFO_GRID)
-    fun profileInfoLabel() = addComponent(CssClasses.Components.PROFILE_INFO_LABEL)
-    fun colorPaletteGrid() = addComponent(CssClasses.Components.COLOR_PALETTE_GRID)
-    fun colorPaletteSquareBase() = addComponent(CssClasses.Components.COLOR_PALETTE_SQUARE_BASE)
-    fun sectionTextBlock() = addComponent(CssClasses.Components.SECTION_TEXT_BLOCK)
+    fun promptText() = addComponent(Components.PROMPT_TEXT)
+    fun profileLayout() = addComponent(Components.PROFILE_LAYOUT)
+    fun profileImage() = addComponent(Components.PROFILE_IMAGE)
+    fun profileDetailsContainer() = addComponent(Components.PROFILE_DETAILS_CONTAINER)
+    fun profileInfoGrid() = addComponent(Components.PROFILE_INFO_GRID)
+    fun profileInfoLabel() = addComponent(Components.PROFILE_INFO_LABEL)
+    fun colorPaletteGrid() = addComponent(Components.COLOR_PALETTE_GRID)
+    fun colorPaletteSquareBase() = addComponent(Components.COLOR_PALETTE_SQUARE_BASE)
+    fun sectionTextBlock() = addComponent(Components.SECTION_TEXT_BLOCK)
 
     // --- Project Tile / Card Components ---
-    fun cardDefault() = addComponent(CssClasses.Components.CARD_DEFAULT)
-    fun cardTitle() = addComponent(CssClasses.Components.CARD_TITLE)
-    fun cardDescription() = addComponent(CssClasses.Components.CARD_DESCRIPTION)
-    fun cardMetadataContainer() = addComponent(CssClasses.Components.CARD_METADATA_CONTAINER)
-    fun cardMetadataMt2() = addComponent(CssClasses.Components.CARD_METADATA_MT2)
-    fun cardMetadataMt4() = addComponent(CssClasses.Components.CARD_METADATA_MT4)
+    fun cardDefault() = addComponent(Components.CARD_DEFAULT)
+    fun cardTitle() = addComponent(Components.CARD_TITLE)
+    fun cardDescription() = addComponent(Components.CARD_DESCRIPTION)
+    fun cardMetadataContainer() = addComponent(Components.CARD_METADATA_CONTAINER)
+    fun cardMetadataMt2() = addComponent(Components.CARD_METADATA_MT2)
+    fun cardMetadataMt4() = addComponent(Components.CARD_METADATA_MT4)
+
+    // "border border-gray-300 rounded p-4 mb-4 max-w rounded overflow-hidden shadow-lg bg-white"
+    fun projectTileClasses() = addComponent(Components.CARD_DEFAULT)
 
     // --- Command Line Emulation Components ---
-    fun cliOutputPrefix() = addComponent(CssClasses.Components.CLI_OUTPUT_PREFIX)
-    fun cliHelpIndent() = addComponent(CssClasses.Components.CLI_HELP_INDENT)
-    fun cliSubpageIndent() = addComponent(CssClasses.Components.CLI_SUBPAGE_INDENT)
-    fun cliInputWrapper() = addComponent(CssClasses.Components.CLI_INPUT_WRAPPER)
-    fun cliInputField() = addComponent(CssClasses.Components.CLI_INPUT_FIELD)
-    fun cliPromptSymbol() = addComponent(CssClasses.Components.CLI_PROMPT_SYMBOL)
+    fun cliOutputPrefix() = addComponent(Components.CLI_OUTPUT_PREFIX)
+    fun cliHelpIndent() = addComponent(Components.CLI_HELP_INDENT)
+    fun cliSubpageIndent() = addComponent(Components.CLI_SUBPAGE_INDENT)
+    fun cliInputWrapper() = addComponent(Components.CLI_INPUT_WRAPPER)
+    fun cliInputField() = addComponent(Components.CLI_INPUT_FIELD)
+    fun cliPromptSymbol() = addComponent(Components.CLI_PROMPT_SYMBOL)
 
     // --- Message Components ---
-    fun errorMessage() = addComponent(CssClasses.Components.ERROR_MESSAGE)
+    fun errorMessage() = addComponent(Components.ERROR_MESSAGE)
 
     // --- Misc ---
-    fun spinnerMessage() = addComponent(CssClasses.Components.SPINNER_MESSAGE)
+    fun spinnerMessage() = addComponent(Components.SPINNER_MESSAGE)
 
     // --- Atomic Layout methods (keep for flexibility or remove if strictly component-based) ---
     fun container() = apply { add(CssClasses.Layout.CONTAINER) }
@@ -85,6 +91,7 @@ class CssBuilder {
     fun wFull() = apply { add(CssClasses.Layout.W_FULL) }
     fun h10() = apply { add(CssClasses.Layout.H_10) }
     fun w10() = apply { add(CssClasses.Layout.W_10) }
+    fun mxAuto() = apply { add(CssClasses.Layout.MX_AUTO) }
 
     // --- Atomic Typography methods ---
     fun textBase() = apply { add(CssClasses.Typography.TEXT_BASE) }
@@ -100,9 +107,9 @@ class CssBuilder {
     // ... etc for other atomic classes
 
     // --- Atomic Border methods ---
-    fun border() = apply { add(CssClasses.Border.BORDER) }
-    fun rounded() = apply { add(CssClasses.Border.ROUNDED) }
-    fun roundedFull() = apply { add(CssClasses.Border.ROUNDED_FULL) }
+    fun border() = apply { add(Border.BORDER) }
+    fun rounded() = apply { add(Border.ROUNDED) }
+    fun roundedFull() = apply { add(Border.ROUNDED_FULL) }
     // ... etc.
 
     // Custom class method

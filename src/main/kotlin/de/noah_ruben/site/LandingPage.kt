@@ -154,6 +154,6 @@ fun HTML.landingpage() {
         div {
             +" >> noahruben"
         }
-        index()
+        indexPageContent()
     }
 }
