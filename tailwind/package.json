@@ -7,4 +7,3 @@
     "@catppuccin/tailwindcss": "^0.1.6"
   }
 }
-// npx tailwindcss -i style.css -o ../src/main/resources/static/style.css

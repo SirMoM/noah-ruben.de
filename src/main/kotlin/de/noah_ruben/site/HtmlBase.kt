@@ -30,6 +30,6 @@ fun HEAD.defaultHeader() {
         integrity = "sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0"
         attributes["crossorigin"] = "anonymous"
     }
-    script(src = "https://cdn.tailwindcss.com") {}
+    // script(src = "https://cdn.tailwindcss.com") {}
     link(rel = "stylesheet", href = "https://fonts.cdnfonts.com/css/cascadia-code")
 }

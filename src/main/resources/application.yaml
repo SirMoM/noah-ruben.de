@@ -4,6 +4,7 @@ ktor:
         watch:
             - classes
             - resources
+            - static
     development: true
     application:
         modules:

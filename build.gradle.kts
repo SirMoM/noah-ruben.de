@@ -27,9 +27,7 @@ kotlin {
 application {
     mainClass.set("de.noah_ruben.ApplicationKt")
 
-    val isDevelopment: Boolean = project.ext.has("development")
-    println(isDevelopment)
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")
 }
 
 repositories {
@@ -82,9 +80,9 @@ tasks {
         val contents = configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) } + sourcesMain.output
         from(contents)
     }
-//    build {
-//        dependsOn(fatJar) // Trigger fat jar creation during build
-//    }
+    build {
+        dependsOn(fatJar) // Trigger fat jar creation during build
+    }
     test {
         useJUnitPlatform()
     }
