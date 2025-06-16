@@ -16,7 +16,7 @@ fun DIV.selfLink(_url: String, text: String) {
 
 fun DIV.githubLink() {
     a(href = "https://github.com/SirMoM") {
-        +" GITHUB"
+        +"GITHUB"
     }
 }
 

@@ -1,7 +1,6 @@
 package de.noah_ruben.site
 
 import de.noah_ruben.misc.Commands
-import de.noah_ruben.misc.CssClasses
 import de.noah_ruben.misc.hxPost
 import de.noah_ruben.misc.hxSwap
 import de.noah_ruben.misc.hxTarget
@@ -108,9 +107,7 @@ fun FlowContent.cleUsage() {
         p {
             +"Usage: noahruben <subpage>"
         }
-        p(
-
-        ) {
+        p {
             +"noahruben is the personal website of Noah Ruben"
         }
         p {

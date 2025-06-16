@@ -1,10 +1,11 @@
 package de.noah_ruben.site
 
-import de.noah_ruben.misc.CssClasses
-import de.noah_ruben.misc.CssClasses.LandingPage.COLOR_GRID
-import de.noah_ruben.misc.CssClasses.LandingPage.COLOR_SQUARE
+import de.noah_ruben.misc.CssClasses.LandingPage.ABOUT_ME
 import de.noah_ruben.misc.CssClasses.LandingPage.COLORS
+import de.noah_ruben.misc.CssClasses.LandingPage.COLOR_GRID
+import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_CONTAINER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE
+import de.noah_ruben.misc.CssClasses.MB_4
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.html.respondHtml
@@ -28,61 +29,60 @@ fun Application.landingPage() {
 }
 
 fun BODY.indexPageContent() { // Renamed for clarity
-    div(/*classes = css { cliOutputPrefix() }*/) {
-        // Using new component class
+    div {
         +" >> noahruben"
     }
-    div(/*classes = css { profileLayout() }*/) {
+    div(classes = PROFILE_CONTAINER) {
         img(
             src = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Van_Gogh_self-portrait.svg/1508px-Van_Gogh_self-portrait.svg.png",
-            classes = PROFILE_PICTURE, // Using new component class
+            classes = PROFILE_PICTURE,
         )
-        div(/*classes = css { profileDetailsContainer() }*/) {
-            // Using new component class
-            div(/*classes = css { profileInfoGrid() }*/) {
-                // Using new component class
+        div(classes = "nf-profile-details-container") {
+            div {
                 div { +"Noah Ruben @ Reutlingen" }
-                hr { }
+                hr(MB_4) {}
                 div {
-                    span(/*classes = css { profileInfoLabel() }*/) { +"Name" }
+                    span { +"Name" }
                     +": Noah Ruben"
                 }
                 div {
-                    span(/*classes = css { profileInfoLabel() }*/) { +"Uptime" }
+                    span { +"Uptime" }
                     +": ${ChronoUnit.YEARS.between(startDate, LocalDate.now())} Years"
                 }
                 div {
-                    span(/*classes = css { profileInfoLabel() }*/) { +"Projects" }
-                    +": "
-                    githubLink()
+                    span { +"Projects" }
+                    span {
+                        +":    "
+                        githubLink()
+                    }
                 }
                 div {
-                    span(/*classes = css { profileInfoLabel() }*/) { +"Twitter" }
+                    span { +"Twitter" }
                     +" : link"
                 }
                 div {
-                    span(/*classes = css { profileInfoLabel() }*/) { +"Github" }
+                    span { +"Github" }
                     +" : link"
                 }
                 div {
-                    span(/*classes = css { profileInfoLabel() }*/) { +"CV" }
+                    span { +"CV" }
                     +" : link"
                 }
                 div {
-                    span(/*classes = css { profileInfoLabel() }*/) { +"Twitter" } // Duplicate?
+                    span { +"Twitter" } // Duplicate?
                     +" : link"
                 }
             }
-//            val colors = listOf("rose", "red", "green", "purple", "indigo", "blue", "cyan", "teal", "emerald", "green", "lime", "yellow", "orange", "red", "gray", "black")
+            // todo click on color rect to make it "main" accsent color of page!
             div(classes = COLOR_GRID) {
                 COLORS.forEach { colorClass ->
-                    div(classes = "$COLOR_SQUARE $colorClass")
+                    div(classes = colorClass)
                 }
             }
         }
     }
-    div(/*classes = css { sectionTextBlock() }*/) {
-        // Using new component class
+
+    div(classes = ABOUT_ME) {
         +"🔭I’m currently working on a royal game of Ur replica in Godot"
         br
         +"It is playable here."
@@ -95,17 +95,17 @@ fun BODY.indexPageContent() { // Renamed for clarity
         br
     }
     div {
-        div(/*classes = css { cliOutputPrefix() }*/) {
+        div {
             +" >> noahruben help"
         }
-        div(/*classes = css { cliHelpIndent() }*/) {
+        div {
             // Using new component class
             p { +"Usage: noahruben <subpage>" }
-            p(/*classes = css { cliSubpageIndent() }*/) { +"noahruben is the personal website of Noah Ruben" }
-            p(/*classes = css { cliSubpageIndent() }*/) { +"It displays information about " }
-            p(/*classes = css { cliSubpageIndent() }*/) { +"TODO" }
+            p { +"noahruben is the personal website of Noah Ruben" }
+            p { +"It displays information about " }
+            p { +"TODO" }
             h1 { +"SUB-PAGES" } // Consider styling for h1
-            div(/*classes = css { cliSubpageIndent() }*/) {
+            div {
                 a(href = "/projects") { +" projects" }
                 br()
                 a(href = "https://github.com/SirMoM") { +" github" }

@@ -1,12 +1,12 @@
-//package de.noah_ruben.misc
+// package de.noah_ruben.misc
 //
-//import de.noah_ruben.misc.CssClasses.Border
-//import de.noah_ruben.misc.CssClasses.Components
+// import de.noah_ruben.misc.CssClasses.Border
+// import de.noah_ruben.misc.CssClasses.Components
 //
-///**
+// /**
 // * CSS Builder class for creating CSS class combinations using a builder pattern.
 // */
-//class CssBuilder {
+// class CssBuilder {
 //    private val classes = mutableSetOf<String>()
 //
 //    // Method to add any set of classes
@@ -121,7 +121,7 @@
 //
 //    fun toCssString(): String = classes.joinToString(separator = " ")
 //    fun toSet(): Set<String> = classes.toSet()
-//}
+// }
 //
-//fun css(block: CssBuilder.() -> Unit): String = CssBuilder().apply(block).toCssString()
-//fun cssSet(block: CssBuilder.() -> Unit): Set<String> = CssBuilder().apply(block).toSet()
+// fun css(block: CssBuilder.() -> Unit): String = CssBuilder().apply(block).toCssString()
+// fun cssSet(block: CssBuilder.() -> Unit): Set<String> = CssBuilder().apply(block).toSet()

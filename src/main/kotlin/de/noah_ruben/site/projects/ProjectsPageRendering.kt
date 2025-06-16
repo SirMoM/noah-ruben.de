@@ -338,7 +338,7 @@ fun FlowContent.mainSearchBar() {
                 }
             }
 
-            button(type = ButtonType.submit,/* classes = css { buttonPrimary()}*/ ) {
+            button(type = ButtonType.submit /* classes = css { buttonPrimary()}*/) {
                 // Added buttonPrimary
                 div(
 //                    classes = css { flex().itemsCenter() }

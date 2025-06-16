@@ -7,32 +7,32 @@
 @plugin "@catppuccin/tailwindcss";
 
 @theme inline {
-    --color-ctp-rosewater: rgba(var(--ctp-rosewater));
-    --color-ctp-flamingo: rgba(var(--ctp-flamingo));
-    --color-ctp-pink: rgba(var(--ctp-pink));
-    --color-ctp-mauve: rgba(var(--ctp-mauve));
-    --color-ctp-red: rgba(var(--ctp-red));
-    --color-ctp-maroon: rgba(var(--ctp-maroon));
-    --color-ctp-peach: rgba(var(--ctp-peach));
-    --color-ctp-yellow: rgba(var(--ctp-yellow));
-    --color-ctp-green: rgba(var(--ctp-green));
-    --color-ctp-teal: rgba(var(--ctp-teal));
-    --color-ctp-sky: rgba(var(--ctp-sky));
-    --color-ctp-sapphire: rgba(var(--ctp-sapphire));
-    --color-ctp-blue: rgba(var(--ctp-blue));
-    --color-ctp-lavender: rgba(var(--ctp-lavender));
-    --color-ctp-text: rgba(var(--ctp-text));
-    --color-ctp-subtext1: rgba(var(--ctp-subtext1));
-    --color-ctp-subtext0: rgba(var(--ctp-subtext0));
-    --color-ctp-overlay2: rgba(var(--ctp-overlay2));
-    --color-ctp-overlay1: rgba(var(--ctp-overlay1));
-    --color-ctp-overlay0: rgba(var(--ctp-overlay0));
-    --color-ctp-surface2: rgba(var(--ctp-surface2));
-    --color-ctp-surface1: rgba(var(--ctp-surface1));
-    --color-ctp-surface0: rgba(var(--ctp-surface0));
-    --color-ctp-base: rgba(var(--ctp-base));
-    --color-ctp-mantle: rgba(var(--ctp-mantle));
-    --color-ctp-crust: rgba(var(--ctp-crust));
+    --color-rosewater: #f5e0dc;
+    --color-flamingo: #f2cdcd;
+    --color-pink: #f5c2e7;
+    --color-mauve: #cba6f7;
+    --color-red: #f38ba8;
+    --color-maroon: #eba0ac;
+    --color-peach: #fab387;
+    --color-yellow: #f9e2af;
+    --color-green: #a6e3a1;
+    --color-teal: #94e2d5;
+    --color-sky: #89dceb;
+    --color-sapphire: #74c7ec;
+    --color-blue: #89b4fa;
+    --color-lavender: #b4befe;
+    --color-text: #cdd6f4;
+    --color-subtext1: #bac2de;
+    --color-subtext0: #a6adc8;
+    --color-overlay2: #9399b2;
+    --color-overlay1: #7f849c;
+    --color-overlay0: #6c7086;
+    --color-surface2: #585b70;
+    --color-surface1: #45475a;
+    --color-surface0: #313244;
+    --color-base: #1e1e2e;
+    --color-mantle: #181825;
+    --color-crust: #11111b;
 }
 
 
@@ -40,40 +40,61 @@
     html {
         font-family: 'Cascadia Code', monospace;
         scroll-behavior: smooth;
-    }
-
-    body {
-        @apply dark:bg-gray-900 dark:text-white font-sans pl-8;
-
-        /*@apply bg-ctp-base;*/
-        /*@apply flex flex-col justify-center items-center !*bg-gradient-to-b from-ctp-base to-ctp-crust*! p-6 ;*/
-
+        @apply flex flex-col dark:bg-base p-6 dark:text-text;
     }
 }
 
 
 @layer components {
-    .profile-picture {
-        @apply m-4 aspect-square w-1/4 rounded-full bg-yellow-500;
+    a {
+        @apply text-red visited:text-maroon;
+    }
+
+    .nf-profile-container {
+        @apply flex items-center mb-4;
+    }
+
+    .nf-profile-picture {
+        @apply m-4 aspect-square w-2/5 rounded-full bg-yellow-500;
+    }
+
+    .nf-profile-details-container {
+        @apply w-3/5 text-xl grow;
+    }
+
+    .nf-profile-details-container > div > div {
+        @apply flex items-baseline space-x-2;
+    }
+
+    .nf-profile-details-container span {
+        @apply font-bold text-red-500;
+    }
+
+    .nf-profile-details-container > div > div:first-child {
+        @apply text-3xl text-green-100;
+        @apply whitespace-nowrap overflow-hidden text-ellipsis;
     }
 
     .color-grid {
-        @apply inline-grid flex-none grid-cols-8 grid-rows-2 mt-4
+        @apply inline-grid flex-none grid-cols-8 grid-rows-2 mt-4;
     }
 
-    .color-grid-square-base {
-        @apply border border-black hover:border-2 h-10 w-10
+    .color-grid > div {
+        @apply h-10 w-10 border border-crust hover:border-3 hover:border-surface0 hover:scale-110;
     }
 
     .page-title {
-        @apply text-2xl font-bold pt-8 text-white;
+        @apply text-2xl font-bold pt-8;
     }
 
     .content-container {
         @apply container mx-auto p-4;
     }
 
-    /* Forms and Controls */
+    .about-me-container {
+        @apply pl-16 mt-4 mb-4 leading-relaxed;
+    }
+
     .form-group {
         @apply flex flex-col;
     }

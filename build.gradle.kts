@@ -80,9 +80,9 @@ tasks {
         val contents = configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) } + sourcesMain.output
         from(contents)
     }
-    build {
-        dependsOn(fatJar) // Trigger fat jar creation during build
-    }
+//    build {
+//        dependsOn(fatJar) // Trigger fat jar creation during build
+//    }
     test {
         useJUnitPlatform()
     }

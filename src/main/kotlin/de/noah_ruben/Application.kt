@@ -20,7 +20,6 @@ import kotlinx.html.*
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-
 fun Application.staticRouting() {
     routing {
         staticResources("/resources", "static") {
