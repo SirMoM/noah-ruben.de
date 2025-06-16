@@ -1,9 +1,11 @@
 package de.noah_ruben.site
 
+import de.noah_ruben.misc.CssClasses
 import de.noah_ruben.misc.CssClasses.LandingPage.ABOUT_ME
 import de.noah_ruben.misc.CssClasses.LandingPage.COLORS
 import de.noah_ruben.misc.CssClasses.LandingPage.COLOR_GRID
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_CONTAINER
+import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_DETAILS_CONTAINER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE
 import de.noah_ruben.misc.CssClasses.MB_4
 import io.ktor.http.HttpStatusCode
@@ -28,16 +30,18 @@ fun Application.landingPage() {
     }
 }
 
-fun BODY.indexPageContent() { // Renamed for clarity
+fun BODY.indexPageContent() {
+    // Renamed for clarity
+    classes = setOf("border-pink-500","border-2")
     div {
         +" >> noahruben"
     }
-    div(classes = PROFILE_CONTAINER) {
+    div(classes = "$PROFILE_CONTAINER border-white-500 border-2") {
         img(
             src = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Van_Gogh_self-portrait.svg/1508px-Van_Gogh_self-portrait.svg.png",
             classes = PROFILE_PICTURE,
         )
-        div(classes = "nf-profile-details-container") {
+        div(classes = PROFILE_DETAILS_CONTAINER) {
             div {
                 div { +"Noah Ruben @ Reutlingen" }
                 hr(MB_4) {}
@@ -51,7 +55,7 @@ fun BODY.indexPageContent() { // Renamed for clarity
                 }
                 div {
                     span { +"Projects" }
-                    span {
+                    p {
                         +":    "
                         githubLink()
                     }
@@ -82,7 +86,7 @@ fun BODY.indexPageContent() { // Renamed for clarity
         }
     }
 
-    div(classes = ABOUT_ME) {
+    div(classes = "$ABOUT_ME border-white-500 border-2") {
         +"🔭I’m currently working on a royal game of Ur replica in Godot"
         br
         +"It is playable here."
@@ -94,18 +98,16 @@ fun BODY.indexPageContent() { // Renamed for clarity
         +"👨‍💻 All of my projects are available"
         br
     }
-    div {
         div {
             +" >> noahruben help"
         }
-        div {
-            // Using new component class
+        div(classes = "pl-6") {
             p { +"Usage: noahruben <subpage>" }
             p { +"noahruben is the personal website of Noah Ruben" }
             p { +"It displays information about " }
             p { +"TODO" }
-            h1 { +"SUB-PAGES" } // Consider styling for h1
-            div {
+            h1 { +"SUB-PAGES" }
+            div(classes="pl-12") {
                 a(href = "/projects") { +" projects" }
                 br()
                 a(href = "https://github.com/SirMoM") { +" github" }
@@ -116,7 +118,6 @@ fun BODY.indexPageContent() { // Renamed for clarity
             }
         }
         commandLineEmulation()
-    }
 }
 
 fun HTML.landingPageHtml() {

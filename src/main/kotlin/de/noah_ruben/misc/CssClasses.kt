@@ -7,6 +7,7 @@ object CssClasses {
     object LandingPage {
         const val PROFILE_CONTAINER = "nf-profile-container"
         const val PROFILE_PICTURE = "nf-profile-picture"
+        const val PROFILE_DETAILS_CONTAINER = "nf-profile-details-container"
         const val COLOR_GRID = "color-grid"
         val COLORS = listOf(
             "bg-rose-500", "bg-red-500", "bg-green-500", "bg-purple-500",

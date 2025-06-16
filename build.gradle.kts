@@ -71,6 +71,17 @@ dependencies {
 }
 
 tasks {
+    val runTailwind = register<Exec>("runTailwind") {
+        workingDir = file("tailwind")
+        environment("PATH", System.getenv("PATH") + ":/home/nr/.config/nvm/versions/node/v22.16.0/bin")
+        commandLine("zsh", "run.sh")
+        description = "Runs the Tailwind CSS processor script"
+    }
+
+    processResources {
+        dependsOn(runTailwind)
+    }
+
     val fatJar = register<Jar>("fatJar") {
         dependsOn.addAll(listOf("compileJava", "compileKotlin", "processResources")) // We need this for Gradle optimization to work
         archiveClassifier.set("standalone") // Naming the jar

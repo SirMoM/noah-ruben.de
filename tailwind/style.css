@@ -2,7 +2,8 @@
 
 @tailwind utilities;
 
-@source "../src/main/kotlin/de/noah_ruben/";
+@source "../src/main/kotlin/de/noah_ruben/misc/CssClasses.kt";
+@source "../src/main/kotlin/de/noah_ruben/site/LandingPage.kt";
 
 @plugin "@catppuccin/tailwindcss";
 
@@ -49,9 +50,12 @@
     a {
         @apply text-red visited:text-maroon;
     }
+    .not-used {
+       @apply border-pink-500 border-8;
+    }
 
     .nf-profile-container {
-        @apply flex items-center mb-4;
+        @apply flex items-center;
     }
 
     .nf-profile-picture {
@@ -63,7 +67,7 @@
     }
 
     .nf-profile-details-container > div > div {
-        @apply flex items-baseline space-x-2;
+        @apply flex items-baseline;
     }
 
     .nf-profile-details-container span {
@@ -92,7 +96,7 @@
     }
 
     .about-me-container {
-        @apply pl-16 mt-4 mb-4 leading-relaxed;
+        @apply p-6 leading-relaxed;
     }
 
     .form-group {
@@ -195,10 +199,10 @@
 
     /* Command Line Interface (CLI) */
     .cli-wrapper {
-        @apply w-full inline-flex dark:bg-gray-800 text-white outline-none focus:outline-none p-4 mt-4 border border-gray-700 rounded;
+        @apply w-full inline-flex dark:bg-base dark:text-text outline-none focus:outline-none border border-crust rounded;
     }
 
     .cli-input-field {
-        @apply flex-grow bg-transparent border-none outline-none text-white placeholder-gray-400 focus:ring-0;
+        @apply pl-4 flex-grow bg-transparent border-none outline-none focus:ring-0;
     }
 }
