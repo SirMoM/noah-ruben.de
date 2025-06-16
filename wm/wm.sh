@@ -1,3 +1,3 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 java -jar ./wiremock-standalone-3.5.4.jar --port 42069 --verbose

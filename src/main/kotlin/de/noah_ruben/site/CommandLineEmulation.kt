@@ -2,9 +2,9 @@ package de.noah_ruben.site
 
 import de.noah_ruben.misc.Commands
 import de.noah_ruben.misc.CssClasses
-import de.noah_ruben.misc.CssClasses.Layout.ML_4
-import de.noah_ruben.misc.CssClasses.Layout.ML_6
-import de.noah_ruben.misc.css
+import de.noah_ruben.misc.hxPost
+import de.noah_ruben.misc.hxSwap
+import de.noah_ruben.misc.hxTarget
 import de.noah_ruben.misc.parseCommand
 import de.noah_ruben.site.projects.projectsPageBody
 import io.ktor.server.application.Application
@@ -51,7 +51,7 @@ suspend fun handleCommand(call: RoutingCall) {
                 head {
                     defaultHeader()
                 }
-                body(classes = css { container() }) {
+                body {
                     projectsPageBody()
                 }
             }
@@ -68,7 +68,7 @@ suspend fun handleCommand(call: RoutingCall) {
             Commands.unknownCommand -> htmlBase.div {
                 call.response.header("HX-Retarget", "#cle")
                 br
-                div(classes = css { cliPromptSymbol() }) {
+                div(/*classes = css { cliPromptSymbol() }*/) {
                     +">> $cmd: command not found"
                 }
                 commandLineEmulation()
@@ -86,44 +86,43 @@ suspend fun handleCommand(call: RoutingCall) {
 }
 
 fun FlowContent.commandLineEmulation() {
-    div(classes = css { cliInputWrapper() }) {
-        id = "cle" // Keep id if used by htmx or JS
-        div(classes = css { cliPromptSymbol() }) { +">> " }
+    div(classes = "cli-wrapper ") {
+        id = "cle"
+        div(/*classes = css { cliPromptSymbol() }*/) { +">> " }
         input(type = InputType.text, name = "command") {
-            classes = CssClasses.Components.CLI_INPUT_FIELD.toSet()
+//            classes = CssClasses.Components.CLI_INPUT_FIELD.toSet()
             placeholder = "noahruben projects"
             autoComplete = false
-            attributes["spellcheck"] = "false"
             autoFocus = true
-            attributes["hx-post"] = "/command"
-            attributes["hx-target"] = "#body"
-            attributes["hx-swap"] = "outerHTML"
+            attributes["spellcheck"] = "false"
+
+            hxPost("/command")
+            hxTarget("#body")
+            hxSwap("outerHTML")
         }
     }
 }
 
 fun FlowContent.cleUsage() {
-    div(classes = css { ML_6 }) {
+    div {
         p {
             +"Usage: noahruben <subpage>"
         }
         p(
-            classes = css {
-                ML_4
-            },
+
         ) {
             +"noahruben is the personal website of Noah Ruben"
         }
-        p(classes = css { ML_4 }) {
+        p {
             +"It displays information about "
         }
-        p(classes = css { ML_4 }) {
+        p {
             +"TODO"
         }
 
         h1 { +"SUB-PAGES" }
 
-        div(classes = css { ML_4 }) {
+        div {
             selfLink("/projects", "projects")
             br
             selfLink("https://github.com/SirMoM", "github")

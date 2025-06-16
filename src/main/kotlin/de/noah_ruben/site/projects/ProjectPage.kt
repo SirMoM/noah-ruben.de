@@ -2,7 +2,6 @@ package de.noah_ruben.site.projects
 
 import de.noah_ruben.data.Cache
 import de.noah_ruben.data.model.Project
-import de.noah_ruben.misc.css
 import de.noah_ruben.site.projects.OrderBy.Date
 import de.noah_ruben.site.projects.OrderBy.Popularity
 import de.noah_ruben.site.projects.OrderBy.Relevance
@@ -77,7 +76,9 @@ fun Application.projectsPageRouting() {
                 val projects = Cache.getProjects().filerByTopic(topic).filerByLanguage(language).query(query).sortedBy(orderBy, descending)
                 val htmlFragment = if (withSearchbar) {
                     // TODO: Add parameters to search bar from / search query parameter
-                    createHTML().div(classes = css { container().mxAuto().p4() }) {
+                    createHTML().div(
+                        // classes = css { container().mxAuto().p4() }
+                    ) {
                         id = "search-replace"
                         mainSearchBar()
                         br()
@@ -95,7 +96,9 @@ fun Application.projectsPageRouting() {
                 log.warn("Missing parameter in search query. Payload: '{}'. Error: {}", payload, e.message)
                 call.respondHtml {
                     body {
-                        div(classes = css { errorMessage() }) {
+                        div(
+                            //     classes = css { errorMessage() }
+                        ) {
                             +"Error: Missing required search parameter (${e.parameterName}). Please try again."
                             br()
                             +"Received: ${URLDecoder.decode(payload, "UTF-8")}"
@@ -107,7 +110,8 @@ fun Application.projectsPageRouting() {
                 log.warn("Invalid parameter value in search query. Payload: '{}'. Error: {}", payload, e.message)
                 call.respondHtml {
                     body {
-                        div(classes = css { errorMessage() }) {
+                        //  (classes = css { errorMessage() })
+                        div {
                             +"Error: Invalid value for a search parameter (e.g., Order By). Please try again."
                             br()
                             +"Received: ${URLDecoder.decode(payload, "UTF-8")}"
@@ -119,7 +123,7 @@ fun Application.projectsPageRouting() {
                 log.error("Error processing search query. Payload: '{}'", payload, e)
                 call.respondHtml {
                     body {
-                        div(classes = css { errorMessage() }) {
+                        div(/*classes = css { errorMessage() }*/) {
                             +"An unexpected error occurred. Please try again later."
                         }
                         projectList(Cache.getProjects())

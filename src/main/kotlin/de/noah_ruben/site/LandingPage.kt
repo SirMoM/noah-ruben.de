@@ -1,7 +1,10 @@
 package de.noah_ruben.site
 
 import de.noah_ruben.misc.CssClasses
-import de.noah_ruben.misc.css
+import de.noah_ruben.misc.CssClasses.LandingPage.COLOR_GRID
+import de.noah_ruben.misc.CssClasses.LandingPage.COLOR_SQUARE
+import de.noah_ruben.misc.CssClasses.LandingPage.COLORS
+import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.html.respondHtml
@@ -25,68 +28,60 @@ fun Application.landingPage() {
 }
 
 fun BODY.indexPageContent() { // Renamed for clarity
-    div(classes = css { cliOutputPrefix() }) {
+    div(/*classes = css { cliOutputPrefix() }*/) {
         // Using new component class
         +" >> noahruben"
     }
-    div(classes = css { profileLayout() }) {
+    div(/*classes = css { profileLayout() }*/) {
         img(
             src = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Van_Gogh_self-portrait.svg/1508px-Van_Gogh_self-portrait.svg.png",
-            classes = css { profileImage() }, // Using new component class
+            classes = PROFILE_PICTURE, // Using new component class
         )
-        div(classes = css { profileDetailsContainer() }) {
+        div(/*classes = css { profileDetailsContainer() }*/) {
             // Using new component class
-            div(classes = css { profileInfoGrid() }) {
+            div(/*classes = css { profileInfoGrid() }*/) {
                 // Using new component class
                 div { +"Noah Ruben @ Reutlingen" }
                 hr { }
                 div {
-                    span(classes = css { profileInfoLabel() }) { +"Name" }
+                    span(/*classes = css { profileInfoLabel() }*/) { +"Name" }
                     +": Noah Ruben"
                 }
                 div {
-                    span(classes = css { profileInfoLabel() }) { +"Uptime" }
+                    span(/*classes = css { profileInfoLabel() }*/) { +"Uptime" }
                     +": ${ChronoUnit.YEARS.between(startDate, LocalDate.now())} Years"
                 }
                 div {
-                    span(classes = css { profileInfoLabel() }) { +"Projects" }
+                    span(/*classes = css { profileInfoLabel() }*/) { +"Projects" }
                     +": "
-                    githubLink() // Assuming this is a defined extension function
+                    githubLink()
                 }
-                // ... other info items ...
                 div {
-                    span(classes = css { profileInfoLabel() }) { +"Twitter" }
+                    span(/*classes = css { profileInfoLabel() }*/) { +"Twitter" }
                     +" : link"
                 }
                 div {
-                    span(classes = css { profileInfoLabel() }) { +"Github" }
+                    span(/*classes = css { profileInfoLabel() }*/) { +"Github" }
                     +" : link"
                 }
                 div {
-                    span(classes = css { profileInfoLabel() }) { +"CV" }
+                    span(/*classes = css { profileInfoLabel() }*/) { +"CV" }
                     +" : link"
                 }
                 div {
-                    span(classes = css { profileInfoLabel() }) { +"Twitter" } // Duplicate?
+                    span(/*classes = css { profileInfoLabel() }*/) { +"Twitter" } // Duplicate?
                     +" : link"
                 }
             }
-            div(classes = css { colorPaletteGrid() }) {
-                // Using new component class
-                val colors = listOf("rose", "red", "green", "purple", "indigo", "blue", "cyan", "teal", "emerald", "green", "lime", "yellow", "orange", "red", "gray", "black")
-                repeat(16) { index ->
-                    val color = colors[index % colors.size] // ensure index is within bounds
-                    div(
-                        classes = css {
-                            colorPaletteSquareBase()
-                            custom("bg-$color-500")
-                        },
-                    ) {}
+//            val colors = listOf("rose", "red", "green", "purple", "indigo", "blue", "cyan", "teal", "emerald", "green", "lime", "yellow", "orange", "red", "gray", "black")
+            div(classes = COLOR_GRID) {
+                COLORS.forEach { colorClass ->
+                    div(classes = "$COLOR_SQUARE $colorClass")
                 }
             }
         }
     }
-    div(classes = css { sectionTextBlock() }) {
+    div(/*classes = css { sectionTextBlock() }*/) {
         // Using new component class
         +"🔭I’m currently working on a royal game of Ur replica in Godot"
         br
@@ -100,18 +95,17 @@ fun BODY.indexPageContent() { // Renamed for clarity
         br
     }
     div {
-        // Wrapper for CLI section
-        div(classes = css { cliOutputPrefix() }) {
+        div(/*classes = css { cliOutputPrefix() }*/) {
             +" >> noahruben help"
         }
-        div(classes = css { cliHelpIndent() }) {
+        div(/*classes = css { cliHelpIndent() }*/) {
             // Using new component class
             p { +"Usage: noahruben <subpage>" }
-            p(classes = css { cliSubpageIndent() }) { +"noahruben is the personal website of Noah Ruben" }
-            p(classes = css { cliSubpageIndent() }) { +"It displays information about " }
-            p(classes = css { cliSubpageIndent() }) { +"TODO" }
+            p(/*classes = css { cliSubpageIndent() }*/) { +"noahruben is the personal website of Noah Ruben" }
+            p(/*classes = css { cliSubpageIndent() }*/) { +"It displays information about " }
+            p(/*classes = css { cliSubpageIndent() }*/) { +"TODO" }
             h1 { +"SUB-PAGES" } // Consider styling for h1
-            div(classes = css { cliSubpageIndent() }) {
+            div(/*classes = css { cliSubpageIndent() }*/) {
                 a(href = "/projects") { +" projects" }
                 br()
                 a(href = "https://github.com/SirMoM") { +" github" }
@@ -121,7 +115,7 @@ fun BODY.indexPageContent() { // Renamed for clarity
                 a(href = "https://www.linkedin.com/in/noah-ruben-3013991b7") { +" linked-in" }
             }
         }
-        commandLineEmulation() // Assuming this function is defined and uses new CLI component classes
+        commandLineEmulation()
     }
 }
 
@@ -130,15 +124,13 @@ fun HTML.landingPageHtml() {
         defaultHeader()
     }
     defaultBody {
-        // defaultBody now uses PAGE_BODY from Components
         id = "body"
         indexPageContent()
     }
 }
 
-// Assuming defaultBody is modified or defined like this:
 @HtmlTagMarker
-inline fun HTML.defaultBody(crossinline block: BODY.() -> Unit = {}): Unit = BODY(attributesMapOf("class", CssClasses.Components.PAGE_BODY.joinToString(" ")), consumer).visit(block)
+inline fun HTML.defaultBody(crossinline block: BODY.() -> Unit = {}): Unit = BODY(/*attributesMapOf("class", CssClasses.Components.PAGE_BODY.joinToString(" ")),*/ emptyMap(), consumer).visit(block)
 
 // Placeholder for githubLink if not defined elsewhere
 fun FlowContent.githubLink() {
