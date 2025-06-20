@@ -1,6 +1,5 @@
 package de.noah_ruben.site
 
-import de.noah_ruben.misc.CssClasses
 import de.noah_ruben.misc.CssClasses.LandingPage.ABOUT_ME
 import de.noah_ruben.misc.CssClasses.LandingPage.COLORS
 import de.noah_ruben.misc.CssClasses.LandingPage.COLOR_GRID
@@ -32,7 +31,7 @@ fun Application.landingPage() {
 
 fun BODY.indexPageContent() {
     // Renamed for clarity
-    classes = setOf("border-pink-500","border-2")
+    classes = setOf("border-pink-500", "border-2")
     div {
         +" >> noahruben"
     }
@@ -87,6 +86,9 @@ fun BODY.indexPageContent() {
     }
 
     div(classes = "$ABOUT_ME border-white-500 border-2") {
+        h3 {
+            +"System summary"
+        }
         +"🔭I’m currently working on a royal game of Ur replica in Godot"
         br
         +"It is playable here."
@@ -98,26 +100,26 @@ fun BODY.indexPageContent() {
         +"👨‍💻 All of my projects are available"
         br
     }
-        div {
-            +" >> noahruben help"
+    div {
+        +" >> noahruben help"
+    }
+    div(classes = "pl-6") {
+        p { +"Usage: noahruben <subpage>" }
+        p { +"noahruben is the personal website of Noah Ruben" }
+        p { +"It displays information about " }
+        p { +"TODO" }
+        h1 { +"SUB-PAGES" }
+        div(classes = "pl-12") {
+            a(href = "/projects") { +" projects" }
+            br()
+            a(href = "https://github.com/SirMoM") { +" github" }
+            br()
+            a(href = "/cv") { +" cv" }
+            br()
+            a(href = "https://www.linkedin.com/in/noah-ruben-3013991b7") { +" linked-in" }
         }
-        div(classes = "pl-6") {
-            p { +"Usage: noahruben <subpage>" }
-            p { +"noahruben is the personal website of Noah Ruben" }
-            p { +"It displays information about " }
-            p { +"TODO" }
-            h1 { +"SUB-PAGES" }
-            div(classes="pl-12") {
-                a(href = "/projects") { +" projects" }
-                br()
-                a(href = "https://github.com/SirMoM") { +" github" }
-                br()
-                a(href = "/cv") { +" cv" }
-                br()
-                a(href = "https://www.linkedin.com/in/noah-ruben-3013991b7") { +" linked-in" }
-            }
-        }
-        commandLineEmulation()
+    }
+    commandLineEmulation()
 }
 
 fun HTML.landingPageHtml() {

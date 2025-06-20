@@ -3,16 +3,13 @@ package de.noah_ruben.config
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
-import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.uri
 import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
 @Serializable
@@ -39,14 +36,6 @@ fun createProblem(throwable: Throwable): Problem {
 }
 
 fun Application.exceptionHandling() {
-    this.install(ContentNegotiation) {
-        json(
-            Json {
-                prettyPrint = true
-                isLenient = true
-            },
-        )
-    }
     install(StatusPages) {
         exception<Throwable> { call, cause ->
             val logger = LoggerFactory.getLogger("ERROR")

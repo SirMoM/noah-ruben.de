@@ -642,12 +642,6 @@
       --tw-outline-style: none;
       outline-style: none;
     }
-    @media (prefers-color-scheme: dark) {
-      background-color: #1e1e2e;
-    }
-    @media (prefers-color-scheme: dark) {
-      color: #cdd6f4;
-    }
   }
   .cli-input-field {
     flex-grow: 1;

@@ -197,9 +197,8 @@
         @apply inline-block rounded-full px-3 py-1 text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200;
     }
 
-    /* Command Line Interface (CLI) */
     .cli-wrapper {
-        @apply w-full inline-flex dark:bg-base dark:text-text outline-none focus:outline-none border border-crust rounded;
+        @apply w-full inline-flex  outline-none focus:outline-none border border-crust rounded;
     }
 
     .cli-input-field {

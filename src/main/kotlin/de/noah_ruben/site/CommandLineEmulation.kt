@@ -87,7 +87,7 @@ suspend fun handleCommand(call: RoutingCall) {
 fun FlowContent.commandLineEmulation() {
     div(classes = "cli-wrapper") {
         id = "cle"
-         +">> "
+        +">> "
         input(type = InputType.text, name = "command", classes = "cli-input-field") {
             placeholder = "noahruben projects"
             autoComplete = false
