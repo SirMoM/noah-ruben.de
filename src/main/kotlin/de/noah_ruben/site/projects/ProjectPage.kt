@@ -37,7 +37,7 @@ internal const val LANGUAGE_PLACEHOLDER = "<Language>"
 internal const val SEARCH_RESULTS = "search-results"
 
 enum class OrderBy {
-    Relevance, // Default might be stars/releases?
+    Relevance,
     Date,
     Popularity,
 }
@@ -50,11 +50,10 @@ fun Application.projectsPageRouting() {
             }
         }
         post(SEARCH_PATH) {
-            val payload = call.receiveText() // Use receiveText
+            val payload = call.receiveText()
             try {
                 val params: Parameters = payload.parseUrlEncodedParameters()
 
-                // Use getOrFail for required parameters
                 val query: String = params.getOrFail(QP_QUERY)
                 val topic: String = params[QP_TOPIC] ?: TOPIC_PLACEHOLDER
                 val language: String = params[QP_LANGUAGE] ?: LANGUAGE_PLACEHOLDER

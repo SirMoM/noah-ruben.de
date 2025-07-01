@@ -23,14 +23,13 @@ fun Application.landingPage() {
         get("/") {
             call.respondHtml(HttpStatusCode.OK) {
                 lang = "en"
-                landingPageHtml() // Renamed for clarity
+                landingPageHtml()
             }
         }
     }
 }
 
 fun BODY.indexPageContent() {
-    // Renamed for clarity
     classes = setOf("border-pink-500", "border-2")
     div {
         +" >> noahruben"
@@ -72,7 +71,7 @@ fun BODY.indexPageContent() {
                     +" : link"
                 }
                 div {
-                    span { +"Twitter" } // Duplicate?
+                    span { +"Twitter" }
                     +" : link"
                 }
             }
@@ -135,7 +134,6 @@ fun HTML.landingPageHtml() {
 @HtmlTagMarker
 inline fun HTML.defaultBody(crossinline block: BODY.() -> Unit = {}): Unit = BODY(/*attributesMapOf("class", CssClasses.Components.PAGE_BODY.joinToString(" ")),*/ emptyMap(), consumer).visit(block)
 
-// Placeholder for githubLink if not defined elsewhere
 fun FlowContent.githubLink() {
     a(href = "https://github.com/SirMoM") { +"GITHUB" }
 }

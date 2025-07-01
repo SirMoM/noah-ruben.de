@@ -22,6 +22,7 @@ fun DIV.githubLink() {
 
 fun HEAD.defaultHeader() {
     link(rel = "stylesheet", href = "/resources/style.css")
+    script { src = "./resources/debug.js" }
     meta(charset = "UTF-8")
     meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
     title("Noah Ruben")
