@@ -2,12 +2,7 @@ package de.noah_ruben
 
 import de.noah_ruben.config.ApplicationInfo
 import de.noah_ruben.config.appInfo
-import de.noah_ruben.config.configureHTTP
-import de.noah_ruben.config.configureMonitoring
-import de.noah_ruben.config.exceptionHandling
-import de.noah_ruben.data.Cache
 import de.noah_ruben.data.GithubClientFake
-import de.noah_ruben.data.WiremockClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
@@ -31,6 +26,7 @@ class ApplicationTest {
         }
         block()
     }
+
     @Test
     fun testStaticResources() = testApplicationWithRepositoryFake {
         client.get("/resources/style.css").apply {
@@ -54,7 +50,6 @@ class ApplicationTest {
 
     @Test
     fun testHealthCheck() = testApplicationWithRepositoryFake {
-
         // This block is necessary because the default test client does not know how to
         // automatically parse JSON. We are creating a new client instance and installing
         // the ContentNegotiation plugin, which teaches the client how to deserialize the
