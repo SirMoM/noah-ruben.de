@@ -95,7 +95,11 @@ fun FlowContent.projectTile(project: Project) {
                             strong(
                                 classes = CssClasses.ProjectPage.META_DETAIL_LABEL,
                             ) { +"Topics: " }
-                            span { +topics.joinToString(", ") }
+                            div(classes = "topics-list") {
+                                topics.forEach { topic ->
+                                    topicTag(topic)
+                                }
+                            }
                         }
                     }
                 }
@@ -146,6 +150,23 @@ fun FlowContent.languageTag(tag: String) {
     }
 }
 
+fun FlowContent.topicTag(topic: String) {
+    span(
+        classes = "topic-tag",
+    ) {
+        style = "color: #${topic.colorFromString()}; border-bottom: 1px solid #${topic.colorFromString()}"
+        hxPost(SEARCH_PATH)
+        hxTarget("#search-replace")
+        hxSwap("outerHTML")
+        hxIndicator("#spinner")
+        hxTrigger("click")
+        hxInclude("#search")
+        hxVals("""{"$QP_TOPIC": "$topic", "$QP_WITH_SEARCHBAR": true}""")
+
+        +topic
+    }
+}
+
 fun FlowContent.mainSearchBar(searchParameters: SearchParameters = SearchParameters.defaults()) {
     div {
         span(classes = "htmx-indicator") {
@@ -191,15 +212,15 @@ fun FlowContent.mainSearchBar(searchParameters: SearchParameters = SearchParamet
                         name = QP_TOPIC
                         id = QP_TOPIC
                         option {
-                            value = TOPIC_PLACEHOLDER
                             selected = searchParameters.topic == TOPIC_PLACEHOLDER
+                            value = TOPIC_PLACEHOLDER
                             +TOPIC_PLACEHOLDER
                         }
                         getAllTopics().forEach { topic ->
                             option {
+                                selected = searchParameters.topic == topic
                                 value = topic
                                 +topic
-                                selected = searchParameters.topic == topic
                             }
                         }
                     }

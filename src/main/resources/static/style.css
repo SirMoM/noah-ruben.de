@@ -587,6 +587,31 @@
       }
     }
   }
+  .topic-tag {
+    display: inline-block;
+    cursor: pointer;
+    margin-right: calc(var(--spacing) * 2);
+    padding-inline: calc(var(--spacing) * 1);
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+    transition-property: opacity;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+    --tw-duration: 200ms;
+    transition-duration: 200ms;
+    &:hover {
+      @media (hover: hover) {
+        opacity: 80%;
+      }
+    }
+  }
+  .topics-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--spacing) * 1);
+  }
   .project-card-footer {
     display: flex;
     justify-content: flex-start;
