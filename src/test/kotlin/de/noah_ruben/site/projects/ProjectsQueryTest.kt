@@ -13,6 +13,27 @@ class ProjectsQueryTest {
     private lateinit var projects: List<Project>
 
     @Test
+    fun filterBySearchParameters() {
+        val searchParameters = SearchParameters(
+            query = "",
+            topic = TOPIC_PLACEHOLDER,
+            language = "Kotlin",
+            orderBy = OrderBy.Popularity,
+            descending = false,
+            withSearchbar = false,
+        )
+
+        val result = this.projects.filterBySearchParameters(searchParameters)
+
+        val expected = listOf(projects[0], projects[1])
+
+        assertEquals(expected, result, "Lists should be filtered by language and ordered by popularity ascending")
+
+        val result2 = this.projects.filterBySearchParameters(searchParameters.copy(descending = true))
+        assertEquals(expected.reversed(), result2, "Lists should be filtered by language and ordered by popularity ascending")
+    }
+
+    @Test
     fun sortedByPopularity() {
         val expectedAscending = listOf(projects[4], projects[2], projects[0], projects[3], projects[1])
 

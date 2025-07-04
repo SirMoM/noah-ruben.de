@@ -43,6 +43,35 @@ enum class OrderBy {
     Popularity,
 }
 
+data class SearchParameters(
+    val query: String,
+    val topic: String,
+    val language: String,
+    val orderBy: OrderBy,
+    val withSearchbar: Boolean,
+    val descending: Boolean,
+) {
+    companion object {
+        fun from(params: Parameters): SearchParameters = SearchParameters(
+            query = params.getOrFail(QP_QUERY),
+            topic = params[QP_TOPIC] ?: TOPIC_PLACEHOLDER,
+            language = params[QP_LANGUAGE] ?: LANGUAGE_PLACEHOLDER,
+            orderBy = params[QP_ORDER_BY]?.let { OrderBy.valueOf(it) } ?: Relevance,
+            withSearchbar = params[QP_WITH_SEARCHBAR].toBoolean(),
+            descending = params[QP_DIR] == "desc",
+        )
+
+        fun defaults(): SearchParameters = SearchParameters(
+            query = "",
+            topic = TOPIC_PLACEHOLDER,
+            language = LANGUAGE_PLACEHOLDER,
+            orderBy = Relevance,
+            withSearchbar = false,
+            descending = false,
+        )
+    }
+}
+
 fun Application.projectsPageRouting() {
     routing {
         get("/projects") {
@@ -55,32 +84,18 @@ fun Application.projectsPageRouting() {
             try {
                 val params: Parameters = payload.parseUrlEncodedParameters()
 
-                val query: String = params.getOrFail(QP_QUERY)
-                val topic: String = params[QP_TOPIC] ?: TOPIC_PLACEHOLDER
-                val language: String = params[QP_LANGUAGE] ?: LANGUAGE_PLACEHOLDER
-                val orderBy: OrderBy = params[QP_ORDER_BY]?.let { OrderBy.valueOf(it) } ?: Relevance
-                val withSearchbar: Boolean = params[QP_WITH_SEARCHBAR].toBoolean()
+                val searchParameters = SearchParameters.from(params)
 
-                val descending: Boolean = params[QP_DIR] == "desc"
+                log.info(searchParameters.toString())
 
-                log.debug(
-                    "Search Params: query='{}', topic='{}', language='{}', orderBy='{}', descending='{}', withSearchbar='{}",
-                    query,
-                    topic,
-                    language,
-                    orderBy,
-                    descending,
-                    withSearchbar,
-                )
-
-                val projects = Cache.getProjects().filerByTopic(topic).filerByLanguage(language).query(query).sortedBy(orderBy, descending)
-                val htmlFragment = if (withSearchbar) {
+                val projects = Cache.getProjects().filterBySearchParameters(searchParameters)
+                val htmlFragment = if (searchParameters.withSearchbar) {
                     // TODO: Add parameters to search bar from / search query parameter
                     createHTML().div(
                         classes = CssClasses.CONTENT_CONTAINER,
                     ) {
                         id = "search-replace"
-                        mainSearchBar()
+                        mainSearchBar(searchParameters)
                         br()
                         projectList(projects)
                     }
@@ -165,3 +180,6 @@ fun List<Project>.query(query: String): List<Project> {
         it.name.contains(query, ignoreCase = true) || it.description.contains(query, ignoreCase = true)
     }
 }
+
+fun List<Project>.filterBySearchParameters(searchParameters: SearchParameters): List<Project> = this.filerByTopic(searchParameters.topic).filerByLanguage(searchParameters.language)
+    .query(searchParameters.query).sortedBy(searchParameters.orderBy, searchParameters.descending)

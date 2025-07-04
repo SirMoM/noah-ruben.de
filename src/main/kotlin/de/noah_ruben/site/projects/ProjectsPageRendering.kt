@@ -146,7 +146,7 @@ fun FlowContent.languageTag(tag: String) {
     }
 }
 
-fun FlowContent.mainSearchBar() {
+fun FlowContent.mainSearchBar(searchParameters: SearchParameters = SearchParameters.defaults()) {
     div {
         span(classes = "htmx-indicator") {
             id = "spinner"
@@ -174,7 +174,7 @@ fun FlowContent.mainSearchBar() {
                     autoFocus = true
                     id = "mainSearch"
                     placeholder = "Search"
-                    value = ""
+                    value = searchParameters.query
                 }
             }
 
@@ -192,13 +192,14 @@ fun FlowContent.mainSearchBar() {
                         id = QP_TOPIC
                         option {
                             value = TOPIC_PLACEHOLDER
-                            selected = true
+                            selected = searchParameters.topic == TOPIC_PLACEHOLDER
                             +TOPIC_PLACEHOLDER
                         }
                         getAllTopics().forEach { topic ->
                             option {
                                 value = topic
                                 +topic
+                                selected = searchParameters.topic == topic
                             }
                         }
                     }
@@ -214,11 +215,12 @@ fun FlowContent.mainSearchBar() {
                         id = QP_LANGUAGE
                         option {
                             value = LANGUAGE_PLACEHOLDER
-                            selected = true
+                            selected = searchParameters.language == LANGUAGE_PLACEHOLDER
                             +LANGUAGE_PLACEHOLDER
                         }
                         getAllLanguages().forEach { language ->
                             option {
+                                selected = searchParameters.language == language
                                 value = language
                                 +language
                             }
@@ -246,16 +248,13 @@ fun FlowContent.mainSearchBar() {
                 div(
                     classes = CssClasses.Form.FORM_CHECKBOX_GROUP,
                 ) {
-                    // Align checkbox and label
                     input(
                         type = InputType.checkBox,
                         name = QP_DIR,
                         classes = CssClasses.Form.FORM_CHECKBOX,
                     ) {
                         id = QP_DIR
-                        value = "desc" // This should probably be "true" or "desc" and handled server-side
-                        // For a "descending" checkbox, it's common to check its presence.
-                        // If you want it to toggle between "asc" and "desc", you'd need more logic.
+                        value = "desc"
                     }
                     label(classes = CssClasses.Form.FORM_LABEL) {
                         htmlFor = QP_DIR
