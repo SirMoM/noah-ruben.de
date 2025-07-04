@@ -185,8 +185,15 @@
     }
 
     .tag-item {
-        /* Note: Dynamic background/text colors for tags are kept inline in HTML */
         @apply rounded-full px-3 py-1 text-sm font-semibold inline-block cursor-pointer hover:opacity-80 transition-opacity duration-200;
+    }
+
+    .topic-tag {
+        @apply inline-block cursor-pointer text-sm font-semibold transition-opacity duration-200 hover:opacity-80;
+    }
+
+    .topics-list {
+        @apply flex flex-wrap gap-2;
     }
 
     .project-card-footer {
