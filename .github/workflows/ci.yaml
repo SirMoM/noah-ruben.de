@@ -73,6 +73,11 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: Start Wiremock in background
+        run: |
+          chmod +x wm/wm.sh
+          ./wm/wm.sh &
+          sleep 5
       - name: Run tests with Gradle
         run: ./gradlew test -x runTailwind -x lintKotlin
       - name: Upload test results

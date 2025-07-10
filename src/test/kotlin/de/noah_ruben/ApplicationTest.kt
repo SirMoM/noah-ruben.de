@@ -15,17 +15,17 @@ import org.junit.Assert.assertEquals
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
-class ApplicationTest {
-
-    private fun testApplicationWithRepositoryFake(block: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
-        environment {
-            config = ApplicationConfig("application-test.yaml")
-        }
-        application {
-            module(GithubClientFake())
-        }
-        block()
+fun testApplicationWithRepositoryFake(block: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
+    environment {
+        config = ApplicationConfig("application-test.yaml")
     }
+    application {
+        module(GithubClientFake())
+    }
+    block()
+}
+
+class ApplicationTest {
 
     @Test
     fun testStaticResources() = testApplicationWithRepositoryFake {
