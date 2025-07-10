@@ -3,6 +3,13 @@ package de.noah_ruben.site.projects
 import de.noah_ruben.data.Cache
 import de.noah_ruben.data.model.Project
 import de.noah_ruben.misc.CssClasses
+import de.noah_ruben.misc.hxInclude
+import de.noah_ruben.misc.hxIndicator
+import de.noah_ruben.misc.hxPost
+import de.noah_ruben.misc.hxSwap
+import de.noah_ruben.misc.hxTarget
+import de.noah_ruben.misc.hxTrigger
+import de.noah_ruben.misc.hxVals
 import de.noah_ruben.site.projects.OrderBy.Date
 import de.noah_ruben.site.projects.OrderBy.Popularity
 import de.noah_ruben.site.projects.OrderBy.Relevance
@@ -19,11 +26,15 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import io.ktor.server.util.getOrFail
+import kotlinx.html.InputType
 import kotlinx.html.body
 import kotlinx.html.br
 import kotlinx.html.div
+import kotlinx.html.h1
 import kotlinx.html.id
+import kotlinx.html.input
 import kotlinx.html.stream.createHTML
+import kotlinx.html.style
 import java.net.URLDecoder
 
 internal const val SEARCH_PATH = "/search"
@@ -43,6 +54,8 @@ enum class OrderBy {
     Popularity,
 }
 
+// TODO not found wenn keine projecte found
+// Topic und languages begrenzen ?
 data class SearchParameters(
     val query: String,
     val topic: String,
@@ -89,7 +102,26 @@ fun Application.projectsPageRouting() {
                 log.info(searchParameters.toString())
 
                 val projects = Cache.getProjects().filterBySearchParameters(searchParameters)
-                val htmlFragment = if (searchParameters.withSearchbar) {
+                val htmlFragment = if (projects.isEmpty()) {
+                    createHTML().div {
+                        style = "text-align: center; padding: 20px; border: 1px solid #dee2e6; border-radius: 8px; background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
+                        h1 {
+                            style = "color: #343a40;"
+                            +"Nothing Found"
+                        }
+                        input(type = InputType.button, classes = "btn btn-outline-primary") {
+                            hxPost(SEARCH_PATH)
+                            hxTarget("#search-replace")
+                            hxSwap("outerHTML")
+                            hxIndicator("#spinner")
+                            hxTrigger("click")
+                            hxInclude("#search")
+                            hxVals("""{"$QP_WITH_SEARCHBAR": true}""")
+                            style = "margin-top: 20px; padding: 10px 20px; border: none; border-radius: 5px; background-color: #007bff; color: white; cursor: pointer;"
+                            +"Reset Query"
+                        }
+                    }
+                } else if (searchParameters.withSearchbar) {
                     // TODO: Add parameters to search bar from / search query parameter
                     createHTML().div(
                         classes = CssClasses.CONTENT_CONTAINER,

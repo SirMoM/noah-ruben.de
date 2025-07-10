@@ -50,21 +50,18 @@ fun FlowContent.projectList(
 
 fun FlowContent.projectTile(project: Project) {
     with(project) {
-        // Main card container
         div(
             classes = CssClasses.ProjectPage.PROJECT_CARD,
         ) {
             div(
                 classes = CssClasses.ProjectPage.PROJECT_CARD_CONTENT,
             ) {
-                // Project Name
                 h3(
                     classes = CssClasses.ProjectPage.PROJECT_CARD_TITLE,
                 ) {
                     +name
                 }
 
-                // Description
                 p(
                     classes = CssClasses.ProjectPage.PROJECT_CARD_DESCRIPTION,
                 ) {
@@ -104,7 +101,6 @@ fun FlowContent.projectTile(project: Project) {
                     }
                 }
 
-                // Languages/Tags Section
                 if (languages.isNotEmpty()) {
                     div(
                         classes = CssClasses.ProjectPage.TAGS_LIST,
@@ -116,7 +112,6 @@ fun FlowContent.projectTile(project: Project) {
                 }
             }
 
-            // Action Buttons Section (at the bottom of the card)
             div(
                 classes = CssClasses.ProjectPage.PROJECT_CARD_FOOTER,
             ) {
