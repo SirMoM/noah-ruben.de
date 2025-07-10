@@ -1,0 +1,45 @@
+name: Continuous Integration/Testing
+"on":
+  push:
+    branches:
+      - main
+      - dud
+  workflow_dispatch:
+concurrency:
+  group: "ci"
+  cancel-in-progress: true
+jobs:
+  ktlint:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Cache ktlint
+        id: cache-ktlint
+        uses: actions/cache@v4
+        with:
+          path: ./ktlint
+          key: ${{ runner.os }}-ktlint-1.6.0
+      - name: Install ktlint
+        if: steps.cache-ktlint.outputs.cache-hit != 'true'
+        run: |
+          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.6.0/ktlint
+          chmod a+x ktlint
+      - name: Run ktlint for job summary
+        if: ${{ always() }}
+        run: |
+          set -o pipefail
+          ./ktlint "src/**/*.kt" --reporter=html --editorconfig=".editorconfig" --relative | sed '/<style>/,/<\/style>/d' >> $GITHUB_STEP_SUMMARY
+      - name: Run ktlint for sarif summary
+        if: ${{ always() }}
+        run: |
+          set -o pipefail
+          ./ktlint "src/**/*.kt" --reporter=sarif --editorconfig=".editorconfig" -l none >> results.sarif
+      - name: Upload sarif results
+        if: ${{ always() }}
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          category: ktlint
+          sarif_file: results.sarif

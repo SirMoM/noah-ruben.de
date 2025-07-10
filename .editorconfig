@@ -6,6 +6,8 @@ trim_trailing_whitespace = true
 indent_size = 4
 indent_style = space
 
+[{*.{yml,yaml},*.{json,md}}]
+indent_size = 2
 
 [*.{kt,kts}]
 ktlint_code_style = intellij_idea
