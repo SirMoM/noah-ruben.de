@@ -32,6 +32,7 @@ object CssClasses {
         const val TAG_ITEM = "tag-item"
         const val PROJECT_CARD_FOOTER = "project-card-footer"
         const val PROJECT_ACTION_LINK = "project-action-link"
+        const val RESET_BUTTON = "reset-button"
     }
 
     object Form {
