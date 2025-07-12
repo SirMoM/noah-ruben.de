@@ -73,7 +73,7 @@ fun BODY.projectsPageBody() {
 fun FlowContent.projectList(
     projects: List<Project>,
 ) {
-    div(classes = CONTENT_CONTAINER) {
+    div {
         id = SEARCH_RESULTS
         projects.forEach {
             projectTile(it)
@@ -341,7 +341,7 @@ fun FlowContent.nothingFoundProjectTile() {
         }
 
         div(classes = PROJECT_CARD_FOOTER) {
-            input(name = "Reset Query", type = InputType.button, classes = RESET_BUTTON) {
+            input(type = InputType.button, classes = RESET_BUTTON) {
                 hxPost(SEARCH_PATH)
                 hxTarget("#search-replace")
                 hxSwap("outerHTML")
