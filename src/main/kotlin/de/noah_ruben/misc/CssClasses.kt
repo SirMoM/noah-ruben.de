@@ -33,6 +33,7 @@ object CssClasses {
         const val PROJECT_CARD_FOOTER = "project-card-footer"
         const val PROJECT_ACTION_LINK = "project-action-link"
         const val RESET_BUTTON = "reset-button"
+        const val STAR_ICON = "star-icon"
     }
 
     object Form {

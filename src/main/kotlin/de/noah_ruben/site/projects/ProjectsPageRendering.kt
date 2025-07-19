@@ -29,6 +29,7 @@ import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_FOOTER
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_META
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_TITLE
 import de.noah_ruben.misc.CssClasses.ProjectPage.RESET_BUTTON
+import de.noah_ruben.misc.CssClasses.ProjectPage.STAR_ICON
 import de.noah_ruben.misc.CssClasses.ProjectPage.TAGS_LIST
 import de.noah_ruben.misc.CssClasses.ProjectPage.TAG_ITEM
 import de.noah_ruben.misc.colorFromString
@@ -86,6 +87,9 @@ fun FlowContent.projectTile(project: Project) {
         div(
             classes = PROJECT_CARD,
         ) {
+            span(classes = STAR_ICON) {
+                +stars.toString()
+            }
             div(
                 classes = PROJECT_CARD_CONTENT,
             ) {
@@ -104,14 +108,6 @@ fun FlowContent.projectTile(project: Project) {
                 div(
                     classes = PROJECT_CARD_META,
                 ) {
-                    div(
-                        classes = META_DETAIL_ROW,
-                    ) {
-                        strong(
-                            classes = META_DETAIL_LABEL,
-                        ) { +"Stars: " }
-                        +stars.toString()
-                    }
                     if (releases.isNotBlank()) {
                         div(classes = META_DETAIL_ROW) {
                             strong(
