@@ -48,6 +48,7 @@ val fakeRepositoryData = Repository(
     watchers = 0,
     allow_forking = true,
     web_commit_signoff_required = false,
+    homepage = "https://example.com",
 )
 
 class GithubClientFake : RepositoryClient {

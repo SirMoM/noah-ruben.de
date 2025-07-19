@@ -58,7 +58,7 @@ object Cache {
                         name = it.name,
                         description = it.description.orEmpty(),
                         githubLink = it.html_url.orEmpty(),
-                        link = it.language.orEmpty(),
+                        link = it.homepage.orEmpty(),
 
                         lastModified = LocalDateTime.parse(it.pushed_at, DateTimeFormatter.ISO_DATE_TIME),
                         created = LocalDateTime.parse(it.created_at, DateTimeFormatter.ISO_DATE_TIME),

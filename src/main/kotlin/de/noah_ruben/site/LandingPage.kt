@@ -132,7 +132,7 @@ fun HTML.landingPageHtml() {
 }
 
 @HtmlTagMarker
-inline fun HTML.defaultBody(crossinline block: BODY.() -> Unit = {}): Unit = BODY(/*attributesMapOf("class", CssClasses.Components.PAGE_BODY.joinToString(" ")),*/ emptyMap(), consumer).visit(block)
+inline fun HTML.defaultBody(crossinline block: BODY.() -> Unit = {}): Unit = BODY(emptyMap(), consumer).visit(block)
 
 fun FlowContent.githubLink() {
     a(href = "https://github.com/SirMoM") { +"GITHUB" }

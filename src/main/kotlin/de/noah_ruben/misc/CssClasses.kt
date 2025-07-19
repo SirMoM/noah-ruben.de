@@ -48,5 +48,7 @@ object CssClasses {
         const val LOADING_SPINNER = "loading-spinner"
         const val FILTER_CONTROLS_LAYOUT = "filter-controls-layout"
         const val FILTER_ITEM_LAYOUT = "filter-item-layout"
+        const val TOGGLE_BUTTON = "toggle-button"
+        const val TOGGLE_BUTTON_ICON = "toggle-button-icon"
     }
 }

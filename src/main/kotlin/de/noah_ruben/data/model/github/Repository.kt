@@ -39,4 +39,5 @@ data class Repository(
     val watchers: Int,
     val allow_forking: Boolean,
     val web_commit_signoff_required: Boolean,
+    val homepage: String?,
 )
