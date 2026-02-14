@@ -1,0 +1,7 @@
+modules:
+  - ./ktlint
+
+plugins:
+  - ./ktlint
+
+

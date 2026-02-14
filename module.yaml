@@ -1,0 +1,49 @@
+product: jvm/app
+layout: maven-like
+
+repositories:
+  - https://repo1.maven.org/maven2
+
+dependencies:
+  - $ktor.client.contentNegotiation
+  - $ktor.client.core
+  - $ktor.client.cio
+  - $ktor.serialization.kotlinx.json
+
+  - io.ktor:ktor-server-core-jvm
+  - io.ktor:ktor-server-host-common-jvm
+  - io.ktor:ktor-server-status-pages-jvm
+  - io.ktor:ktor-server-cors-jvm
+  - io.ktor:ktor-server-default-headers-jvm
+  - io.ktor:ktor-server-http-redirect-jvm
+  - io.ktor:ktor-server-call-logging-jvm
+  - io.ktor:ktor-server-metrics-jvm
+  - io.ktor:ktor-server-content-negotiation-jvm
+  - $ktor.server.netty
+
+  - io.ktor:ktor-serialization-jackson-jvm
+  - io.ktor:ktor-server-html-builder-jvm
+  - io.ktor:ktor-server-config-yaml-jvm
+
+  - org.jetbrains.kotlinx:kotlinx-html-jvm:0.10.1
+  - ch.qos.logback:logback-classic:1.5.13
+
+test-dependencies:
+  - $kotlin.test
+  - io.ktor:ktor-server-tests-jvm
+
+settings:
+  jvm:
+    release: 21
+    mainClass: de.noah_ruben.ApplicationKt
+  kotlin:
+    languageVersion: "2.3"
+    serialization: enabled
+  ktor:
+    enabled: true
+    version: 3.0.0-beta-1
+
+plugins:
+  ktlint:
+    enabled: true
+

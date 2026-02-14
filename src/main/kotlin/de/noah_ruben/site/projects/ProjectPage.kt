@@ -162,9 +162,11 @@ fun List<Project>.sortedBy(selector: OrderBy, descending: Boolean): List<Project
     Relevance -> {
         if (descending) this.sortedByDescending { it.stars } else this.sortedBy { it.stars }
     }
+
     Date -> {
         if (descending) this.sortedByDescending { it.created } else this.sortedBy { it.created }
     }
+
     Popularity -> {
         if (descending) this.sortedByDescending { it.stars } else this.sortedBy { it.stars }
     }

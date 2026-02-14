@@ -27,17 +27,17 @@ This document provides essential information for developers working on the noah-
 
 2. **Build the project**:
    ```bash
-   ./gradlew build
+   ./amper build
    ```
 
 3. **Run the application**:
    ```bash
-   ./gradlew run
+   ./amper run
    ```
 
 4. **Create a standalone JAR**:
    ```bash
-   ./gradlew fatJar
+   ./amper package -f executable-jar
    ```
    This creates a standalone JAR file in the `build/libs` directory with the classifier "standalone".
 
@@ -46,7 +46,7 @@ This document provides essential information for developers working on the noah-
 ### Running Tests
 To run all tests:
 ```bash
-./gradlew test
+./amper test
 ```
 
 ### Test Structure
@@ -87,10 +87,18 @@ The project uses Wiremock to mock external dependencies, particularly the GitHub
 ### Code Style
 The project uses the Kotlinter plugin for code style enforcement. Run the following to check and format code:
 ```bash
-./gradlew lintKotlin    # Check code style
-./gradlew formatKotlin  # Format code
+Use IntelliJ/IDEA formatting and inspections for style checks and formatting.
 ```
 
 ### Debugging
 - Set the `io.ktor.development` system property to `true` for development mode
 - Logging is configured using Logback in `src/main/resources/logback.xml`
+
+### CSS and Static Resources
+- Tailwind CSS is used for styling, and the generated CSS is included in the `src/main/resources/static/css` directory
+
+!!! NEVER EVER EDIT THE GENERATED CSS FILES DIRECTLY !!!
+
+1. This means do not edit [style.css](../src/main/resources/static/style.css)!
+2. Instead, modify the CSS files in [style.css](../tailwind/style.css) as needed.
+3. Always regenerate the CSS using the Tailwind script after making changes to the Tailwind configuration.

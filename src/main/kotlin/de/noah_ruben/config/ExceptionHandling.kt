@@ -27,12 +27,10 @@ data class Problem(
     )
 }
 
-fun createProblem(throwable: Throwable): Problem {
-    return when (throwable::class) {
-        RuntimeException::class -> Problem(InternalServerError, throwable.message, throwable.stackTraceToString())
-        IllegalArgumentException::class -> Problem(BadRequest, throwable.message, throwable.stackTraceToString())
-        else -> Problem(InternalServerError, throwable.message, throwable.localizedMessage.trim())
-    }
+fun createProblem(throwable: Throwable): Problem = when (throwable::class) {
+    RuntimeException::class -> Problem(InternalServerError, throwable.message, throwable.stackTraceToString())
+    IllegalArgumentException::class -> Problem(BadRequest, throwable.message, throwable.stackTraceToString())
+    else -> Problem(InternalServerError, throwable.message, throwable.localizedMessage.trim())
 }
 
 fun Application.exceptionHandling() {

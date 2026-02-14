@@ -46,6 +46,7 @@ suspend fun handleCommand(call: RoutingCall) {
     call.respondText {
         when (parseCommand(rawCommand)) {
             Commands.landingPage -> htmlBase.html { landingpage() }
+
             Commands.projects -> htmlBase.html {
                 head {
                     defaultHeader()
@@ -54,7 +55,9 @@ suspend fun handleCommand(call: RoutingCall) {
                     projectsPageBody()
                 }
             }
+
             Commands.cv -> throw RuntimeException("NOT IMPLEMENTED!")
+
             Commands.unknownSubpage -> htmlBase.div {
                 call.response.header("HX-Retarget", "#cle")
                 br
@@ -64,10 +67,11 @@ suspend fun handleCommand(call: RoutingCall) {
                 cleUsage()
                 commandLineEmulation()
             }
+
             Commands.unknownCommand -> htmlBase.div {
                 call.response.header("HX-Retarget", "#cle")
                 br
-                div(/*classes = css { cliPromptSymbol() }*/) {
+                div {
                     +">> $cmd: command not found"
                 }
                 commandLineEmulation()
