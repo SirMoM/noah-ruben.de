@@ -188,10 +188,7 @@ case "$kernelName" in
     jre_os="linux"
     jre_archive_type="tar.gz"
     default_amper_cache_dir="$HOME/.cache/JetBrains/Amper"
-    # If linux runs in 32-bit mode, we want the "fake" 32-bit architecture, not the real hardware,
-    # because in this mode linux cannot run 64-bit binaries.
-    # shellcheck disable=SC2046
-    arch=$(linux$(getconf LONG_BIT) uname -m)
+    arch=$(uname -m)
     ;;
   CYGWIN* | MSYS* | MINGW* )
     simpleOs="windows"

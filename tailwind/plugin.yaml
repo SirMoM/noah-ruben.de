@@ -1,0 +1,10 @@
+tasks:
+  generateTailwind:
+    action: !de.noah_ruben.build.tailwind.generateTailwind
+      inputCss: ${module.rootDir}/tailwind/style.css
+      packageJson: ${module.rootDir}/tailwind/package.json
+      packageLock: ${module.rootDir}/tailwind/package-lock.json
+      generatedResourceDir: ${taskOutputDir}
+    markOutputsAs:
+      - path: ${action.generatedResourceDir}
+        kind: jvm-resources

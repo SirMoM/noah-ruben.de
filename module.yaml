@@ -46,4 +46,5 @@ settings:
 plugins:
   ktlint:
     enabled: true
-
+  tailwind:
+    enabled: true

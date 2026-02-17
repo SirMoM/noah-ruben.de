@@ -1,7 +1,8 @@
 modules:
   - ./ktlint
+  - ./tailwind
 
 plugins:
   - ./ktlint
-
+  - ./tailwind
 

@@ -1,18 +1,26 @@
 services:
   website:
-    build:
-      context: ..
-      dockerfile: Dockerfile
+    profiles: [website]
+    image: "website:latest"
+    depends_on:
+      wiremock:
+        condition: service_healthy
+    environment:
+      GITHUB_URL: "http://wiremock:8080"
     ports:
       - "42081:42081"
     env_file:
         - ${ENV_FILE:-.env}
   wiremock:
-    profiles: [wm]
     image: "wiremock/wiremock:latest"
-    container_name: website-wiremock
+    container_name: wiremock
     entrypoint: ["/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose"]
     volumes:
       - ../wm:/home/wiremock
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/__admin/mappings"]
+      interval: 5s
+      timeout: 3s
+      retries: 20

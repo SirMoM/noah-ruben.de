@@ -42,3 +42,33 @@
    ```bash
    ./tailwind/run.sh
    ```
+
+## Tilt (Docker orchestration)
+
+Run from `docker/`:
+
+1. Start Tilt:
+
+   ```bash
+   tilt up
+   ```
+
+2. Start the website runtime/deploy step (separate from image build):
+
+   ```bash
+   tilt trigger website
+   ```
+
+3. Stop Tilt-managed resources:
+
+   ```bash
+   tilt down
+   ```
+
+Expected behavior:
+- `website-image-build` is the image build job.
+- `website` is the runtime/deploy job (manual trigger) and depends on `website-image-build`.
+- `docker/compose.yaml` uses `image: website:latest` (no compose-side build).
+- Default run manages `wiremock`; `website` is only started when `website` is triggered.
+- `wiremock-reload` watches `wm/` mappings and restarts Wiremock automatically on changes.
+- Logs and resource status are visible in Tilt UI/CLI.

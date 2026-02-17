@@ -1,19 +1,18 @@
-# Use the official Gradle image to create a build artifact.
-FROM gradle:jdk21-graal AS build
+FROM node:20-bookworm-slim AS node
+
+FROM container-registry.oracle.com/graalvm/jdk:21 AS build
 
 WORKDIR /workspace
 
 
-RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm && rm -rf /var/lib/apt/lists/*
+COPY --from=node /usr/local/ /usr/local/
 
 # Copy the source code to the Docker image.
 COPY . .
 
-RUN chmod +x ./amper ./tailwind/run.sh
+RUN chmod +x ./amper
 
-WORKDIR /workspace/tailwind
-
-RUN ./run.sh
+RUN node --version && npm --version
 
 WORKDIR /workspace
 
@@ -23,8 +22,10 @@ FROM container-registry.oracle.com/graalvm/jdk:21 AS website
 
 WORKDIR /app
 
-COPY --from=build /workspace/build/tasks/_noah-ruben.de_executableJarJvm/noah-ruben.de-jvm-executable.jar ./website.jar
+COPY --from=build /workspace/build/tasks/*_executableJarJvm/*-jvm-executable.jar ./website.jar
+
+RUN jar xf ./website.jar && rm ./website.jar
 
 EXPOSE 42081
 
-CMD ["java", "-jar", "website.jar"]
+CMD ["java", "-cp", "BOOT-INF/classes:BOOT-INF/lib/*", "de.noah_ruben.ApplicationKt"]
