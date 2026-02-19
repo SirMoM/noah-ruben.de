@@ -30,6 +30,12 @@
 5. Run the application:
 
    ```bash
+   ./amper task :noah-ruben.de:runLocal@run
+   ```
+
+   Fallback (equivalent, without helper task):
+
+   ```bash
    GITHUB_TOKEN="NOT_NEEDED" GITHUB_URL="http://localhost:42069" ./amper run
    ```
 
@@ -59,6 +65,12 @@ Run from `docker/`:
 
    ```bash
    tilt down
+   ```
+
+4. Quick health check (after triggering `website`):
+
+   ```bash
+   curl -sf http://localhost:42081/health
    ```
 
 Expected behavior:
