@@ -1,26 +1,36 @@
 # Tailwind CSS
 
-In Tailwind 4 all configuration is made in the css file.
+Tailwind v4 configuration lives in `tailwind/style.css`.
 
-### Problem with Catppuccin
-The catppuccin plugin is not v4 ready:
-- This is the fix we use:<br>
-  https://github.com/catppuccin/tailwindcss/issues/19#issuecomment-2494971455<br>
-  It's basically reassigning all the color variables a second time, but it seems to make the classes work
-- PR for v4 support: https://github.com/catppuccin/tailwindcss/pull/22
+## Build integration
 
-## Compilation
-1. Compile css-file into the staticly served folder of the ktor server
-   ```shell
-    npx @tailwindcss/cli -o ../src/main/resources/static/style.css -i style.css
-   ```
+Tailwind generation is integrated into the repository's Amper build through the local `tailwind` plugin:
 
-1. Copy file into the build output folder that way the started ktor application can serve the new css file:
-   ```shell
-   cp ../src/main/resources/static/style.css ../build/resources/main/static/
-   ```
+- Plugin module: `tailwind/module.yaml`
+- Task wiring: `tailwind/plugin.yaml`
+- Task implementation: `tailwind/src/GenerateTailwind.kt`
 
-1. [Optional] Rerun Tailwind compilation if changes are made to the css file:
-    ```bash
-    find . -name "*.css" | entr bash ./run.sh
-    ```
+The plugin runs `npm ci` and Tailwind CLI, then publishes generated output as JVM resources under `static/style.css`.
+
+Important:
+- Do not manually generate or commit `src/main/resources/static/style.css`.
+- There is no `tailwind/run.sh` workflow anymore.
+
+## Typical commands
+
+Run from repository root:
+
+```bash
+./amper build
+./amper test
+./amper package -f executable-jar
+```
+
+These commands trigger Tailwind generation through Amper when needed.
+
+## Catppuccin note
+
+The Catppuccin Tailwind plugin is still not fully v4-ready.
+
+- Workaround reference: <https://github.com/catppuccin/tailwindcss/issues/19#issuecomment-2494971455>
+- Upstream v4 support PR: <https://github.com/catppuccin/tailwindcss/pull/22>

@@ -12,6 +12,8 @@
    ./amper build
    ```
 
+   Note: Tailwind CSS generation is part of the Amper build via the local `tailwind` plugin. No separate `tailwind/run.sh` step is required.
+
 3. Run tests with Amper:
 
    ```bash
@@ -34,13 +36,7 @@
 6. Build the deployable artifact:
 
    ```bash
-   ./amper package
-   ```
-
-7. If CSS changes, run Tailwind explicitly before build/test/package:
-
-   ```bash
-   ./tailwind/run.sh
+   ./amper package -f executable-jar
    ```
 
 ## Tilt (Docker orchestration)

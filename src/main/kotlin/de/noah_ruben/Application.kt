@@ -18,6 +18,7 @@ import io.ktor.server.application.install
 import io.ktor.server.html.respondHtml
 import io.ktor.server.http.content.staticResources
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.html.*
@@ -45,6 +46,10 @@ fun Application.staticRouting() {
     routing {
         staticResources("/resources", "static") {
             enableAutoHeadResponse()
+        }
+
+        get("/favicon.ico") {
+            call.respondRedirect("/resources/favicon.ico", permanent = false)
         }
 
         get("/gh") {

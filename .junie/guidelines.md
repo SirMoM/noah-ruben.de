@@ -2,103 +2,96 @@
 
 This document provides essential information for developers working on the noah-ruben.de project.
 
-## Build/Configuration Instructions
+## Build and Configuration
 
 ### Prerequisites
+
 - JDK 21
-- Node.js (for Tailwind CSS processing)
-- Gradle (wrapper included in the project)
+- Node.js and npm (required for Tailwind generation during Amper tasks)
+- Docker (optional, for containerized runs)
+- Tilt (optional, for docker orchestration in `docker/`)
 
 ### Environment Setup
-1. Set up the required environment variables:
-   ```
-   GITHUB_TOKEN=your_github_token
-   GITHUB_URL=github_api_url (or use Wiremock for development)
-   ```
 
-### Building the Project
-1. **Generate Tailwind CSS**:
-   The project uses Tailwind CSS for styling. The CSS is generated using a script in the `tailwind` directory.
-   ```bash
-   cd tailwind
-   ./run.sh
-   ```
-   This script is also automatically executed during the Gradle build process.
+Set runtime environment variables as needed:
 
-2. **Build the project**:
-   ```bash
-   ./amper build
-   ```
+```bash
+GITHUB_TOKEN=your_github_token
+GITHUB_URL=github_api_url_or_wiremock_url
+```
 
-3. **Run the application**:
-   ```bash
-   ./amper run
-   ```
+For local development with Wiremock, `GITHUB_URL` is commonly `http://localhost:42069`.
 
-4. **Create a standalone JAR**:
-   ```bash
-   ./amper package -f executable-jar
-   ```
-   This creates a standalone JAR file in the `build/libs` directory with the classifier "standalone".
+### Build and Run Commands
+
+Use Amper commands from repository root:
+
+```bash
+./amper build
+./amper test
+./amper run
+./amper package -f executable-jar
+```
+
+Tailwind generation is integrated via the repo-local Amper plugin (`tailwind/`). No standalone `tailwind/run.sh` step is used.
 
 ## Testing Information
 
 ### Running Tests
-To run all tests:
+
+Run all tests:
+
 ```bash
 ./amper test
 ```
 
-### Test Structure
-- Tests are located in the `src/test/kotlin` directory
-- The project uses JUnit and Kotlin's test library
-- Ktor's testing framework is used for testing HTTP endpoints
+Run a single test class:
 
-### Creating New Tests
-1. Create a new Kotlin file in the appropriate package under `src/test/kotlin`
-2. Use the `@Test` annotation from `kotlin.test` for test methods
-3. Use assertions from `kotlin.test` such as `assertEquals`, `assertTrue`, etc.
+```bash
+./amper test --include-classes="de.noah_ruben.site.LandingPageTest"
+```
+
+Run a single test method:
+
+```bash
+./amper test --include-test="de.noah_ruben.site.LandingPageTest.landingPage"
+```
 
 ### Testing with Wiremock
+
 The project uses Wiremock to mock external dependencies, particularly the GitHub API.
 
-1. Start the Wiremock server:
+1. Start the Wiremock server from repository root:
+
    ```bash
-   ./wm.sh
+   ./wm/wm.sh
    ```
 
-2. The Wiremock server runs on port 42069 by default
-3. Mock responses are defined in JSON files in the `wm/mappings` directory
+2. Wiremock runs on port `42069` by default.
+3. Mock responses are defined in `wm/mappings`.
 
 ## Additional Development Information
 
 ### Project Structure
-- `src/main/kotlin/de/noah_ruben/` - Main application code
-- `src/main/resources/` - Static resources and configuration files
-- `src/test/kotlin/de/noah_ruben/` - Test code
-- `tailwind/` - Tailwind CSS configuration and processing
-- `wm/` - Wiremock configuration and mappings
 
-### Key Components
-- **Application.kt**: Main application entry point and configuration
-- **WiremockClient.kt**: Client for interacting with the GitHub API (or its Wiremock substitute)
-- **CssClasses.kt**: Constants for CSS class names used throughout the project
+- `src/main/kotlin/de/noah_ruben/` - application code
+- `src/main/resources/` - runtime resources and config
+- `src/test/kotlin/de/noah_ruben/` - test code
+- `tailwind/` - Tailwind source and Amper plugin implementation
+- `wm/` - Wiremock scripts and mappings
+- `docker/` - compose/Tilt orchestration files
 
 ### Code Style
-The project uses the Kotlinter plugin for code style enforcement. Run the following to check and format code:
-```bash
-Use IntelliJ/IDEA formatting and inspections for style checks and formatting.
-```
 
-### Debugging
-- Set the `io.ktor.development` system property to `true` for development mode
-- Logging is configured using Logback in `src/main/resources/logback.xml`
+Formatting and linting are IDE-first:
+
+- Use IntelliJ/IDEA formatting and inspections.
+- Keep consistency with `.editorconfig` and existing code patterns.
 
 ### CSS and Static Resources
-- Tailwind CSS is used for styling, and the generated CSS is included in the `src/main/resources/static/css` directory
 
-!!! NEVER EVER EDIT THE GENERATED CSS FILES DIRECTLY !!!
+Tailwind CSS is used for styling.
 
-1. This means do not edit [style.css](../src/main/resources/static/style.css)!
-2. Instead, modify the CSS files in [style.css](../tailwind/style.css) as needed.
-3. Always regenerate the CSS using the Tailwind script after making changes to the Tailwind configuration.
+- Edit source styles in `tailwind/style.css`.
+- Generated CSS is contributed as build resources by the Tailwind Amper plugin.
+- Do not commit or manually edit generated CSS artifacts under `src/main/resources/static/`.

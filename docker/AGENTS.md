@@ -19,15 +19,25 @@ Current files in this folder:
 
 - `compose.yaml`
 - `wm.env`
+- `Tiltfile`
 
 `compose.yaml` defines:
 
-- `website` service built from `context: ..` and `dockerfile: Dockerfile`
+- `website` service using image `website:latest` (no compose-side build)
+- `website` service behind profile `website`
+- `website` depends on healthy `wiremock`
 - host port mapping `42081:42081`
 - runtime env file `${ENV_FILE:-.env}`
-- optional `wiremock` service behind profile `wm`
+- `wiremock` service (no profile gate) with healthcheck
 - wiremock mapping volume `../wm:/home/wiremock`
 - wiremock port mapping `8080:8080`
+
+`Tiltfile` defines:
+
+- local image build resource: `website-image-build`
+- manual runtime resource: `website`
+- auto-managed mock resource: `wiremock`
+- auto-reload helper: `wiremock-reload`
 
 ## Docker Stack
 
@@ -36,7 +46,7 @@ Current files in this folder:
 ## 6) Configuration Notes
 
 - `website` reads env file from `${ENV_FILE:-.env}`.
-- When using a custom env file, users can start manually with:
+- For direct Docker Compose usage with custom env file, users can start manually with:
   - `ENV_FILE=wm.env docker compose -f compose.yaml up`
 - Agents should not execute startup commands unless explicitly asked.
 - Keep env values out of logs and commit history.
