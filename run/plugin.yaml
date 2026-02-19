@@ -1,0 +1,6 @@
+tasks:
+  runLocal:
+    action: !de.noah_ruben.build.run.runLocal
+      moduleRootDir: ${module.rootDir}
+      githubToken: "..."
+      githubUrl: "http://localhost:42069"
