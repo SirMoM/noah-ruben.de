@@ -7,6 +7,8 @@
 
 @plugin "@catppuccin/tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
     --color-rosewater: #f5e0dc;
     --color-flamingo: #f2cdcd;
@@ -41,7 +43,11 @@
     html {
         font-family: 'Cascadia Code', monospace;
         scroll-behavior: smooth;
-        @apply flex flex-col dark:bg-base p-6 dark:text-text;
+        @apply flex flex-col bg-slate-100 p-6 text-slate-900;
+    }
+
+    html.dark {
+        @apply bg-base text-text;
     }
 }
 
@@ -267,5 +273,33 @@
 
     .cli-input-field {
         @apply pl-4 flex-grow bg-transparent border-none outline-none focus:ring-0;
+    }
+
+    .toggle-button {
+        @apply fixed right-4 top-4 z-50 inline-flex items-center gap-1 rounded-full border border-slate-400 bg-slate-200 p-1 text-sm font-semibold text-slate-900 dark:border-surface1 dark:bg-surface0 dark:text-text;
+    }
+
+    .toggle-button-icon {
+        @apply inline-flex h-8 w-8 items-center justify-center rounded-full transition-all;
+    }
+
+    .toggle-button-icon svg {
+        @apply h-5 w-5;
+    }
+
+    .toggle-button-icon-moon {
+        @apply text-overlay0 opacity-70;
+    }
+
+    .toggle-button-icon-sun {
+        @apply text-overlay0 opacity-70;
+    }
+
+    .toggle-button[data-theme="light"] .toggle-button-icon-sun {
+        @apply bg-slate-100 text-yellow opacity-100;
+    }
+
+    .toggle-button[data-theme="dark"] .toggle-button-icon-moon {
+        @apply bg-surface1 text-blue opacity-100;
     }
 }

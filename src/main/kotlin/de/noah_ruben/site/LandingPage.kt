@@ -30,7 +30,6 @@ fun Application.landingPage() {
 }
 
 fun BODY.indexPageContent() {
-    classes = setOf("border-pink-500", "border-2")
     div {
         +" >> noahruben"
     }
@@ -127,6 +126,8 @@ fun HTML.landingPageHtml() {
     }
     defaultBody {
         id = "body"
+        classes = setOf("border-pink-500", "border-2")
+        themeToggleButton()
         indexPageContent()
     }
 }
@@ -144,6 +145,8 @@ fun HTML.landingpage() {
     }
     defaultBody {
         id = "body"
+        classes = setOf("border-pink-500", "border-2")
+        themeToggleButton()
         div {
             +" >> noahruben"
         }

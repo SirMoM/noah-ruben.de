@@ -44,6 +44,7 @@ import de.noah_ruben.misc.invertedFromString
 import de.noah_ruben.site.commandLineEmulation
 import de.noah_ruben.site.defaultBody
 import de.noah_ruben.site.defaultHeader
+import de.noah_ruben.site.themeToggleButton
 import kotlinx.html.*
 
 fun HTML.projectsPage() {
@@ -51,6 +52,7 @@ fun HTML.projectsPage() {
         defaultHeader()
     }
     defaultBody {
+        themeToggleButton()
         projectsPageBody()
     }
 }

@@ -1,12 +1,19 @@
 package de.noah_ruben.site
 
+import de.noah_ruben.misc.CssClasses.Form.TOGGLE_BUTTON
+import de.noah_ruben.misc.CssClasses.Form.TOGGLE_BUTTON_ICON
 import kotlinx.html.DIV
+import kotlinx.html.FlowContent
 import kotlinx.html.HEAD
 import kotlinx.html.a
+import kotlinx.html.button
+import kotlinx.html.id
 import kotlinx.html.link
 import kotlinx.html.meta
 import kotlinx.html.script
+import kotlinx.html.span
 import kotlinx.html.title
+import kotlinx.html.unsafe
 
 fun DIV.selfLink(_url: String, text: String) {
     a(href = _url) {
@@ -39,10 +46,73 @@ fun HEAD.defaultHeader() {
     meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
     title("Noah Ruben")
     script {
+        unsafe {
+            +"""
+                (function () {
+                  function applyTheme() {
+                    var isDark = localStorage.theme === "dark" ||
+                      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
+                    document.documentElement.classList.toggle("dark", isDark);
+
+                    var button = document.getElementById("theme-toggle");
+                    if (!button) return;
+                    button.setAttribute("aria-pressed", String(isDark));
+                    button.setAttribute("data-theme", isDark ? "dark" : "light");
+                  }
+
+                  applyTheme();
+                  document.addEventListener("DOMContentLoaded", applyTheme);
+
+                  document.addEventListener("click", function (event) {
+                    var target = event.target;
+                    if (!(target instanceof Element)) return;
+                    if (!target.closest("#theme-toggle")) return;
+
+                    if (document.documentElement.classList.contains("dark")) {
+                      localStorage.theme = "light";
+                    } else {
+                      localStorage.theme = "dark";
+                    }
+
+                    applyTheme();
+                  });
+                })();
+            """.trimIndent()
+        }
+    }
+    script {
         src = "https://unpkg.com/htmx.org@1.9.11"
         integrity = "sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0"
         attributes["crossorigin"] = "anonymous"
     }
     // script(src = "https://cdn.tailwindcss.com") {}
     link(rel = "stylesheet", href = "https://fonts.cdnfonts.com/css/cascadia-code")
+}
+
+fun FlowContent.themeToggleButton() {
+    button(classes = TOGGLE_BUTTON) {
+        id = "theme-toggle"
+        attributes["type"] = "button"
+        attributes["aria-label"] = "Toggle dark mode"
+        attributes["aria-pressed"] = "false"
+        attributes["data-theme"] = "light"
+        span(classes = "$TOGGLE_BUTTON_ICON toggle-button-icon-moon") {
+            unsafe {
+                +"""
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <use href="/resources/icons/theme-icons.svg#moon"></use>
+                    </svg>
+                """.trimIndent()
+            }
+        }
+        span(classes = "$TOGGLE_BUTTON_ICON toggle-button-icon-sun") {
+            unsafe {
+                +"""
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <use href="/resources/icons/theme-icons.svg#sun"></use>
+                    </svg>
+                """.trimIndent()
+            }
+        }
+    }
 }

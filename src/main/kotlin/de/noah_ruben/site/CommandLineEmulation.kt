@@ -52,6 +52,7 @@ suspend fun handleCommand(call: RoutingCall) {
                     defaultHeader()
                 }
                 body {
+                    themeToggleButton()
                     projectsPageBody()
                 }
             }
