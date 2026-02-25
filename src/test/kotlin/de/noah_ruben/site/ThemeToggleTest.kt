@@ -27,16 +27,17 @@ class ThemeToggleTest {
             assertTrue(body.contains("<use href=\"/resources/icons/theme-icons.svg#sun\""))
             assertTrue(body.contains("aria-pressed=\"false\""))
             assertTrue(body.contains("aria-label=\"Toggle dark mode\""))
+            assertTrue(body.contains("data-[theme=dark]:text-blue"))
+            assertTrue(body.contains("data-[theme=light]:text-yellow"))
+            assertTrue(body.contains("querySelectorAll(\"span\")"))
         }
     }
 
     @Test
-    fun themeToggleCssUsesClassStrategyAndCorrectHighlightSelectors() = testApplicationWithRepositoryFake {
+    fun themeToggleCssUsesClassStrategy() = testApplicationWithRepositoryFake {
         val css = client.get("/resources/style.css").bodyAsText()
 
         assertFalse(css.contains("prefers-color-scheme: dark"))
         assertTrue(css.contains("html.dark"))
-        assertTrue(css.contains(".toggle-button[data-theme=\"light\"] .toggle-button-icon-sun"))
-        assertTrue(css.contains(".toggle-button[data-theme=\"dark\"] .toggle-button-icon-moon"))
     }
 }

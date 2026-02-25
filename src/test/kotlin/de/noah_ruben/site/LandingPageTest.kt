@@ -2,6 +2,7 @@ package de.noah_ruben.site
 
 import de.noah_ruben.testApplicationWithRepositoryFake
 import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import org.junit.Assert
 import kotlin.test.Test
@@ -13,5 +14,17 @@ class LandingPageTest {
         client.get("/").apply {
             Assert.assertEquals(HttpStatusCode.OK, status)
         }
+    }
+
+    @Test
+    fun landingPageIncludesColorGridTileSizing() = testApplicationWithRepositoryFake {
+        val response = client.get("/")
+        Assert.assertEquals(HttpStatusCode.OK, response.status)
+
+        val html = response.bodyAsText()
+        Assert.assertTrue(html.contains("grid-cols-8"))
+        Assert.assertTrue(html.contains("h-10"))
+        Assert.assertTrue(html.contains("w-10"))
+        Assert.assertTrue(html.contains("border-crust"))
     }
 }

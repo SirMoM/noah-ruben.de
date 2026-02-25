@@ -2,6 +2,7 @@ package de.noah_ruben.site
 
 import de.noah_ruben.testApplicationWithRepositoryFake
 import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import org.junit.Assert
 import kotlin.test.Test
@@ -13,5 +14,17 @@ class ProjectPageRoutingAndRenderingTest {
         client.get("/projects").apply {
             Assert.assertEquals(HttpStatusCode.OK, status)
         }
+    }
+
+    @Test
+    fun projectsPageIncludesLightAndDarkClassVariants() = testApplicationWithRepositoryFake {
+        val response = client.get("/projects")
+        Assert.assertEquals(HttpStatusCode.OK, response.status)
+
+        val body = response.bodyAsText()
+        Assert.assertTrue(body.contains("bg-rosewater"))
+        Assert.assertTrue(body.contains("dark:bg-surface0"))
+        Assert.assertTrue(body.contains("text-crust"))
+        Assert.assertTrue(body.contains("dark:text-text"))
     }
 }
