@@ -13,7 +13,6 @@ local_resource(
 
 dc_resource(
     'website',
-    trigger_mode=TRIGGER_MODE_MANUAL,
     auto_init=False,
     resource_deps=['website-image-build', 'wiremock-website'],
     labels=['website'],

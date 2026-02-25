@@ -236,3 +236,6 @@ bin/
 
 # Ignore Node modules
 tailwind/node_modules/
+
+# Local git worktrees
+.worktrees/
