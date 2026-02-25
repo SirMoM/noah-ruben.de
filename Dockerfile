@@ -1,16 +1,22 @@
 FROM node:20-bookworm-slim AS node
 
-FROM container-registry.oracle.com/graalvm/jdk:21 AS build
+FROM container-registry.oracle.com/graalvm/jdk:21 AS build-base
 
 WORKDIR /workspace
 
-
 COPY --from=node /usr/local/ /usr/local/
+
+COPY amper ./amper
+
+RUN chmod +x ./amper
+
+RUN --mount=type=cache,id=noah-ruben-amper,target=/root/.cache/JetBrains/Amper \
+    ./amper --version
+
+FROM build-base AS compile
 
 # Copy the source code to the Docker image.
 COPY . .
-
-RUN chmod +x ./amper
 
 RUN node --version && npm --version
 
@@ -25,7 +31,7 @@ FROM container-registry.oracle.com/graalvm/jdk:21 AS website
 
 WORKDIR /app
 
-COPY --from=build /workspace/website.jar ./website.jar
+COPY --from=compile /workspace/website.jar ./website.jar
 
 RUN jar xf ./website.jar && rm ./website.jar
 
