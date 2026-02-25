@@ -28,11 +28,13 @@ object CssClasses {
         const val PROFILE_PICTURE = LandingClasses.PROFILE_PICTURE
         const val PROFILE_DETAILS_CONTAINER = LandingClasses.PROFILE_DETAILS_CONTAINER
         const val COLOR_GRID = LandingClasses.COLOR_GRID
+
+        // Catppuccin bg-ctp-* classes — resolve to Latte in light mode, Mocha in dark mode via the plugin
         val COLORS = listOf(
-            "bg-ctp-rosewater", "bg-ctp-red", "bg-ctp-green", "bg-ctp-mauve",
-            "bg-ctp-lavender", "bg-ctp-blue", "bg-ctp-sky", "bg-ctp-teal",
-            "bg-ctp-sapphire", "bg-ctp-green", "bg-ctp-peach", "bg-ctp-yellow",
-            "bg-ctp-flamingo", "bg-ctp-maroon", "bg-ctp-overlay1", "bg-ctp-crust",
+            "bg-ctp-rosewater", "bg-ctp-flamingo", "bg-ctp-pink", "bg-ctp-mauve",
+            "bg-ctp-red", "bg-ctp-maroon", "bg-ctp-peach", "bg-ctp-yellow",
+            "bg-ctp-green", "bg-ctp-teal", "bg-ctp-sky", "bg-ctp-sapphire",
+            "bg-ctp-blue", "bg-ctp-lavender", "bg-ctp-overlay0", "bg-ctp-crust",
         )
         const val ABOUT_ME = LandingClasses.ABOUT_ME
     }

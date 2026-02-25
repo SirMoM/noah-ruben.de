@@ -1,6 +1,6 @@
 package de.noah_ruben.misc
 
-fun borderGray(scale: String) = "border-gray-$scale"
+fun borderGray(scale: String) = "border-black-$scale"
 
 @OptIn(ExperimentalStdlibApi::class)
 fun String.colorFromString(): String = this.hashCode().toHexString(format = HexFormat.UpperCase).removeRange(0, 2)

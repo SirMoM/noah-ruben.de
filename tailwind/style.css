@@ -1,10 +1,9 @@
 @import "tailwindcss";
+@import "@catppuccin/tailwindcss/mocha.css";
 
 @tailwind utilities;
 
 @source "../src/main/kotlin/**/*.kt";
-
-@import "@catppuccin/tailwindcss/mocha.css";
 
 @layer base {
     html {

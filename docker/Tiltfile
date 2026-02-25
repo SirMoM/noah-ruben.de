@@ -3,18 +3,17 @@ os.putenv('COMPOSE_PROFILES', 'website')
 
 docker_compose('compose.yaml', env_file='wm.env')
 
-local_resource(
-    'website-image-build',
-    'docker build -t website:latest -f ../Dockerfile ..',
+custom_build(
+    'website:latest',
+    'docker build -t $EXPECTED_REF -f Dockerfile .',
     deps=['../Dockerfile', '../module.yaml', '../src', '../tailwind', '../amper', '../amper.bat'],
-    trigger_mode=TRIGGER_MODE_AUTO,
-    labels=['website'],
+    disable_push=True,
+    dir='..',
 )
 
 dc_resource(
     'website',
-    trigger_mode=TRIGGER_MODE_AUTO,
-    resource_deps=['website-image-build', 'wiremock-website'],
+    resource_deps=['wiremock-website'],
     labels=['website'],
 )
 
@@ -26,7 +25,7 @@ dc_resource(
 
 local_resource(
     'wiremock-reload',
-    'docker compose -f compose.yaml --env-file wm.env restart wiremock || docker compose -f compose.yaml --env-file wm.env up -d wiremock',
+    'docker compose -f compose.yaml --env-file wm.env restart wiremock-website',
     deps=['../wm'],
     trigger_mode=TRIGGER_MODE_AUTO,
     labels=['mock'],

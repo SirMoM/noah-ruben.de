@@ -42,8 +42,11 @@ Run from `/Users/i13az81/dev/uni/noah-ruben.de`.
 
 ### Build and Run
 
-- Run app locally:
-  - `./amper run`
+- **NEVER use `./amper run`** — the site is served by Tilt. Use `tilt` commands to manage runtime.
+- **NEVER use `curl` to check app health** — use Playwright or `tilt get uiresources`.
+- **NEVER run `docker build`, `docker compose up`, `docker compose --force-recreate`, or any variant** — Tilt owns the full build/deploy lifecycle. Do not touch Docker directly to restart or rebuild services.
+- Tilt runs on port 6969: `tilt get uiresources -o name --port 6969`
+- After code changes, Tilt auto-rebuilds. Verify with: `tilt get uiresources -o json --port 6969 | jq '.items[] | {name:.metadata.name, status:.status.runtimeStatus}'`
 - Full build:
   - `./amper build`
 - Build standalone jar task:
@@ -167,7 +170,25 @@ Before claiming completion on Kotlin changes:
 - apply IDE formatting if formatting drift appears,
 - verify no unrelated file changes are accidentally included.
 
-## 9) Cursor and Copilot Rules
+## 9) Runtime Verification with Tilt
+
+After any code or config change, verify the runtime is healthy using the `tilt-health-debug` skill.
+
+**When to invoke the skill:**
+- After any Kotlin, YAML, or Tailwind change that has been saved and picked up by Tilt.
+- When a Tilt resource shows a non-`ok` `runtimeStatus`.
+- When the user asks whether the site is healthy or running correctly.
+
+**How to invoke:** use the `Skill` tool with `name: tilt-health-debug`.
+
+**Quick manual check (no skill):**
+```
+tilt get uiresources -o json --port 6969 | jq '.items[] | {name:.metadata.name, status:.status.runtimeStatus}'
+```
+
+All resources must show `"ok"` before claiming work is complete.
+
+## 10) Cursor and Copilot Rules
 
 Checked rule locations requested by user:
 

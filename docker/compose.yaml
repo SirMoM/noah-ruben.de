@@ -1,3 +1,4 @@
+name: "noah-ruben.de"
 services:
   website:
     profiles: [website]

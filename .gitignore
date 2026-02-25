@@ -239,3 +239,5 @@ tailwind/node_modules/
 
 # Local git worktrees
 .worktrees/
+
+docs/.obsidian/

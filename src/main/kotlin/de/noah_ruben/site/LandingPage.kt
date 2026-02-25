@@ -78,9 +78,10 @@ fun BODY.indexPageContent() {
                 }
             }
             // todo click on color rect to make it "main" accsent color of page!
-            div(classes = COLOR_GRID) {
+            // "latte" class pins Catppuccin CSS variables to Latte values regardless of dark/light mode
+            div(classes = "latte $COLOR_GRID") {
                 COLORS.forEach { colorClass ->
-                    div(classes = colorClass)
+                    div(classes = colorClass) {}
                 }
             }
         }
