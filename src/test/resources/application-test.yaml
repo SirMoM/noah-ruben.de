@@ -2,6 +2,6 @@ ktor:
     deployment:
         port: 42080
 github:
-    mode: fake
+    mode: static
     token: "FAKE"
     url: "localhost:42069"

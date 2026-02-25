@@ -4,7 +4,9 @@ import de.noah_ruben.config.configureHTTP
 import de.noah_ruben.config.configureMonitoring
 import de.noah_ruben.config.exceptionHandling
 import de.noah_ruben.data.Cache
+import de.noah_ruben.data.GitHubClient
 import de.noah_ruben.data.RepositoryClient
+import de.noah_ruben.data.StaticRepositoryClient
 import de.noah_ruben.data.WiremockClient
 import de.noah_ruben.site.commandLineEmulation
 import de.noah_ruben.site.defaultBody
@@ -26,7 +28,7 @@ import kotlinx.serialization.json.Json
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-fun Application.module(repositoryClient: RepositoryClient = WiremockClient(url = getGithubURL())) {
+fun Application.module(repositoryClient: RepositoryClient = createRepositoryClient()) {
     Cache.githubClient = repositoryClient
     Cache.initialize()
 
@@ -90,4 +92,15 @@ private fun Application.getToken(): String {
 private fun Application.getGithubURL(): String {
     val url = environment.config.propertyOrNull("github.url") ?: throw IllegalStateException("Did not provide github URL as GITHUB_URL in the environment.")
     return url.getString().trim()
+}
+
+private fun Application.createRepositoryClient(): RepositoryClient {
+    val mode = environment.config.propertyOrNull("github.mode")?.getString()?.trim()
+        ?: throw IllegalStateException("github.mode is not configured. Set GITHUB_MODE to 'github', 'wiremock', or 'static'.")
+    return when (mode) {
+        "github" -> GitHubClient(token = getToken())
+        "wiremock" -> WiremockClient(url = getGithubURL())
+        "static" -> StaticRepositoryClient()
+        else -> throw IllegalStateException("Unknown github.mode '$mode'. Valid values: github, wiremock, static.")
+    }
 }
