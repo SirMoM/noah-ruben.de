@@ -13,11 +13,10 @@ import de.noah_ruben.misc.CssClasses.Form.FORM_CHECKBOX
 import de.noah_ruben.misc.CssClasses.Form.FORM_CHECKBOX_GROUP
 import de.noah_ruben.misc.CssClasses.Form.FORM_GROUP
 import de.noah_ruben.misc.CssClasses.Form.FORM_INPUT_BASE
-import de.noah_ruben.misc.CssClasses.Form.FORM_INPUT_TEXT
+import de.noah_ruben.misc.CssClasses.Form.FORM_INPUT_TEXT_WITH_MARGIN
 import de.noah_ruben.misc.CssClasses.Form.FORM_LABEL
 import de.noah_ruben.misc.CssClasses.Form.LOADING_SPINNER
 import de.noah_ruben.misc.CssClasses.Form.SUBMIT_BUTTON
-import de.noah_ruben.misc.CssClasses.MB_4
 import de.noah_ruben.misc.CssClasses.PAGE_TITLE
 import de.noah_ruben.misc.CssClasses.ProjectPage.META_DETAIL_LABEL
 import de.noah_ruben.misc.CssClasses.ProjectPage.META_DETAIL_ROW
@@ -32,6 +31,10 @@ import de.noah_ruben.misc.CssClasses.ProjectPage.RESET_BUTTON
 import de.noah_ruben.misc.CssClasses.ProjectPage.STAR_ICON
 import de.noah_ruben.misc.CssClasses.ProjectPage.TAGS_LIST
 import de.noah_ruben.misc.CssClasses.ProjectPage.TAG_ITEM
+import de.noah_ruben.misc.CssClasses.ProjectPage.TOPICS_LIST
+import de.noah_ruben.misc.CssClasses.ProjectPage.TOPIC_TAG
+import de.noah_ruben.misc.CssClasses.Shared.HTMX_INDICATOR
+import de.noah_ruben.misc.CssClasses.Shared.HTMX_INDICATOR_INLINE
 import de.noah_ruben.misc.colorFromString
 import de.noah_ruben.misc.hxInclude
 import de.noah_ruben.misc.hxIndicator
@@ -123,7 +126,7 @@ fun FlowContent.projectTile(project: Project) {
                             strong(
                                 classes = META_DETAIL_LABEL,
                             ) { +"Topics: " }
-                            div(classes = "topics-list") {
+                            div(classes = TOPICS_LIST) {
                                 topics.forEach { topic ->
                                     topicTag(topic)
                                 }
@@ -178,7 +181,7 @@ fun FlowContent.languageTag(tag: String) {
 
 fun FlowContent.topicTag(topic: String) {
     span(
-        classes = "topic-tag",
+        classes = TOPIC_TAG,
     ) {
         style = "color: #${topic.colorFromString()}; border-bottom: 1px solid #${topic.colorFromString()}"
         hxPost(SEARCH_PATH)
@@ -195,7 +198,7 @@ fun FlowContent.topicTag(topic: String) {
 
 fun FlowContent.mainSearchBar(searchParameters: SearchParameters = SearchParameters.defaults()) {
     div {
-        span(classes = "htmx-indicator") {
+        span(classes = HTMX_INDICATOR) {
             id = "spinner"
             img(src = "/resources/bars.svg", alt = "Searching...")
             +"Searching..."
@@ -216,7 +219,7 @@ fun FlowContent.mainSearchBar(searchParameters: SearchParameters = SearchParamet
                 input(
                     InputType.text,
                     name = QP_QUERY,
-                    classes = "$FORM_INPUT_BASE $FORM_INPUT_TEXT $MB_4",
+                    classes = FORM_INPUT_TEXT_WITH_MARGIN,
                 ) {
                     autoFocus = true
                     id = "mainSearch"
@@ -316,7 +319,7 @@ fun FlowContent.mainSearchBar(searchParameters: SearchParameters = SearchParamet
                 ) {
                     +"Search "
                     span(
-                        classes = "htmx-indicator ml-2",
+                        classes = HTMX_INDICATOR_INLINE,
                     ) {
                         img(src = "/resources/bars.svg", alt = "Searching...")
                     }

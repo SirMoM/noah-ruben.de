@@ -1,7 +1,8 @@
 package de.noah_ruben.site
 
 import de.noah_ruben.misc.CssClasses.Form.TOGGLE_BUTTON
-import de.noah_ruben.misc.CssClasses.Form.TOGGLE_BUTTON_ICON
+import de.noah_ruben.misc.CssClasses.Form.TOGGLE_BUTTON_ICON_MOON_FULL
+import de.noah_ruben.misc.CssClasses.Form.TOGGLE_BUTTON_ICON_SUN_FULL
 import kotlinx.html.DIV
 import kotlinx.html.FlowContent
 import kotlinx.html.HEAD
@@ -56,8 +57,12 @@ fun HEAD.defaultHeader() {
 
                     var button = document.getElementById("theme-toggle");
                     if (!button) return;
+                    var theme = isDark ? "dark" : "light";
                     button.setAttribute("aria-pressed", String(isDark));
-                    button.setAttribute("data-theme", isDark ? "dark" : "light");
+                    button.setAttribute("data-theme", theme);
+                    button.querySelectorAll("span").forEach(function (icon) {
+                      icon.setAttribute("data-theme", theme);
+                    });
                   }
 
                   applyTheme();
@@ -96,7 +101,7 @@ fun FlowContent.themeToggleButton() {
         attributes["aria-label"] = "Toggle dark mode"
         attributes["aria-pressed"] = "false"
         attributes["data-theme"] = "light"
-        span(classes = "$TOGGLE_BUTTON_ICON toggle-button-icon-moon") {
+        span(classes = TOGGLE_BUTTON_ICON_MOON_FULL) {
             unsafe {
                 +"""
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -105,7 +110,7 @@ fun FlowContent.themeToggleButton() {
                 """.trimIndent()
             }
         }
-        span(classes = "$TOGGLE_BUTTON_ICON toggle-button-icon-sun") {
+        span(classes = TOGGLE_BUTTON_ICON_SUN_FULL) {
             unsafe {
                 +"""
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

@@ -3,6 +3,7 @@ package de.noah_ruben.site.projects
 import de.noah_ruben.data.Cache
 import de.noah_ruben.data.model.Project
 import de.noah_ruben.misc.CssClasses
+import de.noah_ruben.misc.CssClasses.Shared.ERROR_MESSAGE_BOX
 import de.noah_ruben.site.projects.OrderBy.Date
 import de.noah_ruben.site.projects.OrderBy.Popularity
 import de.noah_ruben.site.projects.OrderBy.Relevance
@@ -118,7 +119,7 @@ fun Application.projectsPageRouting() {
                 call.respondHtml {
                     body {
                         div(
-                            classes = "text-red-500 font-bold p-4 border border-red-500 rounded mb-4",
+                            classes = ERROR_MESSAGE_BOX,
                         ) {
                             +"Error: Missing required search parameter (${e.parameterName}). Please try again."
                             br()
@@ -132,7 +133,7 @@ fun Application.projectsPageRouting() {
                 call.respondHtml {
                     body {
                         div(
-                            classes = "text-red-500 font-bold p-4 border border-red-500 rounded mb-4",
+                            classes = ERROR_MESSAGE_BOX,
                         ) {
                             +"Error: Invalid value for a search parameter (e.g., Order By). Please try again."
                             br()
@@ -146,7 +147,7 @@ fun Application.projectsPageRouting() {
                 call.respondHtml {
                     body {
                         div(
-                            classes = "text-red-500 font-bold p-4 border border-red-500 rounded mb-4",
+                            classes = ERROR_MESSAGE_BOX,
                         ) {
                             +"An unexpected error occurred. Please try again later."
                         }

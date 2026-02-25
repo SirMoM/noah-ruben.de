@@ -1,6 +1,8 @@
 package de.noah_ruben.site
 
 import de.noah_ruben.misc.Commands
+import de.noah_ruben.misc.CssClasses.Shared.CLI_INPUT_FIELD
+import de.noah_ruben.misc.CssClasses.Shared.CLI_WRAPPER
 import de.noah_ruben.misc.hxPost
 import de.noah_ruben.misc.hxSwap
 import de.noah_ruben.misc.hxTarget
@@ -90,10 +92,10 @@ suspend fun handleCommand(call: RoutingCall) {
 }
 
 fun FlowContent.commandLineEmulation() {
-    div(classes = "cli-wrapper") {
+    div(classes = CLI_WRAPPER) {
         id = "cle"
         +">> "
-        input(type = InputType.text, name = "command", classes = "cli-input-field") {
+        input(type = InputType.text, name = "command", classes = CLI_INPUT_FIELD) {
             placeholder = "noahruben projects"
             autoComplete = false
             autoFocus = true

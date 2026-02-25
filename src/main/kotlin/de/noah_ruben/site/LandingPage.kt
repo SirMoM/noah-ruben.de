@@ -7,6 +7,9 @@ import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_CONTAINER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_DETAILS_CONTAINER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE
 import de.noah_ruben.misc.CssClasses.MB_4
+import de.noah_ruben.misc.CssClasses.PAGE_BASE
+import de.noah_ruben.misc.CssClasses.Shared.HELP_INDENT
+import de.noah_ruben.misc.CssClasses.Shared.SUBPAGE_INDENT
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.html.respondHtml
@@ -33,7 +36,7 @@ fun BODY.indexPageContent() {
     div {
         +" >> noahruben"
     }
-    div(classes = "$PROFILE_CONTAINER border-white-500 border-2") {
+    div(classes = PROFILE_CONTAINER) {
         img(
             src = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Van_Gogh_self-portrait.svg/1508px-Van_Gogh_self-portrait.svg.png",
             classes = PROFILE_PICTURE,
@@ -83,7 +86,7 @@ fun BODY.indexPageContent() {
         }
     }
 
-    div(classes = "$ABOUT_ME border-white-500 border-2") {
+    div(classes = ABOUT_ME) {
         h3 {
             +"System summary"
         }
@@ -101,13 +104,13 @@ fun BODY.indexPageContent() {
     div {
         +" >> noahruben help"
     }
-    div(classes = "pl-6") {
+    div(classes = HELP_INDENT) {
         p { +"Usage: noahruben <subpage>" }
         p { +"noahruben is the personal website of Noah Ruben" }
         p { +"It displays information about " }
         p { +"TODO" }
         h1 { +"SUB-PAGES" }
-        div(classes = "pl-12") {
+        div(classes = SUBPAGE_INDENT) {
             a(href = "/projects") { +" projects" }
             br()
             a(href = "https://github.com/SirMoM") { +" github" }
@@ -126,7 +129,7 @@ fun HTML.landingPageHtml() {
     }
     defaultBody {
         id = "body"
-        classes = setOf("border-pink-500", "border-2")
+        classes = setOf(PAGE_BASE)
         themeToggleButton()
         indexPageContent()
     }
@@ -145,7 +148,7 @@ fun HTML.landingpage() {
     }
     defaultBody {
         id = "body"
-        classes = setOf("border-pink-500", "border-2")
+        classes = setOf(PAGE_BASE)
         themeToggleButton()
         div {
             +" >> noahruben"
