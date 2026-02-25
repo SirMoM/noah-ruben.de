@@ -25,6 +25,6 @@ class LandingPageTest {
         Assert.assertTrue(html.contains("grid-cols-8"))
         Assert.assertTrue(html.contains("h-10"))
         Assert.assertTrue(html.contains("w-10"))
-        Assert.assertTrue(html.contains("border-crust"))
+        Assert.assertTrue(html.contains("border-ctp-crust"))
     }
 }

@@ -4,6 +4,6 @@
     "tailwindcss": "^4.1.10"
   },
   "devDependencies": {
-    "@catppuccin/tailwindcss": "^0.1.6"
+    "@catppuccin/tailwindcss": "^1.0.0"
   }
 }

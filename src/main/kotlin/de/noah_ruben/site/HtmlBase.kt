@@ -51,17 +51,19 @@ fun HEAD.defaultHeader() {
             +"""
                 (function () {
                   function applyTheme() {
-                    var isDark = localStorage.theme === "dark" ||
-                      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
-                    document.documentElement.classList.toggle("dark", isDark);
+                    var savedTheme = localStorage.theme;
+                    var prefersDark = !("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches;
+                    var theme = savedTheme || (prefersDark ? "mocha" : "frappe");
+                    document.documentElement.classList.remove("frappe", "mocha");
+                    document.documentElement.classList.add(theme);
 
                     var button = document.getElementById("theme-toggle");
                     if (!button) return;
-                    var theme = isDark ? "dark" : "light";
+                    var isDark = theme === "mocha";
                     button.setAttribute("aria-pressed", String(isDark));
-                    button.setAttribute("data-theme", theme);
+                    button.setAttribute("data-theme", isDark ? "dark" : "light");
                     button.querySelectorAll("span").forEach(function (icon) {
-                      icon.setAttribute("data-theme", theme);
+                      icon.setAttribute("data-theme", isDark ? "dark" : "light");
                     });
                   }
 
@@ -73,11 +75,8 @@ fun HEAD.defaultHeader() {
                     if (!(target instanceof Element)) return;
                     if (!target.closest("#theme-toggle")) return;
 
-                    if (document.documentElement.classList.contains("dark")) {
-                      localStorage.theme = "light";
-                    } else {
-                      localStorage.theme = "dark";
-                    }
+                    var isDark = document.documentElement.classList.contains("mocha");
+                    localStorage.theme = isDark ? "frappe" : "mocha";
 
                     applyTheme();
                   });

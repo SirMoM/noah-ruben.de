@@ -22,13 +22,15 @@ class ThemeToggleTest {
             val body = response.bodyAsText()
             assertTrue(body.contains("id=\"theme-toggle\""))
             assertTrue(body.contains("localStorage.theme"))
-            assertTrue(body.contains("classList.toggle(\"dark\""))
+            assertTrue(body.contains("classList.remove(\"frappe\", \"mocha\")"))
+            assertTrue(body.contains("classList.add(theme)"))
             assertTrue(body.contains("<use href=\"/resources/icons/theme-icons.svg#moon\""))
             assertTrue(body.contains("<use href=\"/resources/icons/theme-icons.svg#sun\""))
             assertTrue(body.contains("aria-pressed=\"false\""))
             assertTrue(body.contains("aria-label=\"Toggle dark mode\""))
-            assertTrue(body.contains("data-[theme=dark]:text-blue"))
-            assertTrue(body.contains("data-[theme=light]:text-yellow"))
+            assertTrue(body.contains("data-[theme=dark]:text-ctp-blue"))
+            assertTrue(body.contains("data-[theme=light]:text-ctp-yellow"))
+            assertTrue(body.contains("data-[theme=light]:bg-ctp-surface1"))
             assertTrue(body.contains("querySelectorAll(\"span\")"))
         }
     }
@@ -37,7 +39,7 @@ class ThemeToggleTest {
     fun themeToggleCssUsesClassStrategy() = testApplicationWithRepositoryFake {
         val css = client.get("/resources/style.css").bodyAsText()
 
-        assertFalse(css.contains("prefers-color-scheme: dark"))
-        assertTrue(css.contains("html.dark"))
+        assertTrue(css.contains(".mocha"))
+        assertTrue(css.contains(".frappe"))
     }
 }

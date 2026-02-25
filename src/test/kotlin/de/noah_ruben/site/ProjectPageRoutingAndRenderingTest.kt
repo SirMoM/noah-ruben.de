@@ -22,9 +22,9 @@ class ProjectPageRoutingAndRenderingTest {
         Assert.assertEquals(HttpStatusCode.OK, response.status)
 
         val body = response.bodyAsText()
-        Assert.assertTrue(body.contains("bg-rosewater"))
-        Assert.assertTrue(body.contains("dark:bg-surface0"))
-        Assert.assertTrue(body.contains("text-crust"))
-        Assert.assertTrue(body.contains("dark:text-text"))
+        Assert.assertTrue(body.contains("bg-ctp-surface0"))
+        Assert.assertTrue(body.contains("text-ctp-text"))
+        Assert.assertTrue(body.contains("border-ctp-overlay1"))
+        Assert.assertTrue(body.contains("text-ctp-blue"))
     }
 }

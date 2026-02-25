@@ -29,10 +29,10 @@ object CssClasses {
         const val PROFILE_DETAILS_CONTAINER = LandingClasses.PROFILE_DETAILS_CONTAINER
         const val COLOR_GRID = LandingClasses.COLOR_GRID
         val COLORS = listOf(
-            "bg-rosewater", "bg-red", "bg-green", "bg-mauve",
-            "bg-lavender", "bg-blue", "bg-sky", "bg-teal",
-            "bg-sapphire", "bg-green", "bg-peach", "bg-yellow",
-            "bg-flamingo", "bg-maroon", "bg-overlay1", "bg-crust",
+            "bg-ctp-rosewater", "bg-ctp-red", "bg-ctp-green", "bg-ctp-mauve",
+            "bg-ctp-lavender", "bg-ctp-blue", "bg-ctp-sky", "bg-ctp-teal",
+            "bg-ctp-sapphire", "bg-ctp-green", "bg-ctp-peach", "bg-ctp-yellow",
+            "bg-ctp-flamingo", "bg-ctp-maroon", "bg-ctp-overlay1", "bg-ctp-crust",
         )
         const val ABOUT_ME = LandingClasses.ABOUT_ME
     }
