@@ -22,7 +22,7 @@ class ThemeToggleTest {
             val body = response.bodyAsText()
             assertTrue(body.contains("id=\"theme-toggle\""))
             assertTrue(body.contains("localStorage.theme"))
-            assertTrue(body.contains("classList.remove(\"frappe\", \"mocha\")"))
+            assertTrue(body.contains("classList.remove(\"latte\", \"mocha\")"))
             assertTrue(body.contains("classList.add(theme)"))
             assertTrue(body.contains("<use href=\"/resources/icons/theme-icons.svg#moon\""))
             assertTrue(body.contains("<use href=\"/resources/icons/theme-icons.svg#sun\""))
@@ -40,6 +40,6 @@ class ThemeToggleTest {
         val css = client.get("/resources/style.css").bodyAsText()
 
         assertTrue(css.contains(".mocha"))
-        assertTrue(css.contains(".frappe"))
+        assertTrue(css.contains(".latte"))
     }
 }

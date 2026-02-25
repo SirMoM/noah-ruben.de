@@ -53,8 +53,8 @@ fun HEAD.defaultHeader() {
                   function applyTheme() {
                     var savedTheme = localStorage.theme;
                     var prefersDark = !("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches;
-                    var theme = savedTheme || (prefersDark ? "mocha" : "frappe");
-                    document.documentElement.classList.remove("frappe", "mocha");
+                    var theme = savedTheme || (prefersDark ? "mocha" : "latte");
+                    document.documentElement.classList.remove("latte", "mocha");
                     document.documentElement.classList.add(theme);
 
                     var button = document.getElementById("theme-toggle");
@@ -76,7 +76,7 @@ fun HEAD.defaultHeader() {
                     if (!target.closest("#theme-toggle")) return;
 
                     var isDark = document.documentElement.classList.contains("mocha");
-                    localStorage.theme = isDark ? "frappe" : "mocha";
+                    localStorage.theme = isDark ? "latte" : "mocha";
 
                     applyTheme();
                   });
