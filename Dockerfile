@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim AS node
+FROM node:24-bookworm-slim AS node
 
 FROM container-registry.oracle.com/graalvm/jdk:21 AS build-base
 
