@@ -3,17 +3,17 @@ services:
     profiles: [website]
     image: "website:latest"
     depends_on:
-      wiremock:
+      wiremock-website:
         condition: service_healthy
     environment:
-      GITHUB_URL: "http://wiremock:8080"
+      GITHUB_URL: "http://wiremock-website:8080"
     ports:
       - "42081:42081"
     env_file:
         - ${ENV_FILE:-.env}
-  wiremock:
+  wiremock-website:
     image: "wiremock/wiremock:latest"
-    container_name: wiremock
+    container_name: wiremock-website
     entrypoint: ["/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose"]
     volumes:
       - ../wm:/home/wiremock
