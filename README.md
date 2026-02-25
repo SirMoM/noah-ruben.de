@@ -1,82 +1,147 @@
 # noah-ruben.de
 
-## Development mode
+Personal portfolio site built with Kotlin, Ktor, Tailwind v4, and HTMX.
 
-1. Start the Wiremock server:
-   - Use an IDE run configuration, or
-   - run `./wm/wm.sh`
+## Tech stack
 
-2. Build the project with Amper:
+- **Language:** Kotlin 2.3 (JVM 21)
+- **Framework:** Ktor with `kotlinx.html` for server-side HTML rendering
+- **Styling:** Tailwind v4 with Catppuccin theme (`latte` light / `mocha` dark)
+- **Build:** Amper with a repo-local Tailwind plugin and `runLocal` plugin
+- **Mock:** Wiremock for local GitHub API stubs
 
-   ```bash
-   ./amper build
-   ```
+## Development
 
-   Note: Tailwind CSS generation is part of the Amper build via the local `tailwind` plugin. No separate `tailwind/run.sh` step is required.
+### 1. Start the Wiremock server
 
-3. Run tests with Amper:
+```bash
+./wm/wm.sh
+```
 
-   ```bash
-   ./amper test
-   ```
+Or use an IDE run configuration.
 
-4. Run a single test class or test method:
+### 2. Run the application locally
 
-   ```bash
-   ./amper test --include-classes="de.noah_ruben.site.LandingPageTest"
-   ./amper test --include-test="de.noah_ruben.site.LandingPageTest.landingPage"
-   ```
+```bash
+./amper task :noah-ruben.de:runLocal@run
+```
 
-5. Run the application:
+This sets `GITHUB_URL` and `GITHUB_TOKEN` automatically from the `.env` file via the `runLocal` plugin.
 
-   ```bash
-   ./amper task :noah-ruben.de:runLocal@run
-   ```
+Fallback (manual env vars):
 
-   Fallback (equivalent, without helper task):
+```bash
+GITHUB_TOKEN="NOT_NEEDED" GITHUB_URL="http://localhost:42069" ./amper run
+```
 
-   ```bash
-   GITHUB_TOKEN="NOT_NEEDED" GITHUB_URL="http://localhost:42069" ./amper run
-   ```
+The app listens on `http://localhost:42081`.
 
-6. Build the deployable artifact:
+### 3. Build
 
-   ```bash
-   ./amper package -f executable-jar
-   ```
+```bash
+./amper build
+```
+
+Tailwind CSS generation runs automatically as part of the build via the local `tailwind` Amper plugin. No separate CSS build step is required.
+
+### 4. Test
+
+Run all tests:
+
+```bash
+./amper test
+```
+
+Run a single test class (requires `--include-module`):
+
+```bash
+./amper test --include-module="noah-ruben.de" --include-classes="de.noah_ruben.site.LandingPageTest"
+```
+
+Run a single test method:
+
+```bash
+./amper test --include-module="noah-ruben.de" --include-test="de.noah_ruben.site.LandingPageTest.landingPage"
+```
+
+Pattern matching:
+
+```bash
+./amper test --include-module="noah-ruben.de" --include-classes="de.noah_ruben.site.*"
+```
+
+### 5. Build the deployable artifact
+
+```bash
+./amper package -f executable-jar
+```
+
+## Theming
+
+The site uses [Catppuccin](https://github.com/catppuccin/tailwindcss) via `@catppuccin/tailwindcss` v1.0.0:
+
+- **Light mode:** Latte (`.latte` class on `<html>`)
+- **Dark mode:** Mocha (`.mocha` class on `<html>`)
+
+The JS theme controller in `HtmlBase.kt` reads `localStorage.theme` (`"latte"` or `"mocha"`), falls back to `prefers-color-scheme`, and toggles the class on `document.documentElement`. All color utilities use the `ctp-` prefix (e.g. `bg-ctp-base`, `text-ctp-text`).
 
 ## Tilt (Docker orchestration)
 
 Run from `docker/`:
 
-1. Start Tilt:
+```bash
+tilt up
+```
 
-   ```bash
-   tilt up
-   ```
+Resources:
 
-2. Start the website runtime/deploy step (separate from image build):
+- `website-image-build` — builds the Docker image automatically when sources change.
+- `website` — starts the container. Requires one manual trigger on first start (`tilt trigger website`), then reloads automatically whenever `website-image-build` completes.
+- `wiremock-website` — starts Wiremock; starts and reloads automatically.
+- `wiremock-reload` — restarts Wiremock when `wm/` mappings change.
 
-   ```bash
-   tilt trigger website
-   ```
+Quick health check (after `website` is running):
 
-3. Stop Tilt-managed resources:
+```bash
+curl -sf http://localhost:42081/health
+```
 
-   ```bash
-   tilt down
-   ```
+Stop everything:
 
-4. Quick health check (after triggering `website`):
+```bash
+tilt down
+```
 
-   ```bash
-   curl -sf http://localhost:42081/health
-   ```
+## Project structure
 
-Expected behavior:
-- `website-image-build` is the image build job.
-- `website` is the runtime/deploy job (manual trigger) and depends on `website-image-build`.
-- `docker/compose.yaml` uses `image: website:latest` (no compose-side build).
-- Default run manages `wiremock`; `website` is only started when `website` is triggered.
-- `wiremock-reload` watches `wm/` mappings and restarts Wiremock automatically on changes.
-- Logs and resource status are visible in Tilt UI/CLI.
+```
+src/main/kotlin/de/noah_ruben/
+  Application.kt              app entry and module wiring
+  config/                     HTTP, monitoring, exception setup
+  data/                       cache, GitHub/Wiremock clients, models
+  site/                       routes and HTML generation
+  misc/                       shared helpers, CSS class constants
+    styles/                   domain-split Kotlin style constants
+      SharedClasses.kt        toggle, form, layout utilities
+      ProjectsClasses.kt      project card and filter styles
+      ThemeClasses.kt         page layout tokens
+      LandingClasses.kt       landing page tokens
+
+src/main/resources/
+  application.yaml            runtime config
+  static/                     served static assets (icons, fonts)
+
+tailwind/
+  style.css                   Tailwind v4 entry: imports catppuccin mocha.css
+  package.json                npm deps (@catppuccin/tailwindcss, tailwindcss CLI)
+
+wm/                           Wiremock scripts and API mappings
+docker/                       Tiltfile, Dockerfile, compose.yaml
+```
+
+## Environment variables
+
+| Variable | Purpose | Default in tests |
+|---|---|---|
+| `GITHUB_URL` | GitHub (or Wiremock stub) base URL | Set in `application-test.yaml` |
+| `GITHUB_TOKEN` | GitHub API token | Not required for Wiremock |
