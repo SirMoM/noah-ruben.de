@@ -9,7 +9,7 @@ class CacheTest {
 
     @BeforeTest
     fun init() {
-        Cache.githubClient = GithubClientFake()
+        Cache.githubClient = FakeRepositoryClient()
         Cache.initialize()
     }
 

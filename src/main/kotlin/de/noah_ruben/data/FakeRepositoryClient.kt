@@ -3,7 +3,7 @@ package de.noah_ruben.data
 import de.noah_ruben.data.model.github.Repository
 import de.noah_ruben.data.model.github.SimpleUser
 
-val fakeUser = SimpleUser(
+private val fakeUser = SimpleUser(
     login = "user",
     id = 123,
     avatar_url = "https://example.com/avatar.jpg",
@@ -12,7 +12,7 @@ val fakeUser = SimpleUser(
     node_id = "123",
 )
 
-val fakeRepositoryData = Repository(
+private val fakeRepositoryData = Repository(
     id = 1,
     node_id = "abc123",
     name = "dummy-repo",
@@ -51,9 +51,7 @@ val fakeRepositoryData = Repository(
     homepage = "https://example.com",
 )
 
-class GithubClientFake : RepositoryClient {
-
+class FakeRepositoryClient : RepositoryClient {
     override suspend fun getRepositories(): List<Repository> = listOf(fakeRepositoryData)
-
     override suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String> = listOf("Lua")
 }
