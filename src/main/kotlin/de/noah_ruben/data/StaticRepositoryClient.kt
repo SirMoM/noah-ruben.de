@@ -51,7 +51,9 @@ private val fakeRepositoryData = Repository(
     homepage = "https://example.com",
 )
 
-class FakeRepositoryClient : RepositoryClient {
+class StaticRepositoryClient : RepositoryClient {
+
     override suspend fun getRepositories(): List<Repository> = listOf(fakeRepositoryData)
+
     override suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String> = listOf("Lua")
 }
