@@ -5,7 +5,7 @@ object SharedClasses {
     const val MB_4 = "mb-4"
 
     const val CLI_WRAPPER = "w-full inline-flex outline-none focus:outline-none border border-ctp-crust rounded"
-    const val CLI_INPUT_FIELD = "pl-4 flex-grow bg-transparent border-none outline-none focus:ring-0"
+    const val CLI_INPUT_FIELD = "pl-4 flex-grow bg-transparent border-none outline-none focus:ring-0 text-ctp-text placeholder:text-ctp-overlay1"
 
     const val FORM_GROUP = "flex flex-col"
     const val FORM_FIELD = "flex flex-col mb-2"

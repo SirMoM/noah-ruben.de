@@ -16,6 +16,14 @@ fun generateTailwind(
     @Input inputCss: Path,
     @Input packageJson: Path,
     @Input packageLock: Path,
+    // Declared as @Input to bust Amper's task cache when CSS class constants change.
+    // Not used in the function body — @Input annotation is sufficient for cache fingerprinting.
+    // If you add a new *Classes.kt file under misc/styles/, add it here and in plugin.yaml too.
+    @Input cssClassesFacade: Path,
+    @Input landingClasses: Path,
+    @Input projectsClasses: Path,
+    @Input sharedClasses: Path,
+    @Input themeClasses: Path,
     @Output generatedResourceDir: Path,
 ) {
     println("[tailwind] Starting Tailwind generation")

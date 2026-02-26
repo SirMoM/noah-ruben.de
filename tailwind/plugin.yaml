@@ -4,6 +4,11 @@ tasks:
       inputCss: ${module.rootDir}/tailwind/style.css
       packageJson: ${module.rootDir}/tailwind/package.json
       packageLock: ${module.rootDir}/tailwind/package-lock.json
+      cssClassesFacade: ${module.rootDir}/src/main/kotlin/de/noah_ruben/misc/CssClasses.kt
+      landingClasses: ${module.rootDir}/src/main/kotlin/de/noah_ruben/misc/styles/LandingClasses.kt
+      projectsClasses: ${module.rootDir}/src/main/kotlin/de/noah_ruben/misc/styles/ProjectsClasses.kt
+      sharedClasses: ${module.rootDir}/src/main/kotlin/de/noah_ruben/misc/styles/SharedClasses.kt
+      themeClasses: ${module.rootDir}/src/main/kotlin/de/noah_ruben/misc/styles/ThemeClasses.kt
       generatedResourceDir: ${taskOutputDir}
     markOutputsAs:
       - path: ${action.generatedResourceDir}

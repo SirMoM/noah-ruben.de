@@ -27,6 +27,7 @@ import kotlinx.html.html
 import kotlinx.html.id
 import kotlinx.html.input
 import kotlinx.html.p
+import kotlinx.html.span
 import kotlinx.html.stream.createHTML
 import java.net.URLDecoder
 import java.nio.charset.Charset
@@ -94,7 +95,8 @@ suspend fun handleCommand(call: RoutingCall) {
 fun FlowContent.commandLineEmulation() {
     div(classes = CLI_WRAPPER) {
         id = "cle"
-        +">> "
+        span(classes = "text-ctp-blue") { +">>" }
+        +" "
         input(type = InputType.text, name = "command", classes = CLI_INPUT_FIELD) {
             placeholder = "noahruben projects"
             autoComplete = false

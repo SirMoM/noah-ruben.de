@@ -77,6 +77,21 @@ Run parent-project commands from `/Users/i13az81/dev/uni/noah-ruben.de`.
 - Use explicit checks and clear error messages in plugin code.
 - Do not silently ignore `npm` or Tailwind CLI failures.
 
+### CSS-defining Kotlin files and Amper cache
+
+The `generateTailwind` task declares the CSS-defining Kotlin files as `@Input` parameters so Amper re-runs Tailwind whenever a class constant changes. The relevant files are enumerated manually in `GenerateTailwind.kt` and `plugin.yaml`.
+
+**When adding a new CSS class constants file** (e.g. `src/main/kotlin/de/noah_ruben/misc/styles/NewPageClasses.kt`):
+
+1. Add a new `@Input newPageClasses: Path` parameter to `generateTailwind` in `tailwind/src/GenerateTailwind.kt`.
+2. Add the matching binding in `tailwind/plugin.yaml`:
+   ```yaml
+   newPageClasses: ${module.rootDir}/src/main/kotlin/de/noah_ruben/misc/styles/NewPageClasses.kt
+   ```
+3. Run `./amper build` to verify the new wiring compiles and Tailwind regenerates.
+
+Skipping steps 1–2 means class changes in the new file will silently miss Amper's cache and not appear in the Docker-built CSS until `style.css` is also touched.
+
 ### Compatibility and safety
 
 - Tailwind v4 config lives in CSS; do not reintroduce deprecated v3 config patterns unless requested.

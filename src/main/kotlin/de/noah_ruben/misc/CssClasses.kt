@@ -37,6 +37,11 @@ object CssClasses {
             "bg-ctp-blue", "bg-ctp-lavender", "bg-ctp-overlay0", "bg-ctp-crust",
         )
         const val ABOUT_ME = LandingClasses.ABOUT_ME
+        const val PROFILE_LABEL = LandingClasses.PROFILE_LABEL
+        const val PROFILE_HEADER = LandingClasses.PROFILE_HEADER
+        const val SECTION_DIVIDER = LandingClasses.SECTION_DIVIDER
+        const val SYSTEM_SUMMARY_HEADING = LandingClasses.SYSTEM_SUMMARY_HEADING
+        val ABOUT_ME_LINE_COLORS = LandingClasses.ABOUT_ME_LINE_COLORS
     }
 
     object ProjectPage {

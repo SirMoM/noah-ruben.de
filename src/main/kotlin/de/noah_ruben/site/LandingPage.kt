@@ -1,11 +1,16 @@
 package de.noah_ruben.site
 
 import de.noah_ruben.misc.CssClasses.LandingPage.ABOUT_ME
+import de.noah_ruben.misc.CssClasses.LandingPage.ABOUT_ME_LINE_COLORS
 import de.noah_ruben.misc.CssClasses.LandingPage.COLORS
 import de.noah_ruben.misc.CssClasses.LandingPage.COLOR_GRID
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_CONTAINER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_DETAILS_CONTAINER
+import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_HEADER
+import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_LABEL
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE
+import de.noah_ruben.misc.CssClasses.LandingPage.SECTION_DIVIDER
+import de.noah_ruben.misc.CssClasses.LandingPage.SYSTEM_SUMMARY_HEADING
 import de.noah_ruben.misc.CssClasses.MB_4
 import de.noah_ruben.misc.CssClasses.PAGE_BASE
 import de.noah_ruben.misc.CssClasses.Shared.HELP_INDENT
@@ -34,7 +39,8 @@ fun Application.landingPage() {
 
 fun BODY.indexPageContent() {
     div {
-        +" >> noahruben"
+        span(classes = "text-ctp-blue") { +">>" }
+        +" noahruben"
     }
     div(classes = PROFILE_CONTAINER) {
         img(
@@ -43,37 +49,39 @@ fun BODY.indexPageContent() {
         )
         div(classes = PROFILE_DETAILS_CONTAINER) {
             div {
-                div { +"Noah Ruben @ Reutlingen" }
-                hr(MB_4) {}
+                div(classes = PROFILE_HEADER) {
+                    +"Noah Ruben "
+                    span(classes = SECTION_DIVIDER) { +"@" }
+                    span(classes = "text-ctp-teal") { +" Darmstadt" }
+                }
+                hr(classes = "$MB_4 $SECTION_DIVIDER") {}
                 div {
-                    span { +"Name" }
+                    span(classes = PROFILE_LABEL) { +"Name" }
                     +": Noah Ruben"
                 }
                 div {
-                    span { +"Uptime" }
+                    span(classes = PROFILE_LABEL) { +"Uptime" }
                     +": ${ChronoUnit.YEARS.between(startDate, LocalDate.now())} Years"
                 }
                 div {
-                    span { +"Projects" }
-                    p {
-                        +":    "
-                        githubLink()
-                    }
+                    span(classes = PROFILE_LABEL) { +"Projects" }
+                    +":    "
+                    githubLink()
                 }
                 div {
-                    span { +"Twitter" }
+                    span(classes = PROFILE_LABEL) { +"Twitter" }
                     +" : link"
                 }
                 div {
-                    span { +"Github" }
+                    span(classes = PROFILE_LABEL) { +"Github" }
                     +" : link"
                 }
                 div {
-                    span { +"CV" }
+                    span(classes = PROFILE_LABEL) { +"CV" }
                     +" : link"
                 }
                 div {
-                    span { +"Twitter" }
+                    span(classes = PROFILE_LABEL) { +"Twitter" }
                     +" : link"
                 }
             }
@@ -88,22 +96,24 @@ fun BODY.indexPageContent() {
     }
 
     div(classes = ABOUT_ME) {
-        h3 {
+        h3(classes = SYSTEM_SUMMARY_HEADING) {
             +"System summary"
         }
-        +"🔭I’m currently working on a royal game of Ur replica in Godot"
-        br
-        +"It is playable here."
-        br
-        +"🌱 I’m currently learning the Godot game engine"
-        br
-        +"📝 I participated in a #plastober: Read the blogpost here."
-        br
-        +"👨‍💻 All of my projects are available"
-        br
+        val lines = listOf(
+            "🔭I'm currently working on a royal game of Ur replica in Godot",
+            "It is playable here.",
+            "🌱 I'm currently learning the Godot game engine",
+            "📝 I participated in a #plastober: Read the blogpost here.",
+            "👨‍💻 All of my projects are available",
+        )
+        lines.forEachIndexed { i, line ->
+            span(classes = ABOUT_ME_LINE_COLORS[i % ABOUT_ME_LINE_COLORS.size]) { +line }
+            br
+        }
     }
     div {
-        +" >> noahruben help"
+        span(classes = "text-ctp-blue") { +">>" }
+        +" noahruben help"
     }
     div(classes = HELP_INDENT) {
         p { +"Usage: noahruben <subpage>" }
@@ -152,7 +162,8 @@ fun HTML.landingpage() {
         classes = setOf(PAGE_BASE)
         themeToggleButton()
         div {
-            +" >> noahruben"
+            span(classes = "text-ctp-blue") { +">>" }
+            +" noahruben"
         }
         indexPageContent()
     }
