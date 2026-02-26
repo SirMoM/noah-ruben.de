@@ -85,13 +85,15 @@ fun Application.configuringSerialization() {
 }
 
 private fun Application.getToken(): String {
-    val tokenConfig = environment.config.propertyOrNull("github.token") ?: throw IllegalStateException("Did not provide github token as GITHUB_TOKEN in the environment.")
-    return tokenConfig.getString().trim()
+    val token = environment.config.propertyOrNull("github.token")?.getString()?.trim()
+    if (token.isNullOrBlank()) throw IllegalStateException("Did not provide github token as GITHUB_TOKEN in the environment.")
+    return token
 }
 
 private fun Application.getGithubURL(): String {
-    val url = environment.config.propertyOrNull("github.url") ?: throw IllegalStateException("Did not provide github URL as GITHUB_URL in the environment.")
-    return url.getString().trim()
+    val url = environment.config.propertyOrNull("github.url")?.getString()?.trim()
+    if (url.isNullOrBlank()) throw IllegalStateException("Did not provide github URL as GITHUB_URL in the environment.")
+    return url
 }
 
 private fun Application.createRepositoryClient(): RepositoryClient {

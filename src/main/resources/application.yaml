@@ -11,5 +11,5 @@ ktor:
             - de.noah_ruben.ApplicationKt.module
 github:
     mode: ${GITHUB_MODE:wiremock}
-    token: $GITHUB_TOKEN
-    url: $GITHUB_URL
+    token: ${GITHUB_TOKEN:}
+    url: ${GITHUB_URL:}
