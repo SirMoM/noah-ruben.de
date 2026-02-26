@@ -1,6 +1,7 @@
 package de.noah_ruben.site
 
 import de.noah_ruben.misc.Commands
+import de.noah_ruben.misc.CssClasses.LandingPage.PROMPT_ARROW
 import de.noah_ruben.misc.CssClasses.Shared.CLI_INPUT_FIELD
 import de.noah_ruben.misc.CssClasses.Shared.CLI_WRAPPER
 import de.noah_ruben.misc.hxPost
@@ -60,7 +61,16 @@ suspend fun handleCommand(call: RoutingCall) {
                 }
             }
 
-            Commands.cv -> throw RuntimeException("NOT IMPLEMENTED!")
+            Commands.cv -> {
+                call.response.header("HX-Retarget", "#cle")
+                htmlBase.div {
+                    br
+                    div {
+                        +">> noahruben cv: CV is not available online at this time."
+                    }
+                    commandLineEmulation()
+                }
+            }
 
             Commands.unknownSubpage -> htmlBase.div {
                 call.response.header("HX-Retarget", "#cle")
@@ -95,7 +105,7 @@ suspend fun handleCommand(call: RoutingCall) {
 fun FlowContent.commandLineEmulation() {
     div(classes = CLI_WRAPPER) {
         id = "cle"
-        span(classes = "text-ctp-blue") { +">>" }
+        span(classes = PROMPT_ARROW) { +">>" }
         +" "
         input(type = InputType.text, name = "command", classes = CLI_INPUT_FIELD) {
             placeholder = "noahruben projects"
@@ -119,10 +129,7 @@ fun FlowContent.cleUsage() {
             +"noahruben is the personal website of Noah Ruben"
         }
         p {
-            +"It displays information about "
-        }
-        p {
-            +"TODO"
+            +"It displays information about Noah Ruben: full-stack development, open source, and game dev interests."
         }
 
         h1 { +"SUB-PAGES" }
@@ -131,8 +138,6 @@ fun FlowContent.cleUsage() {
             selfLink("/projects", "projects")
             br
             selfLink("https://github.com/SirMoM", "github")
-            br
-            selfLink("/cv", "cv")
             br
             selfLink("https://www.linkedin.com/in/noah-ruben-3013991b7", "linked-in")
         }

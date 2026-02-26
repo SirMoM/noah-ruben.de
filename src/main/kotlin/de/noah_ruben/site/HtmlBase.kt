@@ -80,6 +80,11 @@ fun HEAD.defaultHeader() {
 
                     applyTheme();
                   });
+
+                  var applyAccent = function(hex) { document.documentElement.style.setProperty('--accent', hex); };
+                  window.setAccentColor = function(hex) { localStorage.setItem('accent', hex); applyAccent(hex); };
+                  var savedAccent = localStorage.getItem('accent');
+                  if (savedAccent) applyAccent(savedAccent);
                 })();
             """.trimIndent()
         }

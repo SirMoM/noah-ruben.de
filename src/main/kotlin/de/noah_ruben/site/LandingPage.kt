@@ -2,16 +2,18 @@ package de.noah_ruben.site
 
 import de.noah_ruben.misc.CssClasses.LandingPage.ABOUT_ME
 import de.noah_ruben.misc.CssClasses.LandingPage.ABOUT_ME_LINE_COLORS
-import de.noah_ruben.misc.CssClasses.LandingPage.COLORS
-import de.noah_ruben.misc.CssClasses.LandingPage.COLOR_GRID
+import de.noah_ruben.misc.CssClasses.LandingPage.COLORS_WITH_HEX
+import de.noah_ruben.misc.CssClasses.LandingPage.COLOR_GRID_LATTE
+import de.noah_ruben.misc.CssClasses.LandingPage.LOCATION_TEXT
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_CONTAINER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_DETAILS_CONTAINER
+import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_DIVIDER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_HEADER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_LABEL
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE
+import de.noah_ruben.misc.CssClasses.LandingPage.PROMPT_ARROW
 import de.noah_ruben.misc.CssClasses.LandingPage.SECTION_DIVIDER
 import de.noah_ruben.misc.CssClasses.LandingPage.SYSTEM_SUMMARY_HEADING
-import de.noah_ruben.misc.CssClasses.MB_4
 import de.noah_ruben.misc.CssClasses.PAGE_BASE
 import de.noah_ruben.misc.CssClasses.Shared.HELP_INDENT
 import de.noah_ruben.misc.CssClasses.Shared.SUBPAGE_INDENT
@@ -39,7 +41,7 @@ fun Application.landingPage() {
 
 fun BODY.indexPageContent() {
     div {
-        span(classes = "text-ctp-blue") { +">>" }
+        span(classes = PROMPT_ARROW) { +">>" }
         +" noahruben"
     }
     div(classes = PROFILE_CONTAINER) {
@@ -52,9 +54,9 @@ fun BODY.indexPageContent() {
                 div(classes = PROFILE_HEADER) {
                     +"Noah Ruben "
                     span(classes = SECTION_DIVIDER) { +"@" }
-                    span(classes = "text-ctp-teal") { +" Darmstadt" }
+                    span(classes = LOCATION_TEXT) { +" Darmstadt" }
                 }
-                hr(classes = "$MB_4 $SECTION_DIVIDER") {}
+                hr(classes = PROFILE_DIVIDER) {}
                 div {
                     span(classes = PROFILE_LABEL) { +"Name" }
                     +": Noah Ruben"
@@ -64,32 +66,32 @@ fun BODY.indexPageContent() {
                     +": ${ChronoUnit.YEARS.between(startDate, LocalDate.now())} Years"
                 }
                 div {
-                    span(classes = PROFILE_LABEL) { +"Projects" }
-                    +":    "
-                    githubLink()
-                }
-                div {
-                    span(classes = PROFILE_LABEL) { +"Twitter" }
-                    +" : link"
+                    span(classes = PROFILE_LABEL) { +"Role" }
+                    +": Full-Stack Developer @ ATLAS"
                 }
                 div {
                     span(classes = PROFILE_LABEL) { +"Github" }
-                    +" : link"
+                    +": "
+                    a(href = "https://github.com/SirMoM") { +"SirMoM" }
                 }
                 div {
-                    span(classes = PROFILE_LABEL) { +"CV" }
-                    +" : link"
+                    span(classes = PROFILE_LABEL) { +"LinkedIn" }
+                    +": "
+                    a(href = "https://www.linkedin.com/in/noah-ruben-3013991b7") { +"noah-ruben" }
                 }
                 div {
-                    span(classes = PROFILE_LABEL) { +"Twitter" }
-                    +" : link"
+                    span(classes = PROFILE_LABEL) { +"Mail" }
+                    +": "
+                    a(href = "mailto:noah-ruben@pm.me") { +"noah-ruben@pm.me" }
                 }
             }
-            // todo click on color rect to make it "main" accsent color of page!
-            // "latte" class pins Catppuccin CSS variables to Latte values regardless of dark/light mode
-            div(classes = "latte $COLOR_GRID") {
-                COLORS.forEach { colorClass ->
-                    div(classes = colorClass) {}
+            // click on a color swatch to set the accent color for the page
+            div(classes = COLOR_GRID_LATTE) {
+                COLORS_WITH_HEX.forEach { (colorClass, hex) ->
+                    div(classes = colorClass) {
+                        attributes["data-accent"] = hex
+                        onClick = "window.setAccentColor && window.setAccentColor('$hex')"
+                    }
                 }
             }
         }
@@ -100,33 +102,32 @@ fun BODY.indexPageContent() {
             +"System summary"
         }
         val lines = listOf(
-            "🔭I'm currently working on a royal game of Ur replica in Godot",
-            "It is playable here.",
-            "🌱 I'm currently learning the Godot game engine",
-            "📝 I participated in a #plastober: Read the blogpost here.",
-            "👨‍💻 All of my projects are available",
+            Pair("Languages", "Kotlin · Go · TypeScript · Java"),
+            Pair("Frameworks", "Ktor · Angular · HTMX"),
+            Pair("Focus", "Full-stack systems, game dev, open source"),
+            Pair("Currently", "Building a Royal Game of Ur replica in Godot"),
+            Pair("Projects", "Available on GitHub"),
         )
-        lines.forEachIndexed { i, line ->
-            span(classes = ABOUT_ME_LINE_COLORS[i % ABOUT_ME_LINE_COLORS.size]) { +line }
-            br
+        lines.forEachIndexed { i, (label, value) ->
+            div {
+                span(classes = ABOUT_ME_LINE_COLORS[i % ABOUT_ME_LINE_COLORS.size]) { +label }
+                +": $value"
+            }
         }
     }
     div {
-        span(classes = "text-ctp-blue") { +">>" }
+        span(classes = PROMPT_ARROW) { +">>" }
         +" noahruben help"
     }
     div(classes = HELP_INDENT) {
         p { +"Usage: noahruben <subpage>" }
         p { +"noahruben is the personal website of Noah Ruben" }
-        p { +"It displays information about " }
-        p { +"TODO" }
+        p { +"It displays information about Noah Ruben: full-stack development, open source, and game dev interests." }
         h1 { +"SUB-PAGES" }
         div(classes = SUBPAGE_INDENT) {
             a(href = "/projects") { +" projects" }
             br()
             a(href = "https://github.com/SirMoM") { +" github" }
-            br()
-            a(href = "/cv") { +" cv" }
             br()
             a(href = "https://www.linkedin.com/in/noah-ruben-3013991b7") { +" linked-in" }
         }
@@ -149,10 +150,6 @@ fun HTML.landingPageHtml() {
 @HtmlTagMarker
 inline fun HTML.defaultBody(crossinline block: BODY.() -> Unit = {}): Unit = BODY(emptyMap(), consumer).visit(block)
 
-fun FlowContent.githubLink() {
-    a(href = "https://github.com/SirMoM") { +"GITHUB" }
-}
-
 fun HTML.landingpage() {
     head {
         defaultHeader()
@@ -162,7 +159,7 @@ fun HTML.landingpage() {
         classes = setOf(PAGE_BASE)
         themeToggleButton()
         div {
-            span(classes = "text-ctp-blue") { +">>" }
+            span(classes = PROMPT_ARROW) { +">>" }
             +" noahruben"
         }
         indexPageContent()

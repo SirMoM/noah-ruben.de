@@ -29,17 +29,19 @@ object CssClasses {
         const val PROFILE_DETAILS_CONTAINER = LandingClasses.PROFILE_DETAILS_CONTAINER
         const val COLOR_GRID = LandingClasses.COLOR_GRID
 
-        // Catppuccin bg-ctp-* classes — resolve to Latte in light mode, Mocha in dark mode via the plugin
-        val COLORS = listOf(
-            "bg-ctp-rosewater", "bg-ctp-flamingo", "bg-ctp-pink", "bg-ctp-mauve",
-            "bg-ctp-red", "bg-ctp-maroon", "bg-ctp-peach", "bg-ctp-yellow",
-            "bg-ctp-green", "bg-ctp-teal", "bg-ctp-sky", "bg-ctp-sapphire",
-            "bg-ctp-blue", "bg-ctp-lavender", "bg-ctp-overlay0", "bg-ctp-crust",
-        )
+        // Catppuccin bg-ctp-* classes paired with their hex values for accent switching
+        val COLORS_WITH_HEX = LandingClasses.COLORS_WITH_HEX
+
+        @Deprecated("Use COLORS_WITH_HEX instead", replaceWith = ReplaceWith("COLORS_WITH_HEX.map { it.first }"))
+        val COLORS = LandingClasses.COLORS_WITH_HEX.map { it.first }
         const val ABOUT_ME = LandingClasses.ABOUT_ME
         const val PROFILE_LABEL = LandingClasses.PROFILE_LABEL
         const val PROFILE_HEADER = LandingClasses.PROFILE_HEADER
         const val SECTION_DIVIDER = LandingClasses.SECTION_DIVIDER
+        const val PROFILE_DIVIDER = LandingClasses.PROFILE_DIVIDER
+        const val PROMPT_ARROW = LandingClasses.PROMPT_ARROW
+        const val LOCATION_TEXT = LandingClasses.LOCATION_TEXT
+        const val COLOR_GRID_LATTE = LandingClasses.COLOR_GRID_LATTE
         const val SYSTEM_SUMMARY_HEADING = LandingClasses.SYSTEM_SUMMARY_HEADING
         val ABOUT_ME_LINE_COLORS = LandingClasses.ABOUT_ME_LINE_COLORS
     }
