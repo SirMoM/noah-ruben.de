@@ -2,7 +2,7 @@ package de.noah_ruben
 
 import de.noah_ruben.config.ApplicationInfo
 import de.noah_ruben.config.appInfo
-import de.noah_ruben.data.StaticRepositoryClient
+import de.noah_ruben.data.FakeRepositoryClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
@@ -20,7 +20,7 @@ fun testApplicationWithRepositoryFake(block: suspend ApplicationTestBuilder.() -
         config = ApplicationConfig("application-test.yaml")
     }
     application {
-        module(StaticRepositoryClient())
+        module(FakeRepositoryClient())
     }
     block()
 }

@@ -4,9 +4,9 @@ import de.noah_ruben.config.configureHTTP
 import de.noah_ruben.config.configureMonitoring
 import de.noah_ruben.config.exceptionHandling
 import de.noah_ruben.data.Cache
+import de.noah_ruben.data.FakeRepositoryClient
 import de.noah_ruben.data.GitHubClient
 import de.noah_ruben.data.RepositoryClient
-import de.noah_ruben.data.StaticRepositoryClient
 import de.noah_ruben.data.WiremockClient
 import de.noah_ruben.site.commandLineEmulation
 import de.noah_ruben.site.defaultBody
@@ -98,11 +98,11 @@ private fun Application.getGithubURL(): String {
 
 private fun Application.createRepositoryClient(): RepositoryClient {
     val mode = environment.config.propertyOrNull("github.mode")?.getString()?.trim()
-        ?: throw IllegalStateException("github.mode is not configured. Set GITHUB_MODE to 'github', 'wiremock', or 'static'.")
+        ?: throw IllegalStateException("github.mode is not configured. Set GITHUB_MODE to 'github', 'wiremock', or 'fake'.")
     return when (mode) {
         "github" -> GitHubClient(token = getToken())
         "wiremock" -> WiremockClient(url = getGithubURL())
-        "static" -> StaticRepositoryClient()
-        else -> throw IllegalStateException("Unknown github.mode '$mode'. Valid values: github, wiremock, static.")
+        "fake" -> FakeRepositoryClient()
+        else -> throw IllegalStateException("Unknown github.mode '$mode'. Valid values: github, wiremock, fake.")
     }
 }

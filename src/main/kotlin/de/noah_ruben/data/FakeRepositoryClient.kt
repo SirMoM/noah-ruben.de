@@ -51,7 +51,7 @@ private val fakeRepositoryData = Repository(
     homepage = "https://example.com",
 )
 
-class StaticRepositoryClient : RepositoryClient {
+class FakeRepositoryClient : RepositoryClient {
 
     override suspend fun getRepositories(): List<Repository> = listOf(fakeRepositoryData)
 
