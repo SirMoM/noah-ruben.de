@@ -9,8 +9,9 @@ import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_CONTAINER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_DETAILS_CONTAINER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_DIVIDER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_HEADER
+import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE_IMAGE
+import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE_LINK
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_LABEL
-import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE
 import de.noah_ruben.misc.CssClasses.LandingPage.PROMPT_ARROW
 import de.noah_ruben.misc.CssClasses.LandingPage.SECTION_DIVIDER
 import de.noah_ruben.misc.CssClasses.LandingPage.SYSTEM_SUMMARY_HEADING
@@ -45,10 +46,7 @@ fun BODY.indexPageContent() {
         +" noahruben"
     }
     div(classes = PROFILE_CONTAINER) {
-        img(
-            src = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Van_Gogh_self-portrait.svg/1508px-Van_Gogh_self-portrait.svg.png",
-            classes = PROFILE_PICTURE,
-        )
+        vanGoghPortrait()
         div(classes = PROFILE_DETAILS_CONTAINER) {
             div {
                 div(classes = PROFILE_HEADER) {
@@ -136,6 +134,20 @@ fun BODY.indexPageContent() {
         }
     }
     commandLineEmulation()
+}
+
+private fun FlowContent.vanGoghPortrait() {
+    a(
+        href = "https://commons.wikimedia.org/wiki/File:Van_Gogh_self-portrait.svg",
+        classes = PROFILE_PICTURE_LINK,
+    ) {
+        title = "Vincent van Gogh, Public domain, via Wikimedia Commons"
+        img(
+            src = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Van_Gogh_self-portrait.svg/120px-Van_Gogh_self-portrait.svg.png",
+            alt = "Self-portrait of Vincent van Gogh, vector traced",
+            classes = PROFILE_PICTURE_IMAGE,
+        )
+    }
 }
 
 fun HTML.landingPageHtml() {

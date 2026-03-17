@@ -25,15 +25,13 @@ object CssClasses {
 
     object LandingPage {
         const val PROFILE_CONTAINER = LandingClasses.PROFILE_CONTAINER
-        const val PROFILE_PICTURE = LandingClasses.PROFILE_PICTURE
+        const val PROFILE_PICTURE_LINK = LandingClasses.PROFILE_PICTURE_LINK
+        const val PROFILE_PICTURE_IMAGE = LandingClasses.PROFILE_PICTURE_IMAGE
         const val PROFILE_DETAILS_CONTAINER = LandingClasses.PROFILE_DETAILS_CONTAINER
-        const val COLOR_GRID = LandingClasses.COLOR_GRID
 
         // Catppuccin bg-ctp-* classes paired with their hex values for accent switching
         val COLORS_WITH_HEX = LandingClasses.COLORS_WITH_HEX
 
-        @Deprecated("Use COLORS_WITH_HEX instead", replaceWith = ReplaceWith("COLORS_WITH_HEX.map { it.first }"))
-        val COLORS = LandingClasses.COLORS_WITH_HEX.map { it.first }
         const val ABOUT_ME = LandingClasses.ABOUT_ME
         const val PROFILE_LABEL = LandingClasses.PROFILE_LABEL
         const val PROFILE_HEADER = LandingClasses.PROFILE_HEADER

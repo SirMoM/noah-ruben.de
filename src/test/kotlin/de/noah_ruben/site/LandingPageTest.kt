@@ -45,6 +45,20 @@ class LandingPageTest {
     }
 
     @Test
+    fun landingPageRendersLinkedPortraitWithAttributionMetadata() = testApplicationWithRepositoryFake {
+        val response = client.get("/")
+        Assert.assertEquals(HttpStatusCode.OK, response.status)
+
+        val html = response.bodyAsText()
+        Assert.assertTrue(html.contains("href=\"https://commons.wikimedia.org/wiki/File:Van_Gogh_self-portrait.svg\""))
+        Assert.assertTrue(html.contains("title=\"Vincent van Gogh, Public domain, via Wikimedia Commons\""))
+        Assert.assertTrue(html.contains("src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Van_Gogh_self-portrait.svg/120px-Van_Gogh_self-portrait.svg.png\""))
+        Assert.assertTrue(html.contains("alt=\"Self-portrait of Vincent van Gogh, vector traced\""))
+        Assert.assertTrue(html.contains("w-2/5"))
+        Assert.assertTrue(html.contains("shrink-0"))
+    }
+
+    @Test
     fun landingPageRendersBioSkillsAndHelp() = testApplicationWithRepositoryFake {
         val response = client.get("/")
         Assert.assertEquals(HttpStatusCode.OK, response.status)
