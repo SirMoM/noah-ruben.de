@@ -34,16 +34,18 @@ class LandingPageTest {
         Assert.assertEquals(HttpStatusCode.OK, response.status)
 
         val html = response.bodyAsText()
-        Assert.assertTrue(html.contains("Full-Stack Developer @ ATLAS"))
+        Assert.assertTrue(html.contains("Full-Stack Developer @"))
+        Assert.assertTrue(html.contains("https://www.karriere-atlas.de/"))
         Assert.assertTrue(html.contains("https://github.com/SirMoM"))
         Assert.assertTrue(html.contains("https://www.linkedin.com/in/noah-ruben-3013991b7"))
         Assert.assertTrue(html.contains("mailto:"))
         Assert.assertFalse(html.contains("Twitter"))
         Assert.assertFalse(html.contains("TODO"))
+        Assert.assertTrue(html.contains("href=\"/cv\""))
     }
 
     @Test
-    fun landingPageRendersBioSkillsAndHelpWithoutCv() = testApplicationWithRepositoryFake {
+    fun landingPageRendersBioSkillsAndHelp() = testApplicationWithRepositoryFake {
         val response = client.get("/")
         Assert.assertEquals(HttpStatusCode.OK, response.status)
 
@@ -53,7 +55,7 @@ class LandingPageTest {
         Assert.assertTrue(html.contains("Kotlin"))
         Assert.assertTrue(html.contains("Angular"))
         Assert.assertTrue(html.contains("HTMX"))
-        Assert.assertFalse(html.contains("href=\"/cv\""))
+        Assert.assertTrue(html.contains("href=\"/cv\""))
     }
 
     @Test

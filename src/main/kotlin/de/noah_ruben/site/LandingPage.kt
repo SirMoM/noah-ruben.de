@@ -67,7 +67,8 @@ fun BODY.indexPageContent() {
                 }
                 div {
                     span(classes = PROFILE_LABEL) { +"Role" }
-                    +": Full-Stack Developer @ ATLAS"
+                    +": Full-Stack Developer @ "
+                    a(href = "https://www.karriere-atlas.de/") { +"ATLAS" }
                 }
                 div {
                     span(classes = PROFILE_LABEL) { +"Github" }
@@ -126,6 +127,8 @@ fun BODY.indexPageContent() {
         h1 { +"SUB-PAGES" }
         div(classes = SUBPAGE_INDENT) {
             a(href = "/projects") { +" projects" }
+            br()
+            a(href = "/cv") { +" cv" }
             br()
             a(href = "https://github.com/SirMoM") { +" github" }
             br()

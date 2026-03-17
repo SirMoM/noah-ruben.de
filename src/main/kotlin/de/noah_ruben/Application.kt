@@ -9,6 +9,7 @@ import de.noah_ruben.data.GitHubClient
 import de.noah_ruben.data.RepositoryClient
 import de.noah_ruben.data.WiremockClient
 import de.noah_ruben.site.commandLineEmulation
+import de.noah_ruben.site.cv.cvPageRouting
 import de.noah_ruben.site.defaultBody
 import de.noah_ruben.site.defaultHeader
 import de.noah_ruben.site.landingPage
@@ -42,6 +43,7 @@ fun Application.module(repositoryClient: RepositoryClient = createRepositoryClie
     commandLineEmulation()
     staticRouting()
     projectsPageRouting()
+    cvPageRouting()
 }
 
 fun Application.staticRouting() {

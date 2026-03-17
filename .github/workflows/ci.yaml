@@ -9,7 +9,7 @@ name: Continuous Integration/Testing
       - "docs/**"
   workflow_dispatch:
 concurrency:
-  group: "ci-${{ github.ref }}"
+  group: "ci"
   cancel-in-progress: true
 permissions:
   contents: read
