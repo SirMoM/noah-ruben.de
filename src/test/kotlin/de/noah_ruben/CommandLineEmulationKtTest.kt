@@ -2,8 +2,8 @@ package de.noah_ruben
 
 import de.noah_ruben.misc.Commands
 import de.noah_ruben.misc.parseCommand
-import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class CommandLineEmulationKtTest {
 
@@ -12,24 +12,34 @@ class CommandLineEmulationKtTest {
         var input = "command=noahruben%20projects"
 
         var result = parseCommand(input)
-        assertEquals(result, Commands.projects)
+        assertEquals(Commands.projects, result.first)
+        assertEquals(emptyList<String>(), result.second)
 
         input = "command=noahruben%20cv"
 
         result = parseCommand(input)
-        assertEquals(result, Commands.cv)
+        assertEquals(Commands.cv, result.first)
+        assertEquals(emptyList<String>(), result.second)
 
         input = "command=noahruben%20error"
 
         result = parseCommand(input)
-        assertEquals(result, Commands.unknownSubpage)
+        assertEquals(Commands.unknownSubpage, result.first)
+        assertEquals(emptyList<String>(), result.second)
 
         input = "command=noahruben"
         result = parseCommand(input)
-        assertEquals(result, Commands.landingPage)
+        assertEquals(Commands.landingPage, result.first)
+        assertEquals(emptyList<String>(), result.second)
 
         input = "error"
         result = parseCommand(input)
-        assertEquals(result, Commands.unknownCommand)
+        assertEquals(Commands.unknownCommand, result.first)
+        assertEquals(emptyList<String>(), result.second)
+
+        input = "command=noahruben%20cv ger"
+        result = parseCommand(input)
+        assertEquals(Commands.cv, result.first)
+        assertEquals(listOf("ger"), result.second)
     }
 }

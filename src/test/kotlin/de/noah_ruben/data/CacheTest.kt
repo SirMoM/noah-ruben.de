@@ -1,6 +1,5 @@
 package de.noah_ruben.data
 
-import org.junit.jupiter.api.Assertions.assertArrayEquals
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -23,12 +22,14 @@ class CacheTest {
     @Test
     fun getAllTopics() {
         val result = Cache.getAllTopics()
-        assertArrayEquals(arrayOf("dummy", "example"), result.toTypedArray())
+
+        assertEquals(setOf("dummy", "example"), result)
     }
 
     @Test
     fun getAllLanguages() {
         val result = Cache.getAllLanguages()
-        assertArrayEquals(arrayOf("Lua"), result.toTypedArray())
+
+        assertEquals(setOf("Lua"), result)
     }
 }

@@ -25,12 +25,13 @@ dependencies:
   - io.ktor:ktor-server-html-builder-jvm
   - io.ktor:ktor-server-config-yaml-jvm
 
-  - org.jetbrains.kotlinx:kotlinx-html-jvm:0.10.1
-  - ch.qos.logback:logback-classic:1.5.13
+  - org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.4.1
+  - org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0
+  - ch.qos.logback:logback-classic:1.5.32
 
 test-dependencies:
   - $kotlin.test
-  - io.ktor:ktor-server-tests-jvm
+  - $ktor.server.testHost
 
 settings:
   jvm:
@@ -39,9 +40,18 @@ settings:
   kotlin:
     languageVersion: "2.3"
     serialization: enabled
+    powerAssert:
+      enabled: true
+      functions:
+        - kotlin.test.assertTrue
+        - kotlin.test.assertFalse
+        - kotlin.test.assertEquals
+        - kotlin.test.assertNotEquals
+        - kotlin.test.assertContentEquals
+        - kotlin.test.assertNotNull
   ktor:
     enabled: true
-    version: 3.0.0-beta-1
+    version: 3.4.1
 
 plugins:
   ktlint:

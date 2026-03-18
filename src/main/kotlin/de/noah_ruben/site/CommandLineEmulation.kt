@@ -48,7 +48,8 @@ suspend fun handleCommand(call: RoutingCall) {
     val cmd = URLDecoder.decode(rawCommand, Charset.defaultCharset()).replace("command=", "").trim()
 
     call.respondText {
-        when (parseCommand(rawCommand)) {
+        val (command, args) = parseCommand(rawCommand)
+        when (command) {
             Commands.landingPage -> htmlBase.html { landingpage() }
 
             Commands.projects -> htmlBase.html {
@@ -68,6 +69,8 @@ suspend fun handleCommand(call: RoutingCall) {
                     div {
                         +">> noahruben cv: CV is not available online at this time."
                     }
+                    h1 { args.joinToString() }
+
                     commandLineEmulation()
                 }
             }
@@ -109,7 +112,7 @@ fun FlowContent.commandLineEmulation() {
         +" "
         input(type = InputType.text, name = "command", classes = CLI_INPUT_FIELD) {
             placeholder = "noahruben projects"
-            autoComplete = false
+            autoComplete = "off"
             autoFocus = true
             attributes["spellcheck"] = "false"
 

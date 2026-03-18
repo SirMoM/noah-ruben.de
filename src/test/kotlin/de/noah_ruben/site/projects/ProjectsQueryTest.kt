@@ -1,14 +1,12 @@
 package de.noah_ruben.site.projects
 
 import de.noah_ruben.data.model.Project
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.TestInstance
 import java.time.LocalDateTime.now
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ProjectsQueryTest {
     private lateinit var projects: List<Project>
 
@@ -91,7 +89,7 @@ class ProjectsQueryTest {
         assertEquals(listOf(projects[4]), result, "Lists should be equal")
     }
 
-    @BeforeEach
+    @BeforeTest
     fun setUp() {
         projects = listOf(
             Project(
@@ -157,7 +155,7 @@ class ProjectsQueryTest {
         )
     }
 
-    @AfterEach
+    @AfterTest
     fun tearDown() {
         this.projects = emptyList()
     }

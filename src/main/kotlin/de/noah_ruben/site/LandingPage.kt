@@ -9,9 +9,9 @@ import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_CONTAINER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_DETAILS_CONTAINER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_DIVIDER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_HEADER
+import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_LABEL
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE_IMAGE
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE_LINK
-import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_LABEL
 import de.noah_ruben.misc.CssClasses.LandingPage.PROMPT_ARROW
 import de.noah_ruben.misc.CssClasses.LandingPage.SECTION_DIVIDER
 import de.noah_ruben.misc.CssClasses.LandingPage.SYSTEM_SUMMARY_HEADING

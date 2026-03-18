@@ -2,8 +2,6 @@ package de.noah_ruben.config
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
-import io.ktor.server.application.install
-import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
@@ -12,7 +10,6 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
-import org.slf4j.event.Level
 
 @Serializable
 data class ApplicationInfo(
@@ -23,13 +20,8 @@ data class ApplicationInfo(
 val appInfo = ApplicationInfo()
 
 fun Application.configureMonitoring() {
-    install(CallLogging) {
-        level = Level.INFO
-        filter { true }
-    }
-
     routing {
-        get(path = "/health") {
+        get("/health") {
             call.respond(HttpStatusCode.OK, appInfo)
         }
     }

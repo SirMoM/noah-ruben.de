@@ -11,8 +11,8 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
-import org.junit.Assert.assertEquals
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 fun testApplicationWithRepositoryFake(block: suspend ApplicationTestBuilder.() -> Unit) = testApplication {

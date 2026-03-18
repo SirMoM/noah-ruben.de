@@ -7,8 +7,11 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import org.junit.Assert
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class CommandLineEmulationTest {
 
@@ -18,12 +21,13 @@ class CommandLineEmulationTest {
             contentType(ContentType.Application.FormUrlEncoded)
             setBody("command=noahruben+help")
         }
-        Assert.assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(HttpStatusCode.OK, response.status)
 
         val html = response.bodyAsText()
-        Assert.assertTrue(html.contains("Usage: noahruben"))
-        Assert.assertFalse(html.contains("TODO"))
-        Assert.assertFalse(html.contains("href=\"/cv\""))
+        assertTrue(html.contains("Usage: noahruben"))
+        assertFalse(html.contains("TODO"))
+        assertFalse(html.contains("href=\"/cv\""))
+        assertTrue(html.contains("autocomplete=\"off\""))
     }
 
     @Test
@@ -32,9 +36,9 @@ class CommandLineEmulationTest {
             contentType(ContentType.Application.FormUrlEncoded)
             setBody("command=noahruben+cv")
         }
-        Assert.assertNotEquals(HttpStatusCode.InternalServerError, response.status)
+        assertNotEquals(HttpStatusCode.InternalServerError, response.status)
 
         val html = response.bodyAsText()
-        Assert.assertTrue(html.contains("not available"))
+        assertTrue(html.contains("not available"))
     }
 }
