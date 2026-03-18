@@ -16,6 +16,9 @@ permissions:
 jobs:
   ktlint:
     runs-on: ubuntu-22.04
+    env:
+      KTLINT_VERSION: 1.8.0
+      KTLINT_BIN_DIR: ${{ runner.temp }}/ktlint
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v6
@@ -44,15 +47,16 @@ jobs:
         id: cache-ktlint
         uses: actions/cache@v5
         with:
-          path: ./ktlint
-          key: ${{ runner.os }}-ktlint-1.8.0
+          path: ${{ env.KTLINT_BIN_DIR }}
+          key: ${{ runner.os }}-ktlint-${{ env.KTLINT_VERSION }}
       - name: Install ktlint
         if: steps.cache-ktlint.outputs.cache-hit != 'true'
         run: |
-          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint
-          chmod a+x ktlint
+          mkdir -p "${KTLINT_BIN_DIR}"
+          curl -sSL -o "${KTLINT_BIN_DIR}/ktlint" "https://github.com/pinterest/ktlint/releases/download/${KTLINT_VERSION}/ktlint"
+          chmod a+x "${KTLINT_BIN_DIR}/ktlint"
       - name: Add ktlint to PATH
-        run: echo "${{ github.workspace }}" >> $GITHUB_PATH
+        run: echo "${KTLINT_BIN_DIR}" >> $GITHUB_PATH
       - name: Grant execute permission for Amper wrapper
         run: chmod +x amper
       - name: Run ktlint via Amper
