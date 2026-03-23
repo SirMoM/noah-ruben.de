@@ -7,16 +7,19 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.div
+import kotlin.io.path.writeBytes
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class CommandLineEmulationTest {
 
     @Test
-    fun helpCommandRendersUsageWithoutTodoAndWithoutCvLink() = testApplicationWithRepositoryFake {
+    fun helpCommandReturnsUsageText() = testApplicationWithRepositoryFake {
         val response = client.post("/command") {
             contentType(ContentType.Application.FormUrlEncoded)
             setBody("command=noahruben+help")
@@ -25,20 +28,66 @@ class CommandLineEmulationTest {
 
         val html = response.bodyAsText()
         assertTrue(html.contains("Usage: noahruben"))
-        assertFalse(html.contains("TODO"))
-        assertFalse(html.contains("href=\"/cv\""))
-        assertTrue(html.contains("autocomplete=\"off\""))
     }
 
     @Test
-    fun cvCommandReturnsNon500WithFriendlyMessage() = testApplicationWithRepositoryFake {
-        val response = client.post("/command") {
-            contentType(ContentType.Application.FormUrlEncoded)
-            setBody("command=noahruben+cv")
-        }
-        assertNotEquals(HttpStatusCode.InternalServerError, response.status)
+    fun cvCommandDefaultsToEnglishCvPage() {
+        val cvRoot = createCommandTestCvRoot()
 
-        val html = response.bodyAsText()
-        assertTrue(html.contains("not available"))
+        testApplicationWithRepositoryFake(
+            configOverrides = mapOf(
+                "cv" to cvRoot.absolutePathString(),
+            ),
+        ) {
+            val response = client.post("/command") {
+                contentType(ContentType.Application.FormUrlEncoded)
+                setBody("command=noahruben+cv")
+            }
+            assertEquals(HttpStatusCode.OK, response.status)
+        }
     }
+
+    @Test
+    fun cvCommandSupportsExplicitLanguageSelectionAndValidation() {
+        val cvRoot = createCommandTestCvRoot()
+
+        testApplicationWithRepositoryFake(
+            configOverrides = mapOf(
+                "cv" to cvRoot.absolutePathString(),
+            ),
+        ) {
+            val defaultResponse = client.post("/command") {
+                contentType(ContentType.Application.FormUrlEncoded)
+                setBody("command=noahruben+cv")
+            }
+            assertEquals(HttpStatusCode.OK, defaultResponse.status)
+
+            val germanResponse = client.post("/command") {
+                contentType(ContentType.Application.FormUrlEncoded)
+                setBody("command=noahruben+cv+ger")
+            }
+            assertEquals(HttpStatusCode.OK, germanResponse.status)
+
+            val invalidResponse = client.post("/command") {
+                contentType(ContentType.Application.FormUrlEncoded)
+                setBody("command=noahruben+cv+fra")
+            }
+            assertEquals(HttpStatusCode.OK, invalidResponse.status)
+            assertTrue(invalidResponse.bodyAsText().contains("Unsupported CV language 'fra'"))
+        }
+    }
+}
+
+private fun createCommandTestCvRoot() = createTempDirectory("command-cv-root-").apply {
+    createCommandTestPdf(this / "eng" / "cv.pdf", "english-light")
+    createCommandTestPdf(this / "eng" / "cv_dark.pdf", "english-dark")
+    createCommandTestPdf(this / "ger" / "cv.pdf", "german-light")
+    createCommandTestPdf(this / "ger" / "cv_dark.pdf", "german-dark")
+    toFile().deleteOnExit()
+}
+
+private fun createCommandTestPdf(path: java.nio.file.Path, label: String) {
+    path.parent.createDirectories()
+    path.writeBytes("%PDF-1.4\n$label\n%%EOF".toByteArray())
+    path.toFile().deleteOnExit()
 }

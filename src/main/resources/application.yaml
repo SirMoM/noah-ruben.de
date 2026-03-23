@@ -13,3 +13,4 @@ github:
     mode: "$GITHUB_MODE:wiremock"
     token: "$GITHUB_TOKEN:"
     url: "$GITHUB_URL:"
+cv: "${CV_PATH:/Users/i13az81/dev/uni/pers/cv/out/}"

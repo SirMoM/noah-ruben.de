@@ -8,6 +8,9 @@ import de.noah_ruben.misc.hxPost
 import de.noah_ruben.misc.hxSwap
 import de.noah_ruben.misc.hxTarget
 import de.noah_ruben.misc.parseCommand
+import de.noah_ruben.site.cv.CvLanguage
+import de.noah_ruben.site.cv.buildCvPageState
+import de.noah_ruben.site.cv.cvPageHtml
 import de.noah_ruben.site.projects.projectsPageBody
 import io.ktor.server.application.Application
 import io.ktor.server.request.receiveText
@@ -63,15 +66,26 @@ suspend fun handleCommand(call: RoutingCall) {
             }
 
             Commands.cv -> {
-                call.response.header("HX-Retarget", "#cle")
-                htmlBase.div {
-                    br
-                    div {
-                        +">> noahruben cv: CV is not available online at this time."
+                val language = try {
+                    CvLanguage.fromCommandArguments(args)
+                } catch (error: IllegalArgumentException) {
+                    call.response.header("HX-Retarget", "#cle")
+                    return@respondText htmlBase.div {
+                        br
+                        div {
+                            +">> noahruben cv: ${error.message}"
+                        }
+                        commandLineEmulation()
                     }
-                    h1 { args.joinToString() }
+                }
 
-                    commandLineEmulation()
+                htmlBase.html {
+                    cvPageHtml(
+                        buildCvPageState(
+                            config = call.application.environment.config,
+                            language = language,
+                        ),
+                    )
                 }
             }
 

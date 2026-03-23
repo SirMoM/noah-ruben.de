@@ -9,15 +9,27 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.config.ApplicationConfig
+import io.ktor.server.config.MapApplicationConfig
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-fun testApplicationWithRepositoryFake(block: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
+fun testApplicationWithRepositoryFake(
+    configOverrides: Map<String, String> = emptyMap(),
+    block: suspend ApplicationTestBuilder.() -> Unit,
+) = testApplication {
     environment {
-        config = ApplicationConfig("application-test.yaml")
+        val baseConfig = ApplicationConfig("application-test.yaml")
+        val config = MapApplicationConfig().apply {
+            put("ktor.deployment.port", baseConfig.property("ktor.deployment.port").getString())
+            put("github.mode", baseConfig.property("github.mode").getString())
+            put("github.token", baseConfig.property("github.token").getString())
+            put("github.url", baseConfig.property("github.url").getString())
+            configOverrides.forEach { (key, value) -> put(key, value) }
+        }
+        this.config = config
     }
     application {
         module(FakeRepositoryClient())

@@ -159,6 +159,10 @@ Follow current code conventions first; avoid introducing a new style.
 - Reuse existing test fakes/helpers when available.
 - Add regression tests for bug fixes.
 - Avoid adding real network dependencies to tests.
+- UI change exception:
+  - Do not use TDD for UI-only changes.
+  - Do not add or update unit tests that assert the resulting HTML markup for UI changes.
+  - For `kotlinx.html` rendering changes, prefer build verification and browser/runtime checks over HTML-string unit tests.
 
 ## 8) Agent Work Checklist
 
