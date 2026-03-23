@@ -79,9 +79,9 @@ class CommandLineEmulationTest {
 }
 
 private fun createCommandTestCvRoot() = createTempDirectory("command-cv-root-").apply {
-    createCommandTestPdf(this / "eng" / "cv.pdf", "english-light")
+    createCommandTestPdf(this / "eng" / "cv_light.pdf", "english-light")
     createCommandTestPdf(this / "eng" / "cv_dark.pdf", "english-dark")
-    createCommandTestPdf(this / "ger" / "cv.pdf", "german-light")
+    createCommandTestPdf(this / "ger" / "cv_light.pdf", "german-light")
     createCommandTestPdf(this / "ger" / "cv_dark.pdf", "german-dark")
     toFile().deleteOnExit()
 }

@@ -97,7 +97,7 @@ class CvPdfResolver(
                 file.isFile &&
                     file.canRead() &&
                     file.name.lowercase().endsWith(".pdf") &&
-                    file.name.contains("dark", ignoreCase = true) == (mode == CvMode.Dark)
+                    mode.matches(file.name)
             }
 
         val pdfFile = matchingPdfFiles.singleOrNull()
@@ -147,4 +147,10 @@ private fun CvMode.description(): String =
     when (this) {
         CvMode.Dark -> "dark"
         CvMode.Light -> "light"
+    }
+
+private fun CvMode.matches(fileName: String): Boolean =
+    when (this) {
+        CvMode.Dark -> fileName.contains("dark", ignoreCase = true)
+        CvMode.Light -> fileName.contains("_light", ignoreCase = true)
     }
