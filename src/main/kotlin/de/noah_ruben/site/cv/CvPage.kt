@@ -27,11 +27,10 @@ private const val CV_TOGGLE_LINK_BASE = "inline-flex rounded-full border px-4 py
 private const val CV_TOGGLE_LINK_ACTIVE = "border-ctp-blue bg-ctp-blue text-ctp-base"
 private const val CV_TOGGLE_LINK_INACTIVE = "border-ctp-overlay1 bg-ctp-base text-ctp-text hover:bg-ctp-surface0"
 private const val CV_VIEWER_SECTION = "mx-auto mt-6 flex max-w-5xl flex-col"
-private const val CV_VIEWER_LOADING = "flex min-h-[28rem] w-full flex-col items-center justify-center gap-3 rounded-[1.5rem] border border-dashed border-ctp-overlay0 bg-ctp-base px-6 text-center text-sm text-ctp-subtext1"
-private const val CV_VIEWER_LOADING_DOT = "h-3 w-3 rounded-full bg-ctp-blue animate-pulse"
 private const val CV_VIEWER_PAGES = "flex w-full flex-col items-center gap-6"
 private const val CV_VIEWER_ERROR = "w-full rounded-[1.5rem] border border-ctp-red bg-ctp-base px-6 py-5 text-center font-semibold text-ctp-red"
 private const val CV_VIEWER_CANVAS_COUNT = 3
+private const val CV_PDF_CACHE_CONTROL = "public, max-age=3600, stale-while-revalidate=86400"
 private const val CV_VIEWER_BOOTSTRAP = """
     (function () {
       var root = document.getElementById("cv-pdf-viewer");
@@ -40,14 +39,20 @@ private const val CV_VIEWER_BOOTSTRAP = """
       var baseUrl = root.getAttribute("data-pdf-url-base");
       if (!baseUrl) return;
 
-      var url = new URL(baseUrl, window.location.origin);
-      url.searchParams.set(
-        "mode",
-        document.documentElement.classList.contains("mocha") ? "dark" : "light",
-      );
+      var activeMode = document.documentElement.classList.contains("mocha") ? "dark" : "light";
+      var alternateMode = activeMode === "dark" ? "light" : "dark";
 
-      var pdfUrl = url.pathname + url.search;
-      root.setAttribute("data-pdf-url", pdfUrl);
+      var buildPdfUrl = function (mode) {
+        var url = new URL(baseUrl, window.location.origin);
+        url.searchParams.set("mode", mode);
+        return url.pathname + url.search;
+      };
+
+      var activePdfUrl = buildPdfUrl(activeMode);
+      var alternatePdfUrl = buildPdfUrl(alternateMode);
+
+      root.setAttribute("data-pdf-url", activePdfUrl);
+      root.setAttribute("data-alt-pdf-url", alternatePdfUrl);
 
       var preload = document.querySelector("link[data-cv-pdf-preload]");
       if (!preload) {
@@ -55,10 +60,11 @@ private const val CV_VIEWER_BOOTSTRAP = """
         preload.setAttribute("data-cv-pdf-preload", "");
         preload.rel = "preload";
         preload.as = "fetch";
+        preload.setAttribute("fetchpriority", "high");
         document.head.appendChild(preload);
       }
 
-      preload.setAttribute("href", pdfUrl);
+      preload.setAttribute("href", activePdfUrl);
     })();
 """
 
@@ -123,6 +129,10 @@ fun Application.cvPageRouting() {
             }
 
             call.response.header(
+                HttpHeaders.CacheControl,
+                CV_PDF_CACHE_CONTROL,
+            )
+            call.response.header(
                 HttpHeaders.ContentDisposition,
                 "inline; filename=\"${asset.file.name}\"",
             )
@@ -183,18 +193,6 @@ fun BODY.cvPageBody(pageState: CvPageState) {
                     id = "cv-pdf-viewer"
                     attributes["data-pdf-url-base"] = pageState.selectedLanguage.pdfUrlBase()
                     attributes["data-pdf-title"] = "${pageState.selectedLanguage.displayName} CV"
-
-                    div(classes = CV_VIEWER_LOADING) {
-                        attributes["data-role"] = "loading"
-                        div(classes = CV_VIEWER_LOADING_DOT) {}
-                        p {
-                            +"Rendering PDF preview..."
-                        }
-                        p {
-                            attributes["data-role"] = "loading-text"
-                            +"Preparing document."
-                        }
-                    }
 
                     div(classes = CV_VIEWER_ERROR) {
                         attributes["data-role"] = "error"
