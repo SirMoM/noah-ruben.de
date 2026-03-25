@@ -54,8 +54,17 @@ fun HEAD.defaultHeader() {
                     var savedTheme = localStorage.theme;
                     var prefersDark = !("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches;
                     var theme = savedTheme || (prefersDark ? "mocha" : "latte");
-                    document.documentElement.classList.remove("latte", "mocha");
-                    document.documentElement.classList.add(theme);
+                    var root = document.documentElement;
+                    var currentTheme = root.classList.contains("mocha") ? "mocha" : root.classList.contains("latte") ? "latte" : null;
+                    if (currentTheme !== theme) {
+                      root.classList.remove("latte", "mocha");
+                      root.classList.add(theme);
+                      window.dispatchEvent(new CustomEvent("noahruben:theme-changed", {
+                        detail: {
+                          mode: theme === "mocha" ? "dark" : "light",
+                        },
+                      }));
+                    }
 
                     var button = document.getElementById("theme-toggle");
                     if (!button) return;

@@ -3,9 +3,11 @@
 package de.noah_ruben.site.cv
 
 import de.noah_ruben.misc.CssClasses.CONTENT_CONTAINER
+import de.noah_ruben.misc.CssClasses.Form.LOADING_SPINNER
 import de.noah_ruben.misc.CssClasses.PAGE_BASE
 import de.noah_ruben.misc.CssClasses.PAGE_TITLE
 import de.noah_ruben.misc.CssClasses.Shared.ERROR_MESSAGE_BOX
+import de.noah_ruben.misc.CssClasses.Shared.HTMX_INDICATOR_INLINE
 import de.noah_ruben.site.defaultBody
 import de.noah_ruben.site.defaultHeader
 import de.noah_ruben.site.themeToggleButton
@@ -29,44 +31,9 @@ private const val CV_TOGGLE_LINK_INACTIVE = "border-ctp-overlay1 bg-ctp-base tex
 private const val CV_VIEWER_SECTION = "mx-auto mt-6 flex max-w-5xl flex-col"
 private const val CV_VIEWER_PAGES = "flex w-full flex-col items-center gap-6"
 private const val CV_VIEWER_ERROR = "w-full rounded-[1.5rem] border border-ctp-red bg-ctp-base px-6 py-5 text-center font-semibold text-ctp-red"
+private const val CV_VIEWER_LOADING = "flex justify-center py-12"
 private const val CV_VIEWER_CANVAS_COUNT = 3
 private const val CV_PDF_CACHE_CONTROL = "public, max-age=3600, stale-while-revalidate=86400"
-private const val CV_VIEWER_BOOTSTRAP = """
-    (function () {
-      var root = document.getElementById("cv-pdf-viewer");
-      if (!root) return;
-
-      var baseUrl = root.getAttribute("data-pdf-url-base");
-      if (!baseUrl) return;
-
-      var activeMode = document.documentElement.classList.contains("mocha") ? "dark" : "light";
-      var alternateMode = activeMode === "dark" ? "light" : "dark";
-
-      var buildPdfUrl = function (mode) {
-        var url = new URL(baseUrl, window.location.origin);
-        url.searchParams.set("mode", mode);
-        return url.pathname + url.search;
-      };
-
-      var activePdfUrl = buildPdfUrl(activeMode);
-      var alternatePdfUrl = buildPdfUrl(alternateMode);
-
-      root.setAttribute("data-pdf-url", activePdfUrl);
-      root.setAttribute("data-alt-pdf-url", alternatePdfUrl);
-
-      var preload = document.querySelector("link[data-cv-pdf-preload]");
-      if (!preload) {
-        preload = document.createElement("link");
-        preload.setAttribute("data-cv-pdf-preload", "");
-        preload.rel = "preload";
-        preload.as = "fetch";
-        preload.setAttribute("fetchpriority", "high");
-        document.head.appendChild(preload);
-      }
-
-      preload.setAttribute("href", activePdfUrl);
-    })();
-"""
 
 fun Application.cvPageRouting() {
     routing {
@@ -159,11 +126,6 @@ fun HTML.cvPageHtml(pageState: CvPageState) {
         cvPageBody(pageState)
         if (pageState.errorMessage == null) {
             script {
-                unsafe {
-                    +CV_VIEWER_BOOTSTRAP.trimIndent()
-                }
-            }
-            script {
                 attributes["type"] = "module"
                 src = "/resources/cv-pdf-viewer.mjs"
             }
@@ -191,8 +153,12 @@ fun BODY.cvPageBody(pageState: CvPageState) {
             div(classes = CV_VIEWER_SECTION) {
                 div {
                     id = "cv-pdf-viewer"
+                    attributes["data-current-language"] = pageState.selectedLanguage.token
                     attributes["data-pdf-url-base"] = pageState.selectedLanguage.pdfUrlBase()
                     attributes["data-pdf-title"] = "${pageState.selectedLanguage.displayName} CV"
+                    attributes["data-toggle-link-base"] = CV_TOGGLE_LINK_BASE
+                    attributes["data-toggle-link-active"] = CV_TOGGLE_LINK_ACTIVE
+                    attributes["data-toggle-link-inactive"] = CV_TOGGLE_LINK_INACTIVE
 
                     div(classes = CV_VIEWER_ERROR) {
                         attributes["data-role"] = "error"
@@ -200,8 +166,19 @@ fun BODY.cvPageBody(pageState: CvPageState) {
                         +"The PDF preview is unavailable right now."
                     }
 
+                    div(classes = CV_VIEWER_LOADING) {
+                        attributes["data-role"] = "loading"
+                        attributes["hidden"] = ""
+                        div(classes = "$LOADING_SPINNER htmx-request") {
+                            +"Loading CV "
+                            span(classes = HTMX_INDICATOR_INLINE) {
+                                img(src = "/resources/bars.svg", alt = "Loading CV...")
+                            }
+                        }
+                    }
+
                     div(classes = CV_VIEWER_PAGES) {
-                        attributes["data-role"] = "pages"
+                        attributes["data-role"] = "pages-active"
                         attributes["hidden"] = ""
                         repeat(CV_VIEWER_CANVAS_COUNT) { pageIndex ->
                             canvas {
@@ -226,6 +203,9 @@ private fun FlowContent.cvLanguageLink(
         href = language.pageUrl(),
         classes = "$CV_TOGGLE_LINK_BASE $selectedClass",
     ) {
+        attributes["data-cv-language"] = language.token
+        attributes["data-pdf-url-base"] = language.pdfUrlBase()
+        attributes["data-pdf-title"] = "${language.displayName} CV"
         attributes["data-selected"] = isSelected.toString()
         +language.toggleLabel
     }

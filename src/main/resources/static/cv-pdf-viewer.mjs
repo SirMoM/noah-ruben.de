@@ -1,39 +1,13 @@
-/**
- * Renders the CV viewer using PDF.js.
- *
- * Contract:
- * - Kotlin provides `#cv-pdf-viewer` with `data-pdf-url-base` and `data-pdf-title`.
- * - Kotlin pre-renders exactly three `<canvas>` elements for the CV pages.
- * - This module computes the active PDF URL, sizes the canvases, and paints them.
- */
-const PDF_JS_VERSION = "4.0.379";
-const MAX_PAGE_COUNT = 3;
+import {
+  buildVariant,
+  drawVariantIntoLayer,
+  getVariantRecord,
+} from "./cv-pdf-renderer.mjs";
+
+const THEME_CHANGED_EVENT = "noahruben:theme-changed";
+const CV_LANGUAGE_LINK_SELECTOR = "a[data-cv-language]";
 const PREFETCH_IDLE_TIMEOUT_MS = 1500;
 
-const PDF_JS_MODULE_URL = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDF_JS_VERSION}/build/pdf.min.mjs`;
-const PDF_JS_WORKER_URL = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDF_JS_VERSION}/build/pdf.worker.min.mjs`;
-const CV_PDF_PRELOAD_SELECTOR = "link[data-cv-pdf-preload]";
-const warmedPdfUrls = new WeakMap();
-const queuedPrefetchUrls = new WeakMap();
-
-const logInfo = (...parts) => {
-  console.info("[cv-pdf-viewer]", ...parts);
-};
-
-const logWarn = (...parts) => {
-  console.warn("[cv-pdf-viewer]", ...parts);
-};
-
-const logError = (...parts) => {
-  console.error("[cv-pdf-viewer]", ...parts);
-};
-
-/**
- * Toggles an element's hidden state when the element exists.
- *
- * @param {Element | null} element
- * @param {boolean} hidden
- */
 const setHidden = (element, hidden) => {
   if (!element) {
     return;
@@ -46,76 +20,6 @@ const setHidden = (element, hidden) => {
   }
 };
 
-/**
- * Returns the tracked URL set for a viewer root.
- *
- * @param {WeakMap<Element, Set<string>>} map
- * @param {Element} root
- * @returns {Set<string>}
- */
-const getTrackedUrlSet = (map, root) => {
-  let urls = map.get(root);
-  if (!urls) {
-    urls = new Set();
-    map.set(root, urls);
-  }
-
-  return urls;
-};
-
-/**
- * Returns the active CV mode based on the current site theme.
- *
- * @returns {"dark" | "light"}
- */
-const getActiveMode = () =>
-  document.documentElement.classList.contains("mocha") ? "dark" : "light";
-
-/**
- * Returns the inactive CV mode for the current theme.
- *
- * @param {"dark" | "light"} mode
- * @returns {"dark" | "light"}
- */
-const getAlternateMode = (mode) => (mode === "dark" ? "light" : "dark");
-
-/**
- * Returns a concrete PDF URL for the supplied base URL and mode.
- *
- * @param {string} baseUrl
- * @param {"dark" | "light"} mode
- * @returns {string}
- */
-const buildPdfUrl = (baseUrl, mode) => {
-  const url = new URL(baseUrl, window.location.origin);
-  url.searchParams.set("mode", mode);
-  return `${url.pathname}${url.search}`;
-};
-
-/**
- * Updates the PDF preload hint when it exists or creates it when missing.
- *
- * @param {string} pdfUrl
- */
-const syncPreload = (pdfUrl) => {
-  let preload = document.querySelector(CV_PDF_PRELOAD_SELECTOR);
-  if (!(preload instanceof HTMLLinkElement)) {
-    preload = document.createElement("link");
-    preload.setAttribute("data-cv-pdf-preload", "");
-    preload.rel = "preload";
-    preload.as = "fetch";
-    preload.setAttribute("fetchpriority", "high");
-    document.head.appendChild(preload);
-  }
-
-  preload.href = pdfUrl;
-};
-
-/**
- * Schedules a callback once the browser is idle or a timeout expires.
- *
- * @param {() => void} callback
- */
 const scheduleWhenIdle = (callback) => {
   if ("requestIdleCallback" in window) {
     window.requestIdleCallback(callback, {
@@ -127,366 +31,316 @@ const scheduleWhenIdle = (callback) => {
   window.setTimeout(callback, PREFETCH_IDLE_TIMEOUT_MS);
 };
 
-/**
- * Queues an alternate-theme PDF fetch in the background.
- *
- * @param {Element} root
- * @param {string | null} alternatePdfUrl
- */
-const queueAlternateThemePrefetch = (root, alternatePdfUrl) => {
-  if (!alternatePdfUrl) {
-    return;
-  }
+const getActiveMode = () =>
+  document.documentElement.classList.contains("mocha") ? "dark" : "light";
 
-  const warmedUrls = getTrackedUrlSet(warmedPdfUrls, root);
-  if (warmedUrls.has(alternatePdfUrl)) {
-    return;
-  }
+const getAlternateMode = (mode) => (mode === "dark" ? "light" : "dark");
 
-  const queuedUrls = getTrackedUrlSet(queuedPrefetchUrls, root);
-  if (queuedUrls.has(alternatePdfUrl)) {
-    return;
-  }
+const getLanguageLinks = () =>
+  Array.from(document.querySelectorAll(CV_LANGUAGE_LINK_SELECTOR)).filter(
+    (link) => link instanceof HTMLAnchorElement,
+  );
 
-  queuedUrls.add(alternatePdfUrl);
-  logInfo("Queued alternate-theme prefetch.", alternatePdfUrl);
+const getLanguageLink = (language) =>
+  getLanguageLinks().find(
+    (link) => link.getAttribute("data-cv-language") === language,
+  ) ?? null;
 
-  scheduleWhenIdle(async () => {
-    if (root.getAttribute("data-alt-pdf-url") !== alternatePdfUrl) {
-      queuedUrls.delete(alternatePdfUrl);
-      logInfo("Skipped stale alternate-theme prefetch.", alternatePdfUrl);
-      return;
-    }
+const getAvailableLanguages = () => {
+  const languages = getLanguageLinks()
+    .map((link) => link.getAttribute("data-cv-language"))
+    .filter(Boolean);
+  return [...new Set(languages)];
+};
 
-    logInfo("Starting alternate-theme prefetch.", alternatePdfUrl);
+const updateLanguageLinks = (root, selectedLanguage) => {
+  const baseClass = root.getAttribute("data-toggle-link-base") ?? "";
+  const activeClass = root.getAttribute("data-toggle-link-active") ?? "";
+  const inactiveClass = root.getAttribute("data-toggle-link-inactive") ?? "";
 
-    try {
-      const response = await fetch(alternatePdfUrl, {
-        cache: "force-cache",
-      });
-
-      if (!response.ok) {
-        throw new Error(`Unexpected prefetch status ${response.status}.`);
-      }
-
-      await response.arrayBuffer();
-      warmedUrls.add(alternatePdfUrl);
-      logInfo("Alternate-theme prefetch completed.", alternatePdfUrl);
-    } catch (error) {
-      logWarn("Alternate-theme prefetch failed.", alternatePdfUrl, error);
-    } finally {
-      queuedUrls.delete(alternatePdfUrl);
-    }
+  getLanguageLinks().forEach((link) => {
+    const isSelected =
+      link.getAttribute("data-cv-language") === selectedLanguage;
+    link.setAttribute("data-selected", String(isSelected));
+    link.className = `${baseClass} ${isSelected ? activeClass : inactiveClass}`.trim();
   });
 };
 
-/**
- * Computes and stores the exact PDF URLs for the active language and theme.
- *
- * @param {Element} root
- * @returns {{ pdfUrl: string, alternatePdfUrl: string } | null}
- */
-const syncPdfUrls = (root) => {
-  const baseUrl = root.getAttribute("data-pdf-url-base");
-  if (!baseUrl) {
+const syncPendingVariant = (controller, variant) => {
+  controller.root.setAttribute("data-current-language", variant.language);
+  controller.root.setAttribute("data-pdf-url-base", variant.baseUrl);
+  controller.root.setAttribute("data-pdf-title", variant.pdfTitle);
+  updateLanguageLinks(controller.root, variant.language);
+};
+
+const syncCommittedVariant = (controller, variant) => {
+  syncPendingVariant(controller, variant);
+  controller.root.setAttribute("data-pdf-url", variant.pdfUrl);
+};
+
+const showLoading = (controller) => {
+  controller.root.setAttribute("data-viewer-ready", "false");
+  setHidden(controller.errorElement, true);
+  setHidden(controller.loadingElement, false);
+  setHidden(controller.activeLayer, true);
+  setHidden(controller.stagingLayer, true);
+};
+
+const showError = (controller, message) => {
+  controller.root.setAttribute("data-viewer-ready", "false");
+  setHidden(controller.activeLayer, true);
+  setHidden(controller.stagingLayer, true);
+  setHidden(controller.loadingElement, true);
+  if (controller.errorElement) {
+    controller.errorElement.textContent = message;
+  }
+  setHidden(controller.errorElement, false);
+};
+
+const restoreCommittedView = (controller) => {
+  if (!controller.lastCommittedVariant) {
+    return;
+  }
+
+  syncCommittedVariant(controller, controller.lastCommittedVariant);
+  controller.root.setAttribute("data-viewer-ready", "true");
+  setHidden(controller.errorElement, true);
+  setHidden(controller.loadingElement, true);
+  setHidden(controller.activeLayer, false);
+  setHidden(controller.stagingLayer, true);
+};
+
+const commitVariant = (controller, renderedVariant) => {
+  drawVariantIntoLayer(controller.stagingLayer, renderedVariant);
+
+  const nextActiveLayer = controller.stagingLayer;
+  const nextStagingLayer = controller.activeLayer;
+  nextActiveLayer.setAttribute("data-role", "pages-active");
+  nextStagingLayer.setAttribute("data-role", "pages-staging");
+
+  controller.activeLayer = nextActiveLayer;
+  controller.stagingLayer = nextStagingLayer;
+  controller.lastCommittedVariant = renderedVariant;
+
+  syncCommittedVariant(controller, renderedVariant);
+  controller.root.setAttribute(
+    "data-render-id",
+    `${Number.parseInt(controller.root.getAttribute("data-render-id") ?? "0", 10) + 1}`,
+  );
+  controller.root.setAttribute("data-viewer-ready", "true");
+
+  setHidden(controller.errorElement, true);
+  setHidden(controller.loadingElement, true);
+  setHidden(controller.activeLayer, false);
+  setHidden(controller.stagingLayer, true);
+};
+
+const buildVariantFor = (controller, language, mode) =>
+  buildVariant(controller.root, getLanguageLink(language), mode);
+
+const warmVariants = (controller, variants) => {
+  variants.filter(Boolean).forEach((variant, index) => {
+    const warm = () => {
+      void getVariantRecord(controller.root, variant).promise.catch(() => {});
+    };
+
+    if (index === 0) {
+      warm();
+      return;
+    }
+
+    scheduleWhenIdle(warm);
+  });
+};
+
+const warmPreferredVariants = (controller) => {
+  const committed = controller.lastCommittedVariant;
+  if (!committed) {
+    return;
+  }
+
+  const otherLanguages = getAvailableLanguages().filter(
+    (language) => language !== committed.language,
+  );
+
+  warmVariants(controller, [
+    buildVariantFor(
+      controller,
+      committed.language,
+      getAlternateMode(committed.mode),
+    ),
+    ...otherLanguages.map((language) =>
+      buildVariantFor(controller, language, committed.mode),
+    ),
+    ...otherLanguages.map((language) =>
+      buildVariantFor(controller, language, getAlternateMode(committed.mode)),
+    ),
+  ]);
+};
+
+const pushHistoryUrl = (pageUrl) => {
+  const nextUrl = new URL(pageUrl, window.location.origin);
+  const currentUrl = new URL(window.location.href);
+
+  if (
+    currentUrl.pathname === nextUrl.pathname &&
+    currentUrl.search === nextUrl.search
+  ) {
+    return;
+  }
+
+  history.pushState(null, "", nextUrl);
+};
+
+const requestVariant = async (controller, variant, options = {}) => {
+  if (!variant) {
+    return;
+  }
+
+  if (options.pushHistory) {
+    pushHistoryUrl(variant.pageUrl);
+  }
+
+  if (controller.lastCommittedVariant?.key === variant.key) {
+    syncCommittedVariant(controller, variant);
+    return;
+  }
+
+  controller.requestId += 1;
+  const currentRequestId = controller.requestId;
+  syncPendingVariant(controller, variant);
+
+  const record = getVariantRecord(controller.root, variant);
+  if (record.status !== "fulfilled") {
+    showLoading(controller);
+  }
+
+  try {
+    const renderedVariant =
+      record.status === "fulfilled" ? record.value : await record.promise;
+    if (currentRequestId !== controller.requestId) {
+      return;
+    }
+
+    commitVariant(controller, renderedVariant);
+    warmPreferredVariants(controller);
+  } catch (error) {
+    if (currentRequestId !== controller.requestId) {
+      return;
+    }
+
+    console.error("[cv-pdf-viewer] Failed to render CV PDF preview.", error);
+
+    if (controller.lastCommittedVariant) {
+      restoreCommittedView(controller);
+      return;
+    }
+
+    showError(controller, "The PDF preview is unavailable right now.");
+  }
+};
+
+const createController = (root) => {
+  const activeLayer = root.querySelector('[data-role="pages-active"]');
+  const loadingElement = root.querySelector('[data-role="loading"]');
+  const errorElement = root.querySelector('[data-role="error"]');
+
+  if (!(activeLayer instanceof Element) || !(loadingElement instanceof Element)) {
     return null;
   }
 
-  const activeMode = getActiveMode();
-  const pdfUrl = buildPdfUrl(baseUrl, activeMode);
-  const alternatePdfUrl = buildPdfUrl(baseUrl, getAlternateMode(activeMode));
-  root.setAttribute("data-pdf-url", pdfUrl);
-  root.setAttribute("data-alt-pdf-url", alternatePdfUrl);
-  syncPreload(pdfUrl);
-  logInfo("Synced PDF URLs.", {
-    active: pdfUrl,
-    alternate: alternatePdfUrl,
-  });
+  const stagingLayer = activeLayer.cloneNode(true);
+  stagingLayer.setAttribute("data-role", "pages-staging");
+  setHidden(stagingLayer, true);
+  activeLayer.insertAdjacentElement("afterend", stagingLayer);
+
   return {
-    pdfUrl,
-    alternatePdfUrl,
+    activeLayer,
+    errorElement,
+    lastCommittedVariant: null,
+    loadingElement,
+    requestId: 0,
+    root,
+    stagingLayer,
   };
 };
 
-/**
- * Applies the rendered page dimensions to a Kotlin-provided canvas.
- *
- * @param {HTMLCanvasElement} canvas
- * @param {{ width: number, height: number }} viewport
- * @param {number} outputScale
- */
-const configureCanvas = (canvas, viewport, outputScale) => {
-  canvas.width = Math.floor(viewport.width * outputScale);
-  canvas.height = Math.floor(viewport.height * outputScale);
-  canvas.style.width = `${Math.floor(viewport.width)}px`;
-  canvas.style.height = `${Math.floor(viewport.height)}px`;
-  canvas.style.display = "block";
-  canvas.style.maxWidth = "100%";
-};
+const viewerControllers = Array.from(document.querySelectorAll("#cv-pdf-viewer"))
+  .map((root) => createController(root))
+  .filter(Boolean);
 
-/**
- * Returns true once the viewer has rendered at least one document.
- *
- * @param {Element} root
- * @returns {boolean}
- */
-const isViewerReady = (root) => root.getAttribute("data-viewer-ready") === "true";
-
-/**
- * Shows the viewer fallback message after a rendering failure.
- *
- * @param {Element | null} pagesElement
- * @param {Element | null} errorElement
- * @param {string} message
- */
-const showError = (pagesElement, errorElement, message) => {
-  setHidden(pagesElement, true);
-  if (errorElement) {
-    errorElement.textContent = message;
-  }
-  setHidden(errorElement, false);
-};
-
-/**
- * Returns the Kotlin-rendered canvas slots required by the viewer contract.
- *
- * @param {Element} pagesElement
- * @returns {HTMLCanvasElement[]}
- */
-const getPageCanvases = (pagesElement) => {
-  const canvases = Array.from(
-    pagesElement.querySelectorAll("canvas[data-page-number]"),
+viewerControllers.forEach((controller) => {
+  const initialLanguage =
+    controller.root.getAttribute("data-current-language") ??
+    getAvailableLanguages()[0];
+  updateLanguageLinks(controller.root, initialLanguage);
+  void requestVariant(
+    controller,
+    buildVariantFor(controller, initialLanguage, getActiveMode()),
   );
-
-  if (canvases.length !== MAX_PAGE_COUNT) {
-    throw new Error(
-      `Expected ${MAX_PAGE_COUNT} canvas elements, received ${canvases.length}.`,
-    );
-  }
-
-  return canvases;
-};
-
-/**
- * Starts a new render cycle for a viewer root and returns its unique render id.
- *
- * @param {Element} root
- * @returns {string}
- */
-const beginRender = (root) => {
-  const renderId = `${Number.parseInt(root.getAttribute("data-render-id") ?? "0", 10) + 1}`;
-  root.setAttribute("data-render-id", renderId);
-  return renderId;
-};
-
-/**
- * Returns true when a newer render cycle has already replaced this one.
- *
- * @param {Element} root
- * @param {string} renderId
- * @returns {boolean}
- */
-const isStaleRender = (root, renderId) =>
-  root.getAttribute("data-render-id") !== renderId;
-
-/**
- * Paints a fully rendered buffer canvas into the viewer's visible canvas slot.
- *
- * @param {HTMLCanvasElement} canvas
- * @param {HTMLCanvasElement} bufferCanvas
- * @param {{ width: number, height: number }} viewport
- * @param {number} outputScale
- * @param {string} pdfTitle
- * @param {number} pageNumber
- */
-const applyRenderedPage = (
-  canvas,
-  bufferCanvas,
-  viewport,
-  outputScale,
-  pdfTitle,
-  pageNumber,
-) => {
-  const context = canvas.getContext("2d");
-  if (!context) {
-    throw new Error("Canvas 2D context is unavailable.");
-  }
-
-  configureCanvas(canvas, viewport, outputScale);
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.drawImage(bufferCanvas, 0, 0);
-  canvas.setAttribute("aria-label", `${pdfTitle} page ${pageNumber}`);
-};
-
-/**
- * Loads the PDF and paints each page into its pre-rendered Kotlin canvas.
- *
- * @param {Element} root
- * @returns {Promise<void>}
- */
-const renderViewer = async (root) => {
-  const urls = syncPdfUrls(root);
-  const pdfTitle = root.getAttribute("data-pdf-title") ?? "CV";
-  const errorElement = root.querySelector('[data-role="error"]');
-  const pagesElement = root.querySelector('[data-role="pages"]');
-
-  if (!urls || !pagesElement) {
-    return;
-  }
-
-  const { pdfUrl, alternatePdfUrl } = urls;
-  const canvases = getPageCanvases(pagesElement);
-  const renderId = beginRender(root);
-  const shouldHidePages = !isViewerReady(root);
-
-  if (shouldHidePages) {
-    setHidden(pagesElement, true);
-  }
-  setHidden(errorElement, true);
-
-  try {
-    logInfo("Loading PDF.js module.");
-    const pdfjs = await import(PDF_JS_MODULE_URL);
-    pdfjs.GlobalWorkerOptions.workerSrc = PDF_JS_WORKER_URL;
-
-    logInfo("Starting active PDF download.", pdfUrl);
-    const loadingTask = pdfjs.getDocument(pdfUrl);
-    queueAlternateThemePrefetch(root, alternatePdfUrl);
-    const pdf = await loadingTask.promise;
-    getTrackedUrlSet(warmedPdfUrls, root).add(pdfUrl);
-    logInfo("Active PDF ready.", {
-      url: pdfUrl,
-      pages: pdf.numPages,
-    });
-
-    if (isStaleRender(root, renderId)) {
-      return;
-    }
-
-    if (pdf.numPages > MAX_PAGE_COUNT) {
-      throw new Error(
-        `Expected at most ${MAX_PAGE_COUNT} PDF pages, received ${pdf.numPages}.`,
-      );
-    }
-
-    const availableWidth = Math.max(Math.min(root.clientWidth - 32, 920), 320);
-    const renderedPages = [];
-
-    for (const [index, canvas] of canvases.entries()) {
-      const pageNumber = index + 1;
-      if (pageNumber > pdf.numPages) {
-        renderedPages.push(null);
-        continue;
-      }
-
-      logInfo(`Rendering page ${pageNumber} of ${pdf.numPages}.`);
-
-      const page = await pdf.getPage(pageNumber);
-      const baseViewport = page.getViewport({ scale: 1 });
-      const scale = availableWidth / baseViewport.width;
-      const viewport = page.getViewport({ scale });
-      const outputScale = window.devicePixelRatio || 1;
-      const transform =
-        outputScale === 1 ? null : [outputScale, 0, 0, outputScale, 0, 0];
-      const bufferCanvas = document.createElement("canvas");
-      const context = bufferCanvas.getContext("2d");
-
-      if (!context) {
-        throw new Error("Canvas 2D context is unavailable.");
-      }
-
-      configureCanvas(bufferCanvas, viewport, outputScale);
-
-      const renderContext = {
-        canvasContext: context,
-        viewport,
-        transform,
-      };
-
-      await page.render(renderContext).promise;
-      if (isStaleRender(root, renderId)) {
-        return;
-      }
-
-      page.cleanup();
-      renderedPages.push({
-        bufferCanvas,
-        outputScale,
-        pageNumber,
-        viewport,
-      });
-    }
-
-    for (const [index, canvas] of canvases.entries()) {
-      const renderedPage = renderedPages[index];
-      if (!renderedPage) {
-        canvas.setAttribute("hidden", "");
-        continue;
-      }
-
-      canvas.removeAttribute("hidden");
-      applyRenderedPage(
-        canvas,
-        renderedPage.bufferCanvas,
-        renderedPage.viewport,
-        renderedPage.outputScale,
-        pdfTitle,
-        renderedPage.pageNumber,
-      );
-    }
-
-    if (isStaleRender(root, renderId)) {
-      return;
-    }
-
-    root.setAttribute("data-viewer-ready", "true");
-    setHidden(errorElement, true);
-    setHidden(pagesElement, false);
-    logInfo("Viewer render completed.", pdfUrl);
-  } catch (error) {
-    if (isStaleRender(root, renderId)) {
-      return;
-    }
-
-    logError("Failed to render CV PDF preview.", error);
-
-    if (isViewerReady(root)) {
-      logWarn("Keeping the last rendered PDF visible after the failure.");
-      return;
-    }
-
-    showError(pagesElement, errorElement, "The PDF preview is unavailable right now.");
-  }
-};
-
-const viewerRoots = Array.from(document.querySelectorAll("#cv-pdf-viewer"));
-
-viewerRoots.forEach((root) => {
-  void renderViewer(root);
 });
 
-if (viewerRoots.length > 0) {
-  let rerenderQueued = false;
-  const queueRerender = () => {
-    if (rerenderQueued) {
+if (viewerControllers.length > 0) {
+  document.addEventListener("click", (event) => {
+    if (event.defaultPrevented || !(event.target instanceof Element)) {
       return;
     }
 
-    rerenderQueued = true;
-    window.requestAnimationFrame(() => {
-      rerenderQueued = false;
-      viewerRoots.forEach((root) => {
-        void renderViewer(root);
-      });
-    });
-  };
-
-  new MutationObserver((mutations) => {
-    if (mutations.some((mutation) => mutation.attributeName === "class")) {
-      queueRerender();
+    const link = event.target.closest(CV_LANGUAGE_LINK_SELECTOR);
+    if (!(link instanceof HTMLAnchorElement)) {
+      return;
     }
-  }).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["class"],
+
+    if (
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    const language = link.getAttribute("data-cv-language");
+    const mode = getActiveMode();
+
+    viewerControllers.forEach((controller) => {
+      void requestVariant(
+        controller,
+        buildVariantFor(controller, language, mode),
+        { pushHistory: true },
+      );
+    });
+  });
+
+  window.addEventListener(THEME_CHANGED_EVENT, (event) => {
+    const mode =
+      event instanceof CustomEvent && event.detail?.mode === "dark"
+        ? "dark"
+        : "light";
+
+    viewerControllers.forEach((controller) => {
+      const language =
+        controller.root.getAttribute("data-current-language") ??
+        controller.lastCommittedVariant?.language ??
+        getAvailableLanguages()[0];
+      void requestVariant(controller, buildVariantFor(controller, language, mode));
+    });
+  });
+
+  window.addEventListener("popstate", () => {
+    const url = new URL(window.location.href);
+    const language =
+      getLanguageLink(url.searchParams.get("lang"))?.getAttribute(
+        "data-cv-language",
+      ) ??
+      viewerControllers[0].root.getAttribute("data-current-language") ??
+      getAvailableLanguages()[0];
+    const mode = getActiveMode();
+
+    viewerControllers.forEach((controller) => {
+      void requestVariant(controller, buildVariantFor(controller, language, mode));
+    });
   });
 }
