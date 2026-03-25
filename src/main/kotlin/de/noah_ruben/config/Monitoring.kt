@@ -1,5 +1,7 @@
 package de.noah_ruben.config
 
+import de.noah_ruben.data.Cache
+import de.noah_ruben.site.cv.cvAssetsHealthCheck
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.response.respond
@@ -15,6 +17,8 @@ import kotlinx.serialization.Serializable
 data class ApplicationInfo(
     val version: String = "TODO: Dynamic version",
     val startupTime: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    val overallStatus: String = HEALTH_OK,
+    val checks: Map<String, HealthCheckResult> = emptyMap(),
 )
 
 val appInfo = ApplicationInfo()
@@ -22,7 +26,22 @@ val appInfo = ApplicationInfo()
 fun Application.configureMonitoring() {
     routing {
         get("/health") {
-            call.respond(HttpStatusCode.OK, appInfo)
+            val checks = linkedMapOf(
+                "application" to HealthCheckResult(
+                    status = HEALTH_OK,
+                    message = "Application is running.",
+                ),
+                "cvAssets" to cvAssetsHealthCheck(environment.config),
+                "cache" to Cache.healthCheck(),
+            )
+
+            call.respond(
+                HttpStatusCode.OK,
+                appInfo.copy(
+                    overallStatus = overallHealthStatus(checks),
+                    checks = checks,
+                ),
+            )
         }
     }
 }

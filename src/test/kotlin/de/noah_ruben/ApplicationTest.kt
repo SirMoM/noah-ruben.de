@@ -12,9 +12,15 @@ import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.config.MapApplicationConfig
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.div
+import kotlin.io.path.writeBytes
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 fun testApplicationWithRepositoryFake(
     configOverrides: Map<String, String> = emptyMap(),
@@ -79,8 +85,53 @@ class ApplicationTest {
             val body = body<ApplicationInfo>()
 
             assertNotNull(body.startupTime)
-
             assertEquals(appInfo.version, body.version)
+            assertEquals("degraded", body.overallStatus)
+            assertEquals("ok", body.checks.getValue("application").status)
+            assertEquals("degraded", body.checks.getValue("cvAssets").status)
+            assertEquals("ok", body.checks.getValue("cache").status)
         }
     }
+
+    @Test
+    fun testHealthCheckReportsHealthyCvAssetsWhenConfigured() {
+        val cvRoot = createHealthTestCvRoot()
+
+        testApplicationWithRepositoryFake(
+            configOverrides = mapOf(
+                "cv" to cvRoot.absolutePathString(),
+            ),
+        ) {
+            val client = createClient {
+                install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
+                    json()
+                }
+            }
+
+            client.get("/health").apply {
+                assertEquals(HttpStatusCode.OK, status)
+                val body = body<ApplicationInfo>()
+
+                assertEquals("ok", body.overallStatus)
+                assertEquals("ok", body.checks.getValue("application").status)
+                assertEquals("ok", body.checks.getValue("cvAssets").status)
+                assertTrue(body.checks.getValue("cvAssets").message.contains(cvRoot.absolutePathString()))
+                assertEquals("ok", body.checks.getValue("cache").status)
+            }
+        }
+    }
+}
+
+private fun createHealthTestCvRoot() = createTempDirectory("health-cv-root-").apply {
+    createHealthTestPdf(this / "eng" / "cv_light.pdf", "english-light")
+    createHealthTestPdf(this / "eng" / "cv_dark.pdf", "english-dark")
+    createHealthTestPdf(this / "ger" / "cv_light.pdf", "german-light")
+    createHealthTestPdf(this / "ger" / "cv_dark.pdf", "german-dark")
+    toFile().deleteOnExit()
+}
+
+private fun createHealthTestPdf(path: java.nio.file.Path, label: String) {
+    path.parent.createDirectories()
+    path.writeBytes("%PDF-1.4\n$label\n%%EOF".toByteArray())
+    path.toFile().deleteOnExit()
 }

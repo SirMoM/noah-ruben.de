@@ -8,8 +8,12 @@ services:
         condition: service_healthy
     environment:
       GITHUB_URL: "http://wiremock-website:8080"
+      CV_PATH: "/cv"
     ports:
       - "42081:42081"
+    volumes:
+      - ${CV_ENG_DIR:-/Users/i13az81/dev/uni/pers/cv/out/eng}:/cv/eng:ro
+      - ${CV_GER_DIR:-/Users/i13az81/dev/uni/pers/cv/out/ger}:/cv/ger:ro
     env_file:
         - ${ENV_FILE:-.env}
   wiremock-website:

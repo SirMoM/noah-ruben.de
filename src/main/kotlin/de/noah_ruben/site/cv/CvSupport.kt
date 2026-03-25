@@ -1,7 +1,13 @@
 package de.noah_ruben.site.cv
 
+import de.noah_ruben.config.HEALTH_DEGRADED
+import de.noah_ruben.config.HEALTH_OK
+import de.noah_ruben.config.HealthCheckResult
 import io.ktor.server.config.ApplicationConfig
+import org.slf4j.LoggerFactory
 import java.io.File
+
+private val logger = LoggerFactory.getLogger("CV")
 
 enum class CvLanguage(
     val token: String,
@@ -115,6 +121,69 @@ class CvPdfResolver(
     fun validate(language: CvLanguage) {
         resolve(language, CvMode.Dark)
         resolve(language, CvMode.Light)
+    }
+}
+
+fun cvAssetsHealthCheck(config: ApplicationConfig): HealthCheckResult {
+    val rootDirectoryPath = config.propertyOrNull("cv")?.getString()?.trim()
+    if (rootDirectoryPath.isNullOrBlank()) {
+        return HealthCheckResult(
+            status = HEALTH_DEGRADED,
+            message = "CV root directory is not configured.",
+        )
+    }
+
+    val rootDirectory = File(rootDirectoryPath)
+    if (!rootDirectory.exists()) {
+        return HealthCheckResult(
+            status = HEALTH_DEGRADED,
+            message = "CV root directory '$rootDirectoryPath' does not exist.",
+        )
+    }
+
+    if (!rootDirectory.isDirectory) {
+        return HealthCheckResult(
+            status = HEALTH_DEGRADED,
+            message = "CV root directory '$rootDirectoryPath' is not a directory.",
+        )
+    }
+
+    if (!rootDirectory.canRead()) {
+        return HealthCheckResult(
+            status = HEALTH_DEGRADED,
+            message = "CV root directory '$rootDirectoryPath' is not readable.",
+        )
+    }
+
+    val resolver = CvPdfResolver(config)
+    val validationErrors = CvLanguage.entries.mapNotNull { language ->
+        try {
+            resolver.validate(language)
+            null
+        } catch (error: IllegalStateException) {
+            error.message
+        }
+    }
+
+    if (validationErrors.isNotEmpty()) {
+        return HealthCheckResult(
+            status = HEALTH_DEGRADED,
+            message = validationErrors.joinToString(" "),
+        )
+    }
+
+    return HealthCheckResult(
+        status = HEALTH_OK,
+        message = "CV assets are available in '$rootDirectoryPath'.",
+    )
+}
+
+fun logCvAssetsStartupStatus(config: ApplicationConfig) {
+    val health = cvAssetsHealthCheck(config)
+    if (health.status == HEALTH_OK) {
+        logger.info("CV assets ready. {}", health.message)
+    } else {
+        logger.warn("CV assets degraded at startup. {}", health.message)
     }
 }
 

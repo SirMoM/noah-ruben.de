@@ -1,5 +1,8 @@
 package de.noah_ruben.data
 
+import de.noah_ruben.config.HEALTH_DOWN
+import de.noah_ruben.config.HEALTH_OK
+import de.noah_ruben.config.HealthCheckResult
 import de.noah_ruben.data.model.Project
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
@@ -77,5 +80,20 @@ object Cache {
 
     fun initialize() {
         getProjects()
+    }
+
+    fun healthCheck(): HealthCheckResult {
+        if (!::githubClient.isInitialized) {
+            return HealthCheckResult(
+                status = HEALTH_DOWN,
+                message = "Repository client is not initialized.",
+            )
+        }
+
+        val (lastCached, projects) = projectsCache
+        return HealthCheckResult(
+            status = HEALTH_OK,
+            message = "Projects cache is available with ${projects.size} cached project(s) from $lastCached.",
+        )
     }
 }
