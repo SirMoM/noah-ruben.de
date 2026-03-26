@@ -12,8 +12,7 @@ services:
     ports:
       - "42081:42081"
     volumes:
-      - ${CV_ENG_DIR:-/Users/i13az81/dev/uni/pers/cv/out/eng}:/cv/eng:ro
-      - ${CV_GER_DIR:-/Users/i13az81/dev/uni/pers/cv/out/ger}:/cv/ger:ro
+      - ${CV_DIR:-/Users/i13az81/dev/uni/pers/cv/out}:/cv
     env_file:
         - ${ENV_FILE:-.env}
   wiremock-website:

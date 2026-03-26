@@ -9,6 +9,18 @@ let pdfJsPromise = null;
 
 const renderCaches = new WeakMap();
 
+const setHidden = (element, hidden) => {
+  if (!element) {
+    return;
+  }
+
+  if (hidden) {
+    element.setAttribute("hidden", "");
+  } else {
+    element.removeAttribute("hidden");
+  }
+};
+
 const getRenderWidth = (root) =>
   Math.max(Math.min(root.clientWidth - 32, 920), 320);
 
@@ -23,22 +35,31 @@ const configureCanvas = (canvas, viewport, outputScale) => {
   canvas.height = Math.floor(viewport.height * outputScale);
   canvas.style.width = `${Math.floor(viewport.width)}px`;
   canvas.style.height = `${Math.floor(viewport.height)}px`;
-  canvas.style.display = "block";
-  canvas.style.maxWidth = "100%";
 };
 
-const getPageCanvases = (pagesElement) => {
-  const canvases = Array.from(
-    pagesElement.querySelectorAll("canvas[data-page-number]"),
-  );
+const getPageSlots = (pagesElement) => {
+  const slots = Array.from(pagesElement.querySelectorAll('[data-role="page-slot"]'));
 
-  if (canvases.length !== MAX_PAGE_COUNT) {
+  if (slots.length !== MAX_PAGE_COUNT) {
     throw new Error(
-      `Expected ${MAX_PAGE_COUNT} canvas elements, received ${canvases.length}.`,
+      `Expected ${MAX_PAGE_COUNT} page slots, received ${slots.length}.`,
     );
   }
 
-  return canvases;
+  return slots.map((slot) => {
+    const canvas = slot.querySelector("canvas[data-page-number]");
+    const textLayer = slot.querySelector('[data-role="text-layer"]');
+
+    if (!(canvas instanceof HTMLCanvasElement) || !(textLayer instanceof HTMLDivElement)) {
+      throw new Error("Each page slot must contain a canvas and a text layer.");
+    }
+
+    return {
+      canvas,
+      slot,
+      textLayer,
+    };
+  });
 };
 
 const paintPage = (canvas, renderedPage, pdfTitle) => {
@@ -54,6 +75,15 @@ const paintPage = (canvas, renderedPage, pdfTitle) => {
     "aria-label",
     `${pdfTitle} page ${renderedPage.pageNumber}`,
   );
+};
+
+const clearPageSlot = ({ slot, canvas, textLayer }) => {
+  setHidden(slot, true);
+  slot.style.removeProperty("height");
+  slot.style.removeProperty("width");
+  canvas.removeAttribute("aria-label");
+  textLayer.replaceChildren();
+  textLayer.style.removeProperty("--total-scale-factor");
 };
 
 const loadPdfJs = async () => {
@@ -75,6 +105,25 @@ const getRenderCache = (root) => {
   }
 
   return cache;
+};
+
+const renderTextLayer = async (pdfjs, textLayer, renderedPage) => {
+  textLayer.replaceChildren();
+  textLayer.style.setProperty(
+    "--total-scale-factor",
+    renderedPage.viewport.scale.toString(),
+  );
+
+  const task = pdfjs.renderTextLayer({
+    container: textLayer,
+    isOffscreenCanvasSupported: true,
+    textContentItemsStr: [],
+    textContentSource: renderedPage.textContent,
+    textDivProperties: new WeakMap(),
+    textDivs: [],
+    viewport: renderedPage.viewport,
+  });
+  await task.promise;
 };
 
 export const buildVariant = (root, link, mode) => {
@@ -145,11 +194,17 @@ const renderVariant = async (variant) => {
       viewport,
     }).promise;
 
+    const textContent = await page.getTextContent({
+      disableNormalization: true,
+      includeMarkedContent: true,
+    });
+
     page.cleanup();
     renderedPages.push({
       bufferCanvas,
       outputScale: variant.outputScale,
       pageNumber,
+      textContent,
       viewport,
     });
   }
@@ -188,16 +243,25 @@ export const getVariantRecord = (root, variant) => {
   return record;
 };
 
-export const drawVariantIntoLayer = (pagesElement, renderedVariant) => {
-  getPageCanvases(pagesElement).forEach((canvas, index) => {
+export const drawVariantIntoLayer = async (pagesElement, renderedVariant) => {
+  const pdfjs = await loadPdfJs();
+  if (typeof pdfjs.renderTextLayer !== "function") {
+    throw new Error("PDF.js renderTextLayer API is unavailable.");
+  }
+
+  const slots = getPageSlots(pagesElement);
+
+  for (const [index, pageSlot] of slots.entries()) {
     const renderedPage = renderedVariant.renderedPages[index];
     if (!renderedPage) {
-      canvas.setAttribute("hidden", "");
-      canvas.removeAttribute("aria-label");
-      return;
+      clearPageSlot(pageSlot);
+      continue;
     }
 
-    canvas.removeAttribute("hidden");
-    paintPage(canvas, renderedPage, renderedVariant.pdfTitle);
-  });
+    pageSlot.slot.style.width = `${Math.floor(renderedPage.viewport.width)}px`;
+    pageSlot.slot.style.height = `${Math.floor(renderedPage.viewport.height)}px`;
+    paintPage(pageSlot.canvas, renderedPage, renderedVariant.pdfTitle);
+    await renderTextLayer(pdfjs, pageSlot.textLayer, renderedPage);
+    setHidden(pageSlot.slot, false);
+  }
 };

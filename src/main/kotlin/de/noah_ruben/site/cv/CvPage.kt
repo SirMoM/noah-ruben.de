@@ -8,6 +8,7 @@ import de.noah_ruben.misc.CssClasses.PAGE_BASE
 import de.noah_ruben.misc.CssClasses.PAGE_TITLE
 import de.noah_ruben.misc.CssClasses.Shared.ERROR_MESSAGE_BOX
 import de.noah_ruben.misc.CssClasses.Shared.HTMX_INDICATOR_INLINE
+import de.noah_ruben.site.commandLineEmulation
 import de.noah_ruben.site.defaultBody
 import de.noah_ruben.site.defaultHeader
 import de.noah_ruben.site.themeToggleButton
@@ -32,8 +33,11 @@ private const val CV_VIEWER_SECTION = "mx-auto mt-6 flex max-w-5xl flex-col"
 private const val CV_VIEWER_PAGES = "flex w-full flex-col items-center gap-6"
 private const val CV_VIEWER_ERROR = "w-full rounded-[1.5rem] border border-ctp-red bg-ctp-base px-6 py-5 text-center font-semibold text-ctp-red"
 private const val CV_VIEWER_LOADING = "flex justify-center py-12"
+private const val CV_VIEWER_PAGE_SLOT = "cv-pdf-page-slot"
+private const val CV_VIEWER_TEXT_LAYER = "cv-pdf-text-layer"
 private const val CV_VIEWER_CANVAS_COUNT = 3
 private const val CV_PDF_CACHE_CONTROL = "public, max-age=3600, stale-while-revalidate=86400"
+private const val CV_TERMINAL_SECTION = "mt-10"
 
 fun Application.cvPageRouting() {
     routing {
@@ -118,6 +122,7 @@ fun Application.cvPageRouting() {
 fun HTML.cvPageHtml(pageState: CvPageState) {
     head {
         defaultHeader()
+        link(rel = "stylesheet", href = "/resources/cv-pdf-viewer.css")
     }
     defaultBody {
         id = "body"
@@ -181,13 +186,24 @@ fun BODY.cvPageBody(pageState: CvPageState) {
                         attributes["data-role"] = "pages-active"
                         attributes["hidden"] = ""
                         repeat(CV_VIEWER_CANVAS_COUNT) { pageIndex ->
-                            canvas {
-                                attributes["data-page-number"] = (pageIndex + 1).toString()
+                            div(classes = CV_VIEWER_PAGE_SLOT) {
+                                attributes["data-role"] = "page-slot"
+                                attributes["hidden"] = ""
+                                canvas {
+                                    attributes["data-page-number"] = (pageIndex + 1).toString()
+                                }
+                                div(classes = CV_VIEWER_TEXT_LAYER) {
+                                    attributes["data-role"] = "text-layer"
+                                }
                             }
                         }
                     }
                 }
             }
+        }
+
+        div(classes = CV_TERMINAL_SECTION) {
+            commandLineEmulation()
         }
     }
 }

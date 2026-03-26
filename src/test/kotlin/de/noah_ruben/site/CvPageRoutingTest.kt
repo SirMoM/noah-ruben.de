@@ -2,6 +2,7 @@ package de.noah_ruben.site
 
 import de.noah_ruben.testApplicationWithRepositoryFake
 import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import kotlin.io.path.absolutePathString
@@ -11,8 +12,17 @@ import kotlin.io.path.div
 import kotlin.io.path.writeBytes
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class CvPageRoutingTest {
+
+    @Test
+    fun cvPageRejectsUnsupportedLanguageQuery() = testApplicationWithRepositoryFake {
+        val response = client.get("/cv?lang=fra")
+
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+        assertTrue(response.bodyAsText().contains("Unsupported CV language 'fra'"))
+    }
 
     @Test
     fun cvPdfResponseSetsCachingHeaders() {
@@ -35,6 +45,14 @@ class CvPageRoutingTest {
                 response.headers[HttpHeaders.CacheControl],
             )
         }
+    }
+
+    @Test
+    fun cvPdfRejectsUnsupportedLanguageQuery() = testApplicationWithRepositoryFake {
+        val response = client.get("/cv/pdf?lang=fra&mode=light")
+
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+        assertEquals("Unsupported CV language 'fra'. Use 'eng' or 'ger'.", response.bodyAsText())
     }
 }
 
