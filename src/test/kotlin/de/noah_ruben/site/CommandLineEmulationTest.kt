@@ -19,15 +19,13 @@ import kotlin.test.assertTrue
 class CommandLineEmulationTest {
 
     @Test
-    fun helpCommandReturnsUsageText() = testApplicationWithRepositoryFake {
+    fun helpCommandRetargetsToCliContainer() = testApplicationWithRepositoryFake {
         val response = client.post("/command") {
             contentType(ContentType.Application.FormUrlEncoded)
             setBody("command=noahruben+help")
         }
         assertEquals(HttpStatusCode.OK, response.status)
-
-        val html = response.bodyAsText()
-        assertTrue(html.contains("Usage: noahruben"))
+        assertEquals("#cle", response.headers["HX-Retarget"])
     }
 
     @Test
@@ -73,6 +71,7 @@ class CommandLineEmulationTest {
                 setBody("command=noahruben+cv+fra")
             }
             assertEquals(HttpStatusCode.OK, invalidResponse.status)
+            assertEquals("#cle", invalidResponse.headers["HX-Retarget"])
             assertTrue(invalidResponse.bodyAsText().contains("Unsupported CV language 'fra'"))
         }
     }

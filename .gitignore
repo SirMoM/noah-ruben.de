@@ -116,6 +116,12 @@ fabric.properties
 .DS_Store
 .AppleDouble
 .LSOverride
+node_modules/
+e2e/node_modules/
+playwright-report/
+e2e/playwright-report/
+test-results/
+e2e/test-results/
 
 # Icon must end with two \r
 Icon

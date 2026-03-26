@@ -159,10 +159,13 @@ Follow current code conventions first; avoid introducing a new style.
 - Reuse existing test fakes/helpers when available.
 - Add regression tests for bug fixes.
 - Avoid adding real network dependencies to tests.
+- Keep backend tests focused on pure logic and server contracts.
+- Do not add backend tests that validate UI behavior by checking generated HTML strings, CSS classes, or inline JavaScript details.
+- Browser smoke checks live under `e2e/` and accept `BASE_URL` so they can run against any already-running environment.
 - UI change exception:
   - Do not use TDD for UI-only changes.
   - Do not add or update unit tests that assert the resulting HTML markup for UI changes.
-  - For `kotlinx.html` rendering changes, prefer build verification and browser/runtime checks over HTML-string unit tests.
+  - For `kotlinx.html` rendering changes, prefer the Playwright smoke checks and browser/runtime verification over HTML-string unit tests.
 
 ## 8) Agent Work Checklist
 

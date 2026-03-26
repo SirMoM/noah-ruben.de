@@ -52,6 +52,18 @@ Run all tests:
 ./amper test
 ```
 
+Browser smoke verification:
+
+```bash
+npm --prefix e2e install
+BASE_URL="http://127.0.0.1:42081" npm --prefix e2e run ui:smoke
+```
+
+The Playwright smoke suite assumes the target app is already running.
+It does not start or stop the runtime for you.
+Artifacts for agent review are written to `e2e/test-results/` and `e2e/playwright-report/`.
+The CV smoke checks require a runtime with readable CV assets.
+
 Run a single test class (requires `--include-module`):
 
 ```bash
