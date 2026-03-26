@@ -83,13 +83,11 @@ const showLoading = (controller) => {
   setHidden(controller.errorElement, true);
   setHidden(controller.loadingElement, false);
   setHidden(controller.activeLayer, true);
-  setHidden(controller.stagingLayer, true);
 };
 
 const showError = (controller, message) => {
   controller.root.setAttribute("data-viewer-ready", "false");
   setHidden(controller.activeLayer, true);
-  setHidden(controller.stagingLayer, true);
   setHidden(controller.loadingElement, true);
   if (controller.errorElement) {
     controller.errorElement.textContent = message;
@@ -97,7 +95,15 @@ const showError = (controller, message) => {
   setHidden(controller.errorElement, false);
 };
 
-const restoreCommittedView = (controller) => {
+const removeLayer = (layer) => {
+  if (layer && layer.isConnected) {
+    layer.remove();
+  }
+};
+
+const restoreCommittedView = (controller, stagingLayer = null) => {
+  removeLayer(stagingLayer);
+
   if (!controller.lastCommittedVariant) {
     return;
   }
@@ -107,19 +113,16 @@ const restoreCommittedView = (controller) => {
   setHidden(controller.errorElement, true);
   setHidden(controller.loadingElement, true);
   setHidden(controller.activeLayer, false);
-  setHidden(controller.stagingLayer, true);
 };
 
-const commitVariant = (controller, renderedVariant) => {
-  drawVariantIntoLayer(controller.stagingLayer, renderedVariant);
+const commitVariant = (controller, stagingLayer, renderedVariant) => {
+  const previousActiveLayer = controller.activeLayer;
 
-  const nextActiveLayer = controller.stagingLayer;
-  const nextStagingLayer = controller.activeLayer;
-  nextActiveLayer.setAttribute("data-role", "pages-active");
-  nextStagingLayer.setAttribute("data-role", "pages-staging");
+  stagingLayer.setAttribute("data-role", "pages-active");
+  setHidden(stagingLayer, false);
+  previousActiveLayer.remove();
 
-  controller.activeLayer = nextActiveLayer;
-  controller.stagingLayer = nextStagingLayer;
+  controller.activeLayer = stagingLayer;
   controller.lastCommittedVariant = renderedVariant;
 
   syncCommittedVariant(controller, renderedVariant);
@@ -131,8 +134,14 @@ const commitVariant = (controller, renderedVariant) => {
 
   setHidden(controller.errorElement, true);
   setHidden(controller.loadingElement, true);
-  setHidden(controller.activeLayer, false);
-  setHidden(controller.stagingLayer, true);
+};
+
+const createStagingLayer = (controller) => {
+  const stagingLayer = controller.layerTemplate.cloneNode(true);
+  stagingLayer.setAttribute("data-role", "pages-staging");
+  setHidden(stagingLayer, true);
+  controller.activeLayer.insertAdjacentElement("afterend", stagingLayer);
+  return stagingLayer;
 };
 
 const buildVariantFor = (controller, language, mode) =>
@@ -202,7 +211,7 @@ const requestVariant = async (controller, variant, options = {}) => {
   }
 
   if (controller.lastCommittedVariant?.key === variant.key) {
-    syncCommittedVariant(controller, variant);
+    restoreCommittedView(controller);
     return;
   }
 
@@ -215,6 +224,8 @@ const requestVariant = async (controller, variant, options = {}) => {
     showLoading(controller);
   }
 
+  let stagingLayer = null;
+
   try {
     const renderedVariant =
       record.status === "fulfilled" ? record.value : await record.promise;
@@ -222,9 +233,18 @@ const requestVariant = async (controller, variant, options = {}) => {
       return;
     }
 
-    commitVariant(controller, renderedVariant);
+    stagingLayer = createStagingLayer(controller);
+    await drawVariantIntoLayer(stagingLayer, renderedVariant);
+    if (currentRequestId !== controller.requestId) {
+      removeLayer(stagingLayer);
+      return;
+    }
+
+    commitVariant(controller, stagingLayer, renderedVariant);
     warmPreferredVariants(controller);
   } catch (error) {
+    removeLayer(stagingLayer);
+
     if (currentRequestId !== controller.requestId) {
       return;
     }
@@ -249,38 +269,70 @@ const createController = (root) => {
     return null;
   }
 
-  const stagingLayer = activeLayer.cloneNode(true);
-  stagingLayer.setAttribute("data-role", "pages-staging");
-  setHidden(stagingLayer, true);
-  activeLayer.insertAdjacentElement("afterend", stagingLayer);
-
   return {
     activeLayer,
     errorElement,
     lastCommittedVariant: null,
+    layerTemplate: activeLayer.cloneNode(true),
     loadingElement,
     requestId: 0,
     root,
-    stagingLayer,
   };
 };
 
-const viewerControllers = Array.from(document.querySelectorAll("#cv-pdf-viewer"))
-  .map((root) => createController(root))
-  .filter(Boolean);
+const getViewerState = () => {
+  if (!window.__noahrubenCvViewerState) {
+    window.__noahrubenCvViewerState = {
+      controllerByRoot: new Map(),
+      listenersRegistered: false,
+    };
+  }
 
-viewerControllers.forEach((controller) => {
-  const initialLanguage =
-    controller.root.getAttribute("data-current-language") ??
-    getAvailableLanguages()[0];
-  updateLanguageLinks(controller.root, initialLanguage);
-  void requestVariant(
-    controller,
-    buildVariantFor(controller, initialLanguage, getActiveMode()),
-  );
-});
+  return window.__noahrubenCvViewerState;
+};
 
-if (viewerControllers.length > 0) {
+const getViewerControllers = () => {
+  const state = getViewerState();
+
+  state.controllerByRoot.forEach((_, root) => {
+    if (!root.isConnected) {
+      state.controllerByRoot.delete(root);
+    }
+  });
+
+  return Array.from(document.querySelectorAll("#cv-pdf-viewer"))
+    .map((root) => {
+      const existingController = state.controllerByRoot.get(root);
+      if (existingController) {
+        return existingController;
+      }
+
+      const controller = createController(root);
+      if (!controller) {
+        return null;
+      }
+
+      state.controllerByRoot.set(root, controller);
+
+      const initialLanguage =
+        controller.root.getAttribute("data-current-language") ??
+        getAvailableLanguages()[0];
+      updateLanguageLinks(controller.root, initialLanguage);
+      void requestVariant(
+        controller,
+        buildVariantFor(controller, initialLanguage, getActiveMode()),
+      );
+
+      return controller;
+    })
+    .filter(Boolean);
+};
+
+getViewerControllers();
+
+if (!getViewerState().listenersRegistered) {
+  getViewerState().listenersRegistered = true;
+
   document.addEventListener("click", (event) => {
     if (event.defaultPrevented || !(event.target instanceof Element)) {
       return;
@@ -305,7 +357,7 @@ if (viewerControllers.length > 0) {
     const language = link.getAttribute("data-cv-language");
     const mode = getActiveMode();
 
-    viewerControllers.forEach((controller) => {
+    getViewerControllers().forEach((controller) => {
       void requestVariant(
         controller,
         buildVariantFor(controller, language, mode),
@@ -320,7 +372,7 @@ if (viewerControllers.length > 0) {
         ? "dark"
         : "light";
 
-    viewerControllers.forEach((controller) => {
+    getViewerControllers().forEach((controller) => {
       const language =
         controller.root.getAttribute("data-current-language") ??
         controller.lastCommittedVariant?.language ??
@@ -330,6 +382,11 @@ if (viewerControllers.length > 0) {
   });
 
   window.addEventListener("popstate", () => {
+    const viewerControllers = getViewerControllers();
+    if (viewerControllers.length === 0) {
+      return;
+    }
+
     const url = new URL(window.location.href);
     const language =
       getLanguageLink(url.searchParams.get("lang"))?.getAttribute(
@@ -342,5 +399,9 @@ if (viewerControllers.length > 0) {
     viewerControllers.forEach((controller) => {
       void requestVariant(controller, buildVariantFor(controller, language, mode));
     });
+  });
+
+  document.addEventListener("htmx:afterSwap", () => {
+    getViewerControllers();
   });
 }

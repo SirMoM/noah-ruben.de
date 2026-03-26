@@ -162,6 +162,9 @@ Follow current code conventions first; avoid introducing a new style.
 - Keep backend tests focused on pure logic and server contracts.
 - Do not add backend tests that validate UI behavior by checking generated HTML strings, CSS classes, or inline JavaScript details.
 - Browser smoke checks live under `e2e/` and accept `BASE_URL` so they can run against any already-running environment.
+- Treat CLI-emulated navigation between landing page, projects, and CV as a critical user flow.
+  Keep it covered by a dedicated Playwright smoke spec as a site-to-site matrix:
+  visit every relevant page from every relevant page via the CLI when touching routing, HTMX swaps, or command handling.
 - UI change exception:
   - Do not use TDD for UI-only changes.
   - Do not add or update unit tests that assert the resulting HTML markup for UI changes.

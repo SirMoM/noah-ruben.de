@@ -2,6 +2,7 @@ package de.noah_ruben.site
 
 import de.noah_ruben.misc.Commands
 import de.noah_ruben.misc.CssClasses.LandingPage.PROMPT_ARROW
+import de.noah_ruben.misc.CssClasses.PAGE_BASE
 import de.noah_ruben.misc.CssClasses.Shared.CLI_INPUT_FIELD
 import de.noah_ruben.misc.CssClasses.Shared.CLI_WRAPPER
 import de.noah_ruben.misc.hxPost
@@ -60,6 +61,8 @@ suspend fun handleCommand(call: RoutingCall) {
                     defaultHeader()
                 }
                 body {
+                    id = "body"
+                    classes = setOf(PAGE_BASE)
                     themeToggleButton()
                     projectsPageBody()
                 }

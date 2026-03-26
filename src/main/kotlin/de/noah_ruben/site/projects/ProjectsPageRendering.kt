@@ -17,6 +17,7 @@ import de.noah_ruben.misc.CssClasses.Form.FORM_INPUT_TEXT_WITH_MARGIN
 import de.noah_ruben.misc.CssClasses.Form.FORM_LABEL
 import de.noah_ruben.misc.CssClasses.Form.LOADING_SPINNER
 import de.noah_ruben.misc.CssClasses.Form.SUBMIT_BUTTON
+import de.noah_ruben.misc.CssClasses.PAGE_BASE
 import de.noah_ruben.misc.CssClasses.PAGE_TITLE
 import de.noah_ruben.misc.CssClasses.ProjectPage.META_DETAIL_LABEL
 import de.noah_ruben.misc.CssClasses.ProjectPage.META_DETAIL_ROW
@@ -55,6 +56,8 @@ fun HTML.projectsPage() {
         defaultHeader()
     }
     defaultBody {
+        id = "body"
+        classes = setOf(PAGE_BASE)
         themeToggleButton()
         projectsPageBody()
     }
