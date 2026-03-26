@@ -79,18 +79,15 @@ Run parent-project commands from `/Users/i13az81/dev/uni/noah-ruben.de`.
 
 ### CSS-defining Kotlin files and Amper cache
 
-The `generateTailwind` task declares the CSS-defining Kotlin files as `@Input` parameters so Amper re-runs Tailwind whenever a class constant changes. The relevant files are enumerated manually in `GenerateTailwind.kt` and `plugin.yaml`.
+The `generateTailwind` task declares `src/main/kotlin` as an `@Input` so Amper re-runs Tailwind whenever Kotlin sources that Tailwind scans change.
 
-**When adding a new CSS class constants file** (e.g. `src/main/kotlin/de/noah_ruben/misc/styles/NewPageClasses.kt`):
+**When adding a new Kotlin file that defines or references Tailwind classes**:
 
-1. Add a new `@Input newPageClasses: Path` parameter to `generateTailwind` in `tailwind/src/GenerateTailwind.kt`.
-2. Add the matching binding in `tailwind/plugin.yaml`:
-   ```yaml
-   newPageClasses: ${module.rootDir}/src/main/kotlin/de/noah_ruben/misc/styles/NewPageClasses.kt
-   ```
-3. Run `./amper build` to verify the new wiring compiles and Tailwind regenerates.
+1. Keep it under `src/main/kotlin`.
+2. Ensure `tailwind/style.css` still covers it with an appropriate `@source` declaration.
+3. Run `./amper build` to verify Tailwind regenerates.
 
-Skipping steps 1–2 means class changes in the new file will silently miss Amper's cache and not appear in the Docker-built CSS until `style.css` is also touched.
+If you move CSS-defining code outside `src/main/kotlin`, update both `GenerateTailwind.kt` and `tailwind/plugin.yaml` so the new source root is fingerprinted too.
 
 ### Compatibility and safety
 

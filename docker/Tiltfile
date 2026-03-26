@@ -3,10 +3,27 @@ os.putenv('COMPOSE_PROFILES', 'website')
 
 docker_compose('compose.yaml', env_file='wm.env')
 
+website_deps = [
+    '../Dockerfile',
+    '../amper',
+    '../amper.bat',
+    '../module.yaml',
+    '../project.yaml',
+    '../run',
+    '../src/main/kotlin',
+    '../src/main/resources',
+    '../tailwind/module.yaml',
+    '../tailwind/package-lock.json',
+    '../tailwind/package.json',
+    '../tailwind/plugin.yaml',
+    '../tailwind/src',
+    '../tailwind/style.css',
+]
+
 custom_build(
     'website:latest',
     'docker build -t $EXPECTED_REF -f Dockerfile .',
-    deps=['../Dockerfile', '../module.yaml', '../src', '../tailwind', '../amper', '../amper.bat'],
+    deps=website_deps,
     disable_push=True,
     dir='..',
 )
