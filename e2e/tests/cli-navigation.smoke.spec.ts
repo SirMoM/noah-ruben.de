@@ -41,7 +41,7 @@ const waitForCvViewerReady = async (page: Page): Promise<void> => {
 
 const waitForLanding = async (page: Page): Promise<void> => {
   await expect(page.getByText("System summary")).toBeVisible();
-  await expect(page.getByText(">> noahruben").first()).toBeVisible();
+  await expect(page.locator("#cle")).toBeVisible();
 };
 
 const waitForProjects = async (page: Page): Promise<void> => {
@@ -51,9 +51,9 @@ const waitForProjects = async (page: Page): Promise<void> => {
 };
 
 const waitForCv = async (page: Page): Promise<void> => {
-  await expect(page.locator("h1", { hasText: "CV" })).toBeVisible();
   await waitForCvViewerReady(page);
   await expect(page.locator('canvas[aria-label*="English CV page"]').first()).toBeVisible();
+  await expect(page.locator("#cle")).toBeVisible();
 };
 
 const sites: Site[] = [
@@ -75,7 +75,7 @@ const sites: Site[] = [
     assertionName: "cv",
     cliCommand: "noahruben cv",
     key: "cv",
-    path: "/cv",
+    path: "/cv?lang=eng",
     waitForReady: waitForCv,
   },
 ];
@@ -89,7 +89,19 @@ test("cli navigation smoke covers every site from every site", async ({ page }, 
 
       await runCliCommand(page, target.cliCommand);
       await target.waitForReady(page);
+      await expect(page).toHaveURL(new RegExp(`${target.path.replace("?", "\\?")}$`));
       await expect(cliInput(page)).toHaveValue("");
+
+      if (origin.key !== target.key) {
+        await page.goBack();
+        await origin.waitForReady(page);
+        await expect(page).toHaveURL(new RegExp(`${origin.path.replace("?", "\\?")}$`));
+
+        await page.goForward();
+        await target.waitForReady(page);
+        await expect(page).toHaveURL(new RegExp(`${target.path.replace("?", "\\?")}$`));
+      }
+
       await captureStep(page, testInfo, `cli-${origin.key}-to-${target.key}`);
     }
   }

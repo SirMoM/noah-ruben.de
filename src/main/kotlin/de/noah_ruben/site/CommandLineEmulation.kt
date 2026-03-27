@@ -54,9 +54,13 @@ suspend fun handleCommand(call: RoutingCall) {
     call.respondText {
         val (command, args) = parseCommand(rawCommand)
         when (command) {
-            Commands.landingPage -> htmlBase.html { landingpage() }
+            Commands.landingPage -> {
+                call.response.header("HX-Push-Url", "/")
+                htmlBase.html { landingpage() }
+            }
 
             Commands.projects -> htmlBase.html {
+                call.response.header("HX-Push-Url", "/projects")
                 head {
                     defaultHeader()
                 }
@@ -82,6 +86,7 @@ suspend fun handleCommand(call: RoutingCall) {
                     }
                 }
 
+                call.response.header("HX-Push-Url", language.pageUrl())
                 htmlBase.html {
                     cvPageHtml(
                         buildCvPageState(

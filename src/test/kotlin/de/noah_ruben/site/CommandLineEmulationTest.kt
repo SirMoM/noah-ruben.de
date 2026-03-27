@@ -29,6 +29,28 @@ class CommandLineEmulationTest {
     }
 
     @Test
+    fun landingCommandPushesLandingUrlIntoHtmxHistory() = testApplicationWithRepositoryFake {
+        val response = client.post("/command") {
+            contentType(ContentType.Application.FormUrlEncoded)
+            setBody("command=noahruben")
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals("/", response.headers["HX-Push-Url"])
+    }
+
+    @Test
+    fun projectsCommandPushesProjectsUrlIntoHtmxHistory() = testApplicationWithRepositoryFake {
+        val response = client.post("/command") {
+            contentType(ContentType.Application.FormUrlEncoded)
+            setBody("command=noahruben+projects")
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals("/projects", response.headers["HX-Push-Url"])
+    }
+
+    @Test
     fun cvCommandDefaultsToEnglishCvPage() {
         val cvRoot = createCommandTestCvRoot()
 
@@ -42,6 +64,7 @@ class CommandLineEmulationTest {
                 setBody("command=noahruben+cv")
             }
             assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals("/cv?lang=eng", response.headers["HX-Push-Url"])
         }
     }
 
@@ -65,6 +88,7 @@ class CommandLineEmulationTest {
                 setBody("command=noahruben+cv+ger")
             }
             assertEquals(HttpStatusCode.OK, germanResponse.status)
+            assertEquals("/cv?lang=ger", germanResponse.headers["HX-Push-Url"])
 
             val invalidResponse = client.post("/command") {
                 contentType(ContentType.Application.FormUrlEncoded)
