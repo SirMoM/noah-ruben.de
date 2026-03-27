@@ -32,7 +32,54 @@ class SearchRouteTest {
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("Nothing Found"))
+        assertTrue(response.bodyAsText().contains("0 results"))
+    }
+
+    @Test
+    fun searchRouteParsesRepeatedTopicParametersIntoCommandPreview() = testApplicationWithRepositoryFake {
+        val response = client.post("/search") {
+            contentType(ContentType.Application.FormUrlEncoded)
+            setBody("query=&topic=dummy&topic=example")
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertTrue(response.bodyAsText().contains("""data-selected-topic="dummy""""))
+        assertTrue(response.bodyAsText().contains("""data-selected-topic="example""""))
+    }
+
+    @Test
+    fun searchRouteAppliesAddAndRemoveTopicActions() = testApplicationWithRepositoryFake {
+        val addedResponse = client.post("/search") {
+            contentType(ContentType.Application.FormUrlEncoded)
+            setBody("query=&topic=dummy&addTopic=example")
+        }
+
+        assertEquals(HttpStatusCode.OK, addedResponse.status)
+        assertTrue(addedResponse.bodyAsText().contains("""data-selected-topic="dummy""""))
+        assertTrue(addedResponse.bodyAsText().contains("""data-selected-topic="example""""))
+
+        val removedResponse = client.post("/search") {
+            contentType(ContentType.Application.FormUrlEncoded)
+            setBody("query=&topic=dummy&topic=example&removeTopic=dummy")
+        }
+
+        assertEquals(HttpStatusCode.OK, removedResponse.status)
+        assertTrue(removedResponse.bodyAsText().contains("""data-selected-topic="example""""))
+        assertTrue(!removedResponse.bodyAsText().contains("""data-selected-topic="dummy""""))
+    }
+
+    @Test
+    fun searchRouteResetPayloadClearsTopicState() = testApplicationWithRepositoryFake {
+        val response = client.post("/search") {
+            contentType(ContentType.Application.FormUrlEncoded)
+            setBody("query=&language=%3CLanguage%3E&orderBy=Relevance&dir=&withSearchBar=true")
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertTrue(response.bodyAsText().contains("noahruben projects"))
+        assertTrue(response.bodyAsText().contains("""id="projects-topic-control""""))
+        assertTrue(response.bodyAsText().contains(">all<"))
+        assertTrue(!response.bodyAsText().contains("""data-selected-topic=""""))
     }
 
     @Test

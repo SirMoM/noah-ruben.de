@@ -7,49 +7,70 @@ import de.noah_ruben.data.Cache.getAllLanguages
 import de.noah_ruben.data.Cache.getAllTopics
 import de.noah_ruben.data.model.Project
 import de.noah_ruben.misc.CssClasses.CONTENT_CONTAINER
-import de.noah_ruben.misc.CssClasses.Form.FILTER_CONTROLS_LAYOUT
-import de.noah_ruben.misc.CssClasses.Form.FILTER_ITEM_LAYOUT
-import de.noah_ruben.misc.CssClasses.Form.FORM_CHECKBOX
-import de.noah_ruben.misc.CssClasses.Form.FORM_CHECKBOX_GROUP
-import de.noah_ruben.misc.CssClasses.Form.FORM_GROUP
-import de.noah_ruben.misc.CssClasses.Form.FORM_INPUT_BASE
-import de.noah_ruben.misc.CssClasses.Form.FORM_INPUT_TEXT_WITH_MARGIN
-import de.noah_ruben.misc.CssClasses.Form.FORM_LABEL
-import de.noah_ruben.misc.CssClasses.Form.LOADING_SPINNER
-import de.noah_ruben.misc.CssClasses.Form.SUBMIT_BUTTON
 import de.noah_ruben.misc.CssClasses.PAGE_BASE
-import de.noah_ruben.misc.CssClasses.PAGE_TITLE
+import de.noah_ruben.misc.CssClasses.ProjectPage.EMPTY_STATE
+import de.noah_ruben.misc.CssClasses.ProjectPage.EMPTY_STATE_MESSAGE
+import de.noah_ruben.misc.CssClasses.ProjectPage.EMPTY_STATE_TITLE
 import de.noah_ruben.misc.CssClasses.ProjectPage.META_DETAIL_LABEL
 import de.noah_ruben.misc.CssClasses.ProjectPage.META_DETAIL_ROW
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_ACTION_LINK
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_ARGUMENT_CONTROL
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_ARGUMENT_FIELD
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_ARGUMENT_FLAG
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_ARGUMENT_SELECT
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_ACTIONS
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_CONTENT
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_DESCRIPTION
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_FOOTER
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_HEADER
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_INDEX
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_META
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_TITLE
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_ACTIONS
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_CONTINUATION
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_CONTINUATION_LINE
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_LINE
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_PREVIEW
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_PROMPT
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_TEXT
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_DIRECTION_BUTTON
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_FILTER_FORM
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_RESULTS_LIST
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_RESULTS_SUMMARY
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_SHELL
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_SHELL_STATUS
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_ADD_BUTTON
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_ADD_PANEL
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_ADD_PANEL_EMPTY
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_ADD_TRIGGER
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_COMMA
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_CONTROL
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_DROPDOWN
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_EMPTY_TRIGGER
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_EMPTY_VALUE
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_PICKER
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_SELECTED_VALUE
 import de.noah_ruben.misc.CssClasses.ProjectPage.RESET_BUTTON
-import de.noah_ruben.misc.CssClasses.ProjectPage.STAR_ICON
 import de.noah_ruben.misc.CssClasses.ProjectPage.TAGS_LIST
 import de.noah_ruben.misc.CssClasses.ProjectPage.TAG_ITEM
 import de.noah_ruben.misc.CssClasses.ProjectPage.TOPICS_LIST
 import de.noah_ruben.misc.CssClasses.ProjectPage.TOPIC_TAG
 import de.noah_ruben.misc.CssClasses.Shared.HTMX_INDICATOR
-import de.noah_ruben.misc.CssClasses.Shared.HTMX_INDICATOR_INLINE
+import de.noah_ruben.misc.CssClasses.Shared.SCREEN_READER_ONLY
 import de.noah_ruben.misc.colorFromString
-import de.noah_ruben.misc.hxInclude
 import de.noah_ruben.misc.hxIndicator
 import de.noah_ruben.misc.hxPost
 import de.noah_ruben.misc.hxSwap
 import de.noah_ruben.misc.hxTarget
 import de.noah_ruben.misc.hxTrigger
 import de.noah_ruben.misc.hxVals
-import de.noah_ruben.misc.invertedFromString
-import de.noah_ruben.site.commandLineEmulation
-import de.noah_ruben.site.defaultBody
-import de.noah_ruben.site.defaultHeader
-import de.noah_ruben.site.themeToggleButton
+import de.noah_ruben.site.*
 import kotlinx.html.*
+
+private const val DEFAULT_PROJECTS_COMMAND = "noahruben projects"
+private const val COMMAND_PREVIEW_ID = "projects-command-preview"
+private const val RESULTS_SUMMARY_ID = "projects-results-summary"
 
 fun HTML.projectsPage() {
     head {
@@ -64,47 +85,94 @@ fun HTML.projectsPage() {
 }
 
 fun BODY.projectsPageBody() {
-    val projects = Cache.getProjects()
-    h1(
-        classes = PAGE_TITLE,
-    ) { +"> Projects" }
     div(
         classes = CONTENT_CONTAINER,
     ) {
-        id = "search-replace"
-        mainSearchBar()
-        br()
-        projectList(projects)
+        id = SEARCH_REPLACE
+        projectsShell(
+            projects = Cache.getProjects(),
+            searchParameters = SearchParameters.defaults(),
+        )
         commandLineEmulation()
+    }
+}
+
+fun FlowContent.projectsShell(
+    projects: List<Project>,
+    searchParameters: SearchParameters = SearchParameters.defaults(),
+    errorMessage: String? = null,
+) {
+    div(classes = PROJECT_SHELL) {
+        mainSearchBar(searchParameters)
+
+        div(classes = PROJECT_RESULTS_SUMMARY) {
+            id = RESULTS_SUMMARY_ID
+            attributes["aria-live"] = "polite"
+            +projects.resultsSummary()
+        }
+
+        if (errorMessage != null) {
+            div(classes = EMPTY_STATE) {
+                h3(classes = EMPTY_STATE_TITLE) { +"error" }
+                p(classes = EMPTY_STATE_MESSAGE) { +errorMessage }
+            }
+        }
+
+        projectList(projects, searchParameters)
     }
 }
 
 fun FlowContent.projectList(
     projects: List<Project>,
+    searchParameters: SearchParameters,
 ) {
-    div {
+    div(classes = PROJECT_RESULTS_LIST) {
         id = SEARCH_RESULTS
-        projects.forEach {
-            projectTile(it)
+        if (projects.isEmpty()) {
+            nothingFoundProjectTile(searchParameters)
+        } else {
+            projects.forEachIndexed { index, project ->
+                projectTile(index + 1, project, searchParameters)
+            }
         }
     }
 }
 
-fun FlowContent.projectTile(project: Project) {
+fun FlowContent.projectTile(
+    index: Int,
+    project: Project,
+    searchParameters: SearchParameters,
+) {
     with(project) {
         div(
             classes = PROJECT_CARD,
         ) {
-            span(classes = STAR_ICON) {
-                +stars.toString()
-            }
             div(
                 classes = PROJECT_CARD_CONTENT,
             ) {
-                h3(
-                    classes = PROJECT_CARD_TITLE,
-                ) {
-                    +name
+                div(classes = PROJECT_CARD_HEADER) {
+                    span(classes = PROJECT_CARD_INDEX) {
+                        +"[${index.toString().padStart(2, '0')}]"
+                    }
+                    h3(
+                        classes = PROJECT_CARD_TITLE,
+                    ) {
+                        +name
+                    }
+                    div(classes = PROJECT_CARD_META) {
+                        span(classes = META_DETAIL_ROW) {
+                            strong(
+                                classes = META_DETAIL_LABEL,
+                            ) { +"stars:" }
+                            +stars.toString()
+                        }
+                        div(classes = META_DETAIL_ROW) {
+                            strong(
+                                classes = META_DETAIL_LABEL,
+                            ) { +"rel:" }
+                            +displayDate()
+                        }
+                    }
                 }
 
                 p(
@@ -114,50 +182,33 @@ fun FlowContent.projectTile(project: Project) {
                 }
 
                 div(
-                    classes = PROJECT_CARD_META,
+                    classes = PROJECT_CARD_FOOTER,
                 ) {
-                    if (releases.isNotBlank()) {
-                        div(classes = META_DETAIL_ROW) {
-                            strong(
-                                classes = META_DETAIL_LABEL,
-                            ) { +"Released: " }
-                            +releases
+                    if (languages.isNotEmpty()) {
+                        div(
+                            classes = TAGS_LIST,
+                        ) {
+                            languages.forEach { lang ->
+                                languageTag(lang)
+                            }
                         }
                     }
                     if (topics.isNotEmpty()) {
-                        div(classes = META_DETAIL_ROW) {
-                            strong(
-                                classes = META_DETAIL_LABEL,
-                            ) { +"Topics: " }
-                            div(classes = TOPICS_LIST) {
-                                topics.forEach { topic ->
-                                    topicTag(topic)
-                                }
+                        div(classes = TOPICS_LIST) {
+                            topics.forEach { topic ->
+                                topicTag(topic)
                             }
                         }
                     }
                 }
-
-                if (languages.isNotEmpty()) {
-                    div(
-                        classes = TAGS_LIST,
-                    ) {
-                        languages.forEach { lang ->
-                            languageTag(lang)
-                        }
+                div(classes = PROJECT_CARD_ACTIONS) {
+                    a(href = githubLink, classes = PROJECT_ACTION_LINK) {
+                        +"[github]"
                     }
-                }
-            }
-
-            div(
-                classes = PROJECT_CARD_FOOTER,
-            ) {
-                a(href = githubLink, classes = PROJECT_ACTION_LINK) {
-                    +"GitHub"
-                }
-                if (link.isNotBlank() && link != "#") {
-                    a(href = link, classes = PROJECT_ACTION_LINK) {
-                        +"Visit"
+                    if (link.isNotBlank() && link != "#") {
+                        a(href = link, classes = PROJECT_ACTION_LINK) {
+                            +"[visit]"
+                        }
                     }
                 }
             }
@@ -166,195 +217,331 @@ fun FlowContent.projectTile(project: Project) {
 }
 
 fun FlowContent.languageTag(tag: String) {
-    div(
+    button(
+        type = ButtonType.submit,
         classes = TAG_ITEM,
     ) {
-        style = "background-color: #${tag.colorFromString()}; color: #${tag.colorFromString().invertedFromString()}"
-        hxPost(SEARCH_PATH)
-        hxTarget("#search-replace")
-        hxSwap("outerHTML")
-        hxIndicator("#spinner")
-        hxTrigger("click")
-        hxInclude("#search")
-        hxVals("""{"$QP_LANGUAGE": "$tag", "$QP_WITH_SEARCHBAR": true}""")
+        val accent = tag.colorFromString()
+        style = "color: #$accent; border-color: #$accent; background-color: #${accent}26"
+        attributes["form"] = "search"
+        name = QP_SET_LANGUAGE
+        value = tag
 
-        +tag
+        +"lang:$tag"
     }
 }
 
-fun FlowContent.topicTag(topic: String) {
-    span(
+fun FlowContent.topicTag(
+    topic: String,
+) {
+    button(
+        type = ButtonType.submit,
         classes = TOPIC_TAG,
     ) {
-        style = "color: #${topic.colorFromString()}; border-bottom: 1px solid #${topic.colorFromString()}"
-        hxPost(SEARCH_PATH)
-        hxTarget("#search-replace")
-        hxSwap("outerHTML")
-        hxIndicator("#spinner")
-        hxTrigger("click")
-        hxInclude("#search")
-        hxVals("""{"$QP_TOPIC": "$topic", "$QP_WITH_SEARCHBAR": true}""")
+        val accent = topic.colorFromString()
+        style = "color: #$accent; border-color: #$accent; background-color: #${accent}26"
+        attributes["data-topic-tag"] = topic
+        attributes["form"] = "search"
+        name = QP_TOGGLE_TOPIC
+        value = topic
+
+        +"topic:$topic"
+    }
+}
+
+private fun FlowContent.selectedTopicButton(topic: String) {
+    button(
+        type = ButtonType.submit,
+        classes = PROJECT_TOPIC_SELECTED_VALUE,
+    ) {
+        attributes["aria-label"] = "Remove topic $topic"
+        attributes["data-selected-topic"] = topic
+        name = QP_REMOVE_TOPIC
+        value = topic
 
         +topic
     }
 }
 
+private fun FlowContent.topicAddOption(topic: String) {
+    button(
+        type = ButtonType.submit,
+        classes = PROJECT_TOPIC_ADD_BUTTON,
+    ) {
+        attributes["data-topic-option"] = topic
+        name = QP_ADD_TOPIC
+        value = topic
+
+        +topic
+    }
+}
+
+private fun FlowContent.directionToggle(searchParameters: SearchParameters) {
+    button(type = ButtonType.submit, classes = PROJECT_DIRECTION_BUTTON) {
+        id = "projects-dir-toggle"
+        attributes["aria-label"] = "Sort direction"
+        name = QP_TOGGLE_DIR
+        value = true.toString()
+
+        +if (searchParameters.descending) "--desc" else "--asc"
+    }
+}
+
 fun FlowContent.mainSearchBar(searchParameters: SearchParameters = SearchParameters.defaults()) {
-    div {
-        span(classes = HTMX_INDICATOR) {
-            id = "spinner"
-            img(src = "/resources/bars.svg", alt = "Searching...")
-            +"Searching..."
+    form(action = SEARCH_PATH, method = FormMethod.post, classes = PROJECT_FILTER_FORM) {
+        id = "search"
+        hxPost(SEARCH_PATH)
+        hxTarget("#$SEARCH_REPLACE")
+        hxSwap("outerHTML")
+        hxIndicator("#spinner")
+        hxTrigger("submit, change from:select delay:100ms, input from:input[type='text'] changed delay:500ms")
+
+        input(type = InputType.hidden, name = QP_WITH_SEARCHBAR) {
+            value = true.toString()
         }
 
-        form(action = SEARCH_PATH, method = FormMethod.post) {
-            id = "search"
-            hxPost(SEARCH_PATH)
-            hxTarget("#search-results")
-            hxIndicator("#spinner")
-            hxTrigger("submit, change from:select, change from:input[type='checkbox'] delay:100ms, input from:input[type='text'] changed delay:500ms")
+        input(type = InputType.hidden, name = QP_DIR) {
+            value = if (searchParameters.descending) "desc" else ""
+        }
 
-            div(classes = FORM_GROUP) {
-                label(classes = FORM_LABEL) {
-                    htmlFor = "mainSearch"
-                    +"Search:"
+        searchParameters.topics.forEach { topic ->
+            input(type = InputType.hidden, name = QP_TOPIC) {
+                value = topic
+            }
+        }
+
+        div(classes = PROJECT_COMMAND_PREVIEW) {
+            id = COMMAND_PREVIEW_ID
+
+            div(classes = PROJECT_COMMAND_LINE) {
+                span(classes = PROJECT_COMMAND_PROMPT) { +">>" }
+                code(classes = PROJECT_COMMAND_TEXT) {
+                    +DEFAULT_PROJECTS_COMMAND
                 }
-                input(
-                    InputType.text,
-                    name = QP_QUERY,
-                    classes = FORM_INPUT_TEXT_WITH_MARGIN,
-                ) {
-                    autoFocus = true
-                    id = "mainSearch"
-                    placeholder = "Search"
-                    value = searchParameters.query
+                span(classes = PROJECT_COMMAND_CONTINUATION) {
+                    +"\\"
+                }
+                div(classes = PROJECT_COMMAND_ACTIONS) {
+                    resetFiltersButton()
+                    span(classes = PROJECT_SHELL_STATUS) {
+                        span(classes = HTMX_INDICATOR) {
+                            id = "spinner"
+                            img(src = "/resources/bars.svg", alt = "")
+                            +" syncing"
+                        }
+                    }
                 }
             }
 
-            // Grouping filter controls for better layout potential
-            div(
-                classes = FILTER_CONTROLS_LAYOUT,
-            ) {
-                div(classes = FILTER_ITEM_LAYOUT) {
-                    label(classes = FORM_LABEL) {
-                        htmlFor = QP_TOPIC
-                        +"Topic:"
+            div(classes = PROJECT_COMMAND_CONTINUATION_LINE) {
+                span(classes = SCREEN_READER_ONLY) {
+                    +"Topic filter"
+                }
+                div(classes = PROJECT_TOPIC_CONTROL) {
+                    id = "projects-topic-control"
+                    span(classes = PROJECT_ARGUMENT_FLAG) {
+                        +"--topic"
                     }
-                    select(classes = FORM_INPUT_BASE) {
-                        name = QP_TOPIC
-                        id = QP_TOPIC
-                        option {
-                            selected = searchParameters.topic == TOPIC_PLACEHOLDER
-                            value = TOPIC_PLACEHOLDER
-                            +TOPIC_PLACEHOLDER
+
+                    if (searchParameters.topics.isNotEmpty()) {
+                        searchParameters.topics.forEachIndexed { index, topic ->
+                            if (index > 0) {
+                                span(classes = PROJECT_TOPIC_COMMA) {
+                                    +","
+                                }
+                            }
+                            selectedTopicButton(topic)
                         }
-                        getAllTopics().forEach { topic ->
-                            option {
-                                selected = searchParameters.topic == topic
-                                value = topic
-                                +topic
+                    }
+
+                    details(classes = PROJECT_TOPIC_PICKER) {
+                        id = "projects-topic-picker"
+                        summary(
+                            classes = if (searchParameters.topics.isEmpty()) {
+                                PROJECT_TOPIC_EMPTY_TRIGGER
+                            } else {
+                                PROJECT_TOPIC_ADD_TRIGGER
+                            },
+                        ) {
+                            attributes["aria-label"] = if (searchParameters.topics.isEmpty()) {
+                                "Choose topics"
+                            } else {
+                                "Add topic"
+                            }
+                            if (searchParameters.topics.isEmpty()) {
+                                span(classes = PROJECT_TOPIC_EMPTY_VALUE) {
+                                    +"all"
+                                }
+                            } else {
+                                +"(+)"
+                            }
+                        }
+
+                        div(classes = PROJECT_TOPIC_DROPDOWN) {
+                            id = "projects-topic-dropdown"
+                            val availableTopics = getAllTopics().filterNot(searchParameters.topics::contains)
+                            if (availableTopics.isEmpty()) {
+                                div(classes = PROJECT_TOPIC_ADD_PANEL_EMPTY) {
+                                    +"all topics selected"
+                                }
+                            } else {
+                                div(classes = PROJECT_TOPIC_ADD_PANEL) {
+                                    availableTopics.forEach { topic ->
+                                        topicAddOption(topic)
+                                    }
+                                }
                             }
                         }
                     }
                 }
 
-                div(classes = FILTER_ITEM_LAYOUT) {
-                    label(classes = FORM_LABEL) {
-                        htmlFor = QP_LANGUAGE
-                        +"Language:"
+                label(classes = SCREEN_READER_ONLY) {
+                    htmlFor = QP_LANGUAGE
+                    +"Language"
+                }
+                div(classes = PROJECT_ARGUMENT_CONTROL) {
+                    id = "projects-language-control"
+                    span(classes = PROJECT_ARGUMENT_FLAG) {
+                        +"--language"
                     }
-                    select(classes = FORM_INPUT_BASE) {
+                    select(classes = PROJECT_ARGUMENT_SELECT) {
                         name = QP_LANGUAGE
                         id = QP_LANGUAGE
                         option {
                             value = LANGUAGE_PLACEHOLDER
                             selected = searchParameters.language == LANGUAGE_PLACEHOLDER
-                            +LANGUAGE_PLACEHOLDER
+                            +"all"
                         }
                         getAllLanguages().forEach { language ->
                             option {
                                 selected = searchParameters.language == language
                                 value = language
-                                +language
+                                +language.lowercase()
                             }
                         }
                     }
                 }
 
-                div(classes = FILTER_ITEM_LAYOUT) {
-                    label(classes = FORM_LABEL) {
-                        htmlFor = QP_ORDER_BY
-                        +"Order by:"
+                label(classes = SCREEN_READER_ONLY) {
+                    htmlFor = QP_ORDER_BY
+                    +"Sort"
+                }
+                div(classes = PROJECT_ARGUMENT_CONTROL) {
+                    id = "projects-sort-control"
+                    span(classes = PROJECT_ARGUMENT_FLAG) {
+                        +"--sort"
                     }
-                    select(classes = FORM_INPUT_BASE) {
+                    select(classes = PROJECT_ARGUMENT_SELECT) {
                         name = QP_ORDER_BY
                         id = QP_ORDER_BY
-                        OrderBy.entries.forEach {
+                        OrderBy.entries.forEach { orderBy ->
                             option {
-                                value = it.name
-                                +it.name
+                                value = orderBy.name
+                                selected = searchParameters.orderBy == orderBy
+                                +orderBy.name.lowercase()
                             }
                         }
                     }
                 }
 
-                div(
-                    classes = FORM_CHECKBOX_GROUP,
-                ) {
-                    input(
-                        type = InputType.checkBox,
-                        name = QP_DIR,
-                        classes = FORM_CHECKBOX,
-                    ) {
-                        id = QP_DIR
-                        value = "desc"
-                    }
-                    label(classes = FORM_LABEL) {
-                        htmlFor = QP_DIR
-                        +"Descending"
-                    }
+                label(classes = SCREEN_READER_ONLY) {
+                    htmlFor = "projects-dir-toggle"
+                    +"Sort direction"
+                }
+                directionToggle(searchParameters)
+                span(classes = PROJECT_COMMAND_CONTINUATION) {
+                    +"\\"
                 }
             }
 
-            button(type = ButtonType.submit, classes = SUBMIT_BUTTON) {
-                div(
-                    classes = LOADING_SPINNER,
-                ) {
-                    +"Search "
-                    span(
-                        classes = HTMX_INDICATOR_INLINE,
+            div(classes = PROJECT_COMMAND_CONTINUATION_LINE) {
+                label(classes = SCREEN_READER_ONLY) {
+                    htmlFor = "mainSearch"
+                    +"Query"
+                }
+                div(classes = PROJECT_ARGUMENT_CONTROL) {
+                    id = "projects-query-control"
+                    span(classes = PROJECT_ARGUMENT_FLAG) {
+                        +"--query"
+                    }
+                    input(
+                        InputType.text,
+                        name = QP_QUERY,
+                        classes = PROJECT_ARGUMENT_FIELD,
                     ) {
-                        img(src = "/resources/bars.svg", alt = "Searching...")
+                        autoFocus = true
+                        id = "mainSearch"
+                        value = searchParameters.query
                     }
                 }
             }
         }
+
     }
 }
 
-fun FlowContent.nothingFoundProjectTile() {
-    div(classes = PROJECT_CARD) {
-        div(classes = PROJECT_CARD_CONTENT) {
-            h3(classes = PROJECT_CARD_TITLE) {
-                +"Nothing Found"
-            }
-
-            p(classes = PROJECT_CARD_DESCRIPTION) {
-                +"No projects match your search criteria."
-            }
-        }
-
-        div(classes = PROJECT_CARD_FOOTER) {
-            input(type = InputType.button, classes = RESET_BUTTON) {
-                hxPost(SEARCH_PATH)
-                hxTarget("#search-replace")
-                hxSwap("outerHTML")
-                hxIndicator("#spinner")
-                hxTrigger("click")
-                hxInclude("#search")
-                hxVals("""{"$QP_QUERY": "", "$QP_LANGUAGE": "$LANGUAGE_PLACEHOLDER", "$QP_TOPIC": "$TOPIC_PLACEHOLDER", "$QP_WITH_SEARCHBAR": true}""")
-                value = "Reset Search"
-            }
-        }
+private fun FlowContent.resetFiltersButton() {
+    button(type = ButtonType.button, classes = RESET_BUTTON) {
+        hxPost(SEARCH_PATH)
+        hxTarget("#$SEARCH_REPLACE")
+        hxSwap("outerHTML")
+        hxIndicator("#spinner")
+        hxTrigger("click")
+        attributes["hx-params"] = "none"
+        hxVals(
+            """{"$QP_QUERY": "", "$QP_LANGUAGE": "$LANGUAGE_PLACEHOLDER", "$QP_ORDER_BY": "${OrderBy.Relevance.name}", "$QP_DIR": "", "$QP_WITH_SEARCHBAR": true}""",
+        )
+        +"[reset filters]"
     }
+}
+
+fun FlowContent.nothingFoundProjectTile(searchParameters: SearchParameters) {
+    div(classes = EMPTY_STATE) {
+        h3(classes = EMPTY_STATE_TITLE) {
+            +"0 results"
+        }
+
+        p(classes = EMPTY_STATE_MESSAGE) {
+            +"No projects matched the current filter state."
+        }
+
+        p(classes = EMPTY_STATE_MESSAGE) {
+            +"Current command: ${searchParameters.commandPreview()}"
+        }
+
+        resetFiltersButton()
+    }
+}
+
+private fun SearchParameters.commandPreview(): String {
+    val parts = mutableListOf(DEFAULT_PROJECTS_COMMAND)
+
+    if (query.isNotBlank()) {
+        parts += "--query \"${query.escapeShellText()}\""
+    }
+    if (topics.isNotEmpty()) {
+        parts += "--topic ${topics.joinToString(", ") { it.escapeShellText() }}"
+    }
+    if (language != LANGUAGE_PLACEHOLDER) {
+        parts += "--language \"${language.escapeShellText()}\""
+    }
+    if (orderBy != OrderBy.Relevance) {
+        parts += "--sort ${orderBy.name.lowercase()}"
+    }
+    if (descending) {
+        parts += "--desc"
+    }
+
+    return parts.joinToString(" ")
+}
+
+private fun String.escapeShellText(): String = replace("\"", "\\\"")
+
+private fun List<Project>.resultsSummary(): String {
+    val noun = if (size == 1) "result" else "results"
+    return "$size $noun"
+}
+
+private fun Project.displayDate(): String = releases.substringBefore("T").ifBlank {
+    created.toLocalDate().toString()
 }

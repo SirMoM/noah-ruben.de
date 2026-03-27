@@ -1,6 +1,7 @@
 package de.noah_ruben.site.projects
 
 import de.noah_ruben.data.model.Project
+import io.ktor.http.parametersOf
 import java.time.LocalDateTime.now
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -14,7 +15,7 @@ class ProjectsQueryTest {
     fun filterBySearchParameters() {
         val searchParameters = SearchParameters(
             query = "",
-            topic = TOPIC_PLACEHOLDER,
+            topics = emptyList(),
             language = "Kotlin",
             orderBy = OrderBy.Popularity,
             descending = false,
@@ -71,9 +72,27 @@ class ProjectsQueryTest {
     }
 
     @Test
-    fun filerByTopic() {
-        val result = this.projects.filerByTopic("Android")
+    fun filterByTopicsWithSingleSelection() {
+        val result = this.projects.filterByTopics(listOf("Android"))
         assertEquals(listOf(projects[0]), result, "Lists should be equal")
+    }
+
+    @Test
+    fun filterByTopicsMatchesAnySelectedTopic() {
+        val result = this.projects.filterByTopics(listOf("Android", "CLI"))
+        assertEquals(listOf(projects[0], projects[2]), result, "Projects should match any selected topic")
+    }
+
+    @Test
+    fun searchParametersFromDeduplicatesTopicsAndPreservesOrder() {
+        val result = SearchParameters.from(
+            parametersOf(
+                QP_QUERY to listOf(""),
+                QP_TOPIC to listOf("Web", "CLI", "Web", "Backend"),
+            ),
+        )
+
+        assertEquals(listOf("Web", "CLI", "Backend"), result.topics)
     }
 
     @Test
