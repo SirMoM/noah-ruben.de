@@ -6,6 +6,8 @@ import {
 
 const THEME_CHANGED_EVENT = "noahruben:theme-changed";
 const CV_LANGUAGE_LINK_SELECTOR = "a[data-cv-language]";
+const CV_COMMAND_SELECTOR = '[data-role="cv-command"]';
+const CV_COMMAND_TEXT_SELECTOR = '[data-role="cv-command-text"]';
 const PREFETCH_IDLE_TIMEOUT_MS = 1500;
 
 const setHidden = (element, hidden) => {
@@ -66,11 +68,25 @@ const updateLanguageLinks = (root, selectedLanguage) => {
   });
 };
 
+const updateCvCommand = (selectedLanguage) => {
+  document.querySelectorAll(CV_COMMAND_SELECTOR).forEach((element) => {
+    const commandText = element.querySelector(CV_COMMAND_TEXT_SELECTOR);
+
+    if (commandText) {
+      commandText.textContent = `noahruben cv ${selectedLanguage}`;
+      return;
+    }
+
+    element.textContent = `>> noahruben cv ${selectedLanguage}`;
+  });
+};
+
 const syncPendingVariant = (controller, variant) => {
   controller.root.setAttribute("data-current-language", variant.language);
   controller.root.setAttribute("data-pdf-url-base", variant.baseUrl);
   controller.root.setAttribute("data-pdf-title", variant.pdfTitle);
   updateLanguageLinks(controller.root, variant.language);
+  updateCvCommand(variant.language);
 };
 
 const syncCommittedVariant = (controller, variant) => {

@@ -45,7 +45,8 @@ const waitForLanding = async (page: Page): Promise<void> => {
 };
 
 const waitForProjects = async (page: Page): Promise<void> => {
-  await expect(page.locator("h1", { hasText: "Projects" })).toBeVisible();
+  await expect(page.locator("#projects-command-preview")).toContainText(">>");
+  await expect(page.locator("#projects-command-preview")).toContainText("noahruben projects");
   await expect(page.locator("#search-results")).toBeVisible();
 };
 

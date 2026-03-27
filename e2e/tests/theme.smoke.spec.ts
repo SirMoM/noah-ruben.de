@@ -11,7 +11,7 @@ const pages = [
   {
     name: "landing",
     ready: async (page) => {
-      await expect(page.getByText(">> noahruben").first()).toBeVisible();
+      await expect(page.locator('[data-role="landing-command"] code')).toHaveText("noahruben");
     },
     url: "/",
   },

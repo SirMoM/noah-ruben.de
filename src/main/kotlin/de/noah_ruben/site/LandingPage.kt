@@ -12,7 +12,6 @@ import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_HEADER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_LABEL
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE_IMAGE
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE_LINK
-import de.noah_ruben.misc.CssClasses.LandingPage.PROMPT_ARROW
 import de.noah_ruben.misc.CssClasses.LandingPage.SECTION_DIVIDER
 import de.noah_ruben.misc.CssClasses.LandingPage.SYSTEM_SUMMARY_HEADING
 import de.noah_ruben.misc.CssClasses.PAGE_BASE
@@ -41,10 +40,10 @@ fun Application.landingPage() {
 }
 
 fun BODY.indexPageContent() {
-    div {
-        span(classes = PROMPT_ARROW) { +">>" }
-        +" noahruben"
-    }
+    commandPrompt(
+        command = "noahruben",
+        containerRole = "landing-command",
+    )
     div(classes = PROFILE_CONTAINER) {
         vanGoghPortrait()
         div(classes = PROFILE_DETAILS_CONTAINER) {
@@ -114,10 +113,10 @@ fun BODY.indexPageContent() {
             }
         }
     }
-    div {
-        span(classes = PROMPT_ARROW) { +">>" }
-        +" noahruben help"
-    }
+    commandPrompt(
+        command = "noahruben help",
+        containerRole = "landing-help-command",
+    )
     div(classes = HELP_INDENT) {
         p { +"Usage: noahruben <subpage>" }
         p { +"noahruben is the personal website of Noah Ruben" }
@@ -173,10 +172,6 @@ fun HTML.landingpage() {
         id = "body"
         classes = setOf(PAGE_BASE)
         themeToggleButton()
-        div {
-            span(classes = PROMPT_ARROW) { +">>" }
-            +" noahruben"
-        }
         indexPageContent()
     }
 }

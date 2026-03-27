@@ -27,6 +27,10 @@ const viewerPdfUrl = async (page: Page): Promise<string | null> =>
 const viewerRenderId = async (page: Page): Promise<number> =>
   Number((await getViewer(page).getAttribute("data-render-id")) ?? "0");
 
+const expectCvPrompt = async (page: Page, language: "eng" | "ger"): Promise<void> => {
+  await expect(page.locator('[data-role="cv-command-text"]')).toHaveText(`noahruben cv ${language}`);
+};
+
 const waitForViewerReady = async (page: Page): Promise<void> => {
   await page.waitForFunction(() => {
     const viewer = document.querySelector("#cv-pdf-viewer");
@@ -115,6 +119,7 @@ test("cv viewer loads and reacts to language and theme changes", async ({ page }
 
   const viewer = getViewer(page);
 
+  await expectCvPrompt(page, "eng");
   await expect(viewer).toBeVisible();
   await expectViewerState(page, {
     language: "eng",
@@ -147,6 +152,7 @@ test("cv viewer loads and reacts to language and theme changes", async ({ page }
     mode: "dark",
     titleFragment: "German",
   });
+  await expectCvPrompt(page, "ger");
   await captureStep(page, testInfo, "cv-german-dark");
 
   const renderIdBeforeLightMode = await viewerRenderId(page);
@@ -156,6 +162,7 @@ test("cv viewer loads and reacts to language and theme changes", async ({ page }
     mode: "light",
     titleFragment: "German",
   });
+  await expectCvPrompt(page, "ger");
   await expect.poll(() => viewerRenderId(page)).toBeGreaterThan(renderIdBeforeLightMode);
   await captureStep(page, testInfo, "cv-german-light");
 
@@ -184,6 +191,7 @@ test("cv viewer loads and reacts to language and theme changes", async ({ page }
     mode: "light",
     titleFragment: "English",
   });
+  await expectCvPrompt(page, "eng");
   await captureStep(page, testInfo, "cv-returned-to-english-light");
 });
 
@@ -196,6 +204,7 @@ test("cv viewer shows a visible error when pdf loading fails", async ({ page }, 
   const errorMessage = viewer.locator('[data-role="error"]');
   const cli = page.locator("#cle");
 
+  await expectCvPrompt(page, "eng");
   await expect(errorMessage).toBeVisible();
   await expect(errorMessage).toContainText("The PDF preview is unavailable right now.");
   await expect(viewer).toHaveAttribute("data-viewer-ready", "false");

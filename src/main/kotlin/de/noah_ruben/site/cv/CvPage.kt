@@ -5,10 +5,10 @@ package de.noah_ruben.site.cv
 import de.noah_ruben.misc.CssClasses.CONTENT_CONTAINER
 import de.noah_ruben.misc.CssClasses.Form.LOADING_SPINNER
 import de.noah_ruben.misc.CssClasses.PAGE_BASE
-import de.noah_ruben.misc.CssClasses.PAGE_TITLE
 import de.noah_ruben.misc.CssClasses.Shared.ERROR_MESSAGE_BOX
 import de.noah_ruben.misc.CssClasses.Shared.HTMX_INDICATOR_INLINE
 import de.noah_ruben.site.commandLineEmulation
+import de.noah_ruben.site.commandPrompt
 import de.noah_ruben.site.defaultBody
 import de.noah_ruben.site.defaultHeader
 import de.noah_ruben.site.themeToggleButton
@@ -24,7 +24,6 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.html.*
 
-private const val CV_PAGE_TITLE = "text-2xl font-bold pt-8"
 private const val CV_TOGGLE_ROW = "fixed right-4 top-20 z-40 flex flex-wrap justify-end gap-3"
 private const val CV_TOGGLE_LINK_BASE = "inline-flex rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200"
 private const val CV_TOGGLE_LINK_ACTIVE = "border-ctp-blue bg-ctp-blue text-ctp-base"
@@ -140,7 +139,11 @@ fun HTML.cvPageHtml(pageState: CvPageState) {
 
 fun BODY.cvPageBody(pageState: CvPageState) {
     div(classes = CONTENT_CONTAINER) {
-        h1(classes = CV_PAGE_TITLE) { +"> CV" }
+        commandPrompt(
+            command = "noahruben cv ${pageState.selectedLanguage.token}",
+            containerRole = "cv-command",
+            textRole = "cv-command-text",
+        )
         div(classes = CV_TOGGLE_ROW) {
             CvLanguage.entries.forEach { language ->
                 cvLanguageLink(
