@@ -5,6 +5,8 @@
  */
 
 (() => {
+    const FLASH_CLASS = "noahruben-debug-flash";
+    const FLASH_STYLE_ID = "noahruben-debug-flash-style";
     const PANEL_ID = "noahruben-debug-panel";
     const debugParam = new URLSearchParams(window.location.search).get("debug");
     const enabled = shouldEnable(debugParam);
@@ -56,6 +58,40 @@
         }
 
         return document.title.trim() || "unknown";
+    }
+
+    function ensureFlashStyle() {
+        if (document.getElementById(FLASH_STYLE_ID)) {
+            return;
+        }
+
+        const style = document.createElement("style");
+        style.id = FLASH_STYLE_ID;
+        style.textContent = `
+            @keyframes noahrubenDebugFlash {
+                from { background-color: rgba(166, 227, 161, 0.45); }
+                to { background-color: transparent; }
+            }
+
+            .${FLASH_CLASS} {
+                animation: noahrubenDebugFlash 1500ms ease-out;
+            }
+        `.trim();
+        document.head.append(style);
+    }
+
+    function flashSwapTarget(target) {
+        if (!(target instanceof HTMLElement)) {
+            return;
+        }
+
+        ensureFlashStyle();
+        target.classList.remove(FLASH_CLASS);
+        void target.offsetWidth;
+        target.classList.add(FLASH_CLASS);
+        target.addEventListener("animationend", () => {
+            target.classList.remove(FLASH_CLASS);
+        }, { once: true });
     }
 
     function ensurePanel() {
@@ -212,7 +248,8 @@
             }
         });
 
-        document.addEventListener("htmx:afterSwap", () => {
+        document.addEventListener("htmx:afterSwap", (event) => {
+            flashSwapTarget(event.detail?.elt ?? event.detail?.target);
             render();
         });
 
