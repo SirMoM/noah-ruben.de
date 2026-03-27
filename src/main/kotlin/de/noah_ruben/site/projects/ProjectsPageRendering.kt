@@ -294,7 +294,7 @@ fun FlowContent.mainSearchBar(searchParameters: SearchParameters = SearchParamet
         hxTarget("#$SEARCH_REPLACE")
         hxSwap("outerHTML")
         hxIndicator("#spinner")
-        hxTrigger("submit, change from:select delay:100ms, input from:input[type='text'] changed delay:500ms")
+        hxTrigger("submit, change from:select delay:100ms, input from:#mainSearch changed delay:500ms")
 
         input(type = InputType.hidden, name = QP_WITH_SEARCHBAR) {
             value = true.toString()

@@ -22,3 +22,17 @@ test("landing smoke covers theme persistence and key navigation", async ({ page 
   await expect(page.locator("#cv-pdf-viewer")).toBeVisible();
   await captureStep(page, testInfo, "landing-to-cv");
 });
+
+test("cli emulation keeps pending text until a command is submitted", async ({ page }, testInfo) => {
+  await page.goto("/");
+
+  const input = page.locator('#cle input[name="command"]');
+
+  await expect(input).toBeVisible();
+  await input.click();
+  await input.fill("noahruben projects");
+  await page.waitForTimeout(1000);
+  await expect(input).toHaveValue("noahruben projects");
+
+  await captureStep(page, testInfo, "landing-cli-pending-text");
+});

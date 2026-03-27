@@ -94,3 +94,21 @@ test("cli navigation smoke covers every site from every site", async ({ page }, 
     }
   }
 });
+
+test("cli input keeps pending text across pages until Enter is pressed", async ({ page }, testInfo) => {
+  for (const site of sites) {
+    await page.goto(site.path);
+    await site.waitForReady(page);
+
+    const input = cliInput(page);
+    const pendingCommand = `${site.cliCommand} help`;
+
+    await expect(input).toBeVisible();
+    await input.click();
+    await input.fill(pendingCommand);
+    await page.waitForTimeout(1000);
+    await expect(input).toHaveValue(pendingCommand);
+
+    await captureStep(page, testInfo, `cli-pending-${site.key}`);
+  }
+});
