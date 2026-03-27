@@ -207,3 +207,8 @@ Checked rule locations requested by user:
 - `.github/copilot-instructions.md`: not present.
 
 If these files are added later, treat them as repository-level instructions and update this file.
+
+## 11) Playwright Invocation Rule
+
+- Never run Playwright from the shell via `node`, `npx`, or `./node_modules/.bin/playwright`.
+- Use Playwright MCP tooling, or another user-approved wrapper command, when browser verification is needed.

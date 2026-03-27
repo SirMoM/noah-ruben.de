@@ -1,8 +1,8 @@
 package de.noah_ruben.site
 
 import de.noah_ruben.misc.Commands
-import de.noah_ruben.misc.CssClasses.LandingPage.PROMPT_ARROW
 import de.noah_ruben.misc.CssClasses.PAGE_BASE
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_PROMPT
 import de.noah_ruben.misc.CssClasses.Shared.CLI_INPUT_FIELD
 import de.noah_ruben.misc.CssClasses.Shared.CLI_WRAPPER
 import de.noah_ruben.misc.hxPost
@@ -130,7 +130,7 @@ suspend fun handleCommand(call: RoutingCall) {
 fun FlowContent.commandLineEmulation() {
     div(classes = CLI_WRAPPER) {
         id = "cle"
-        span(classes = PROMPT_ARROW) { +">>" }
+        span(classes = PROJECT_COMMAND_PROMPT) { +">>" }
         +" "
         input(type = InputType.text, name = "command", classes = CLI_INPUT_FIELD) {
             placeholder = "noahruben projects"

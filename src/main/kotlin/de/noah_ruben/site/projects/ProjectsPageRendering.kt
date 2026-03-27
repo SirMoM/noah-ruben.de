@@ -498,7 +498,7 @@ private fun FlowContent.resetFiltersButton() {
 fun FlowContent.nothingFoundProjectTile(searchParameters: SearchParameters) {
     div(classes = EMPTY_STATE) {
         h3(classes = EMPTY_STATE_TITLE) {
-            +"0 results"
+            +"Nothing found"
         }
 
         p(classes = EMPTY_STATE_MESSAGE) {

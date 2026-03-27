@@ -34,7 +34,7 @@ test("projects interactions keep the terminal shell in sync", async ({ page }, t
   await queryInput.fill("__definitely_no_matches__");
   await expect(resultsSummary).toHaveText("0 results");
   await expect(queryInput).toHaveValue("__definitely_no_matches__");
-  await expect(page.getByText("0 results").first()).toBeVisible();
+  await expect(page.getByText("0 results")).toHaveCount(1);
   await captureStep(page, testInfo, "projects-terminal-no-results");
 
   await page.getByRole("button", { name: "[reset filters]" }).first().click();
@@ -123,6 +123,7 @@ test("projects reset button clears an unmatched query", async ({ page }, testInf
   await queryInput.fill("asdfg");
   await expect(resultsSummary).toHaveText("0 results");
   await expect(queryInput).toHaveValue("asdfg");
+  await expect(page.getByText("0 results")).toHaveCount(1);
 
   await resetButton.click();
   await expect.poll(async () => projectCards.count()).toBeGreaterThan(0);
