@@ -13,17 +13,14 @@ import io.ktor.http.parseUrlEncodedParameters
 import io.ktor.server.application.Application
 import io.ktor.server.application.log
 import io.ktor.server.html.respondHtml
-import io.ktor.server.plugins.MissingRequestParameterException
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
-import io.ktor.server.util.getOrFail
 import kotlinx.html.div
 import kotlinx.html.id
 import kotlinx.html.stream.createHTML
-import java.net.URLDecoder
 
 internal const val SEARCH_PATH = "/search"
 internal const val QP_QUERY = "query"
@@ -59,7 +56,7 @@ data class SearchParameters(
 ) {
     companion object {
         fun from(params: Parameters): SearchParameters = SearchParameters(
-            query = params.getOrFail(QP_QUERY),
+            query = params[QP_QUERY].orEmpty(),
             topics = params.topics(),
             language = params.language(),
             orderBy = params[QP_ORDER_BY]?.let { OrderBy.valueOf(it) } ?: Relevance,
@@ -99,23 +96,13 @@ fun Application.projectsPageRouting() {
                     renderSearchReplace(searchParameters, projects),
                     ContentType.Text.Html,
                 )
-            } catch (e: MissingRequestParameterException) {
-                log.warn("Missing parameter in search query. Payload: '{}'. Error: {}", payload, e.message)
-                call.respondText(
-                    renderSearchReplace(
-                        searchParameters = SearchParameters.defaults(),
-                        projects = Cache.getProjects(),
-                        errorMessage = "Missing required search parameter (${e.parameterName}). Received: ${URLDecoder.decode(payload, "UTF-8")}",
-                    ),
-                    ContentType.Text.Html,
-                )
             } catch (e: IllegalArgumentException) {
                 log.warn("Invalid parameter value in search query. Payload: '{}'. Error: {}", payload, e.message)
                 call.respondText(
                     renderSearchReplace(
                         searchParameters = SearchParameters.defaults(),
                         projects = Cache.getProjects(),
-                        errorMessage = "Invalid value for a search parameter. Received: ${URLDecoder.decode(payload, "UTF-8")}",
+                        errorMessage = "Invalid value for a search parameter. Received: $payload",
                     ),
                     ContentType.Text.Html,
                 )

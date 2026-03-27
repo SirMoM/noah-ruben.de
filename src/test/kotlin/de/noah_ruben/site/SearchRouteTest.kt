@@ -72,7 +72,7 @@ class SearchRouteTest {
     fun searchRouteResetPayloadClearsTopicState() = testApplicationWithRepositoryFake {
         val response = client.post("/search") {
             contentType(ContentType.Application.FormUrlEncoded)
-            setBody("query=&language=%3CLanguage%3E&orderBy=Relevance&dir=&withSearchBar=true")
+            setBody("language=%3CLanguage%3E&orderBy=Relevance&dir=&withSearchBar=true")
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -80,17 +80,19 @@ class SearchRouteTest {
         assertTrue(response.bodyAsText().contains("""id="projects-topic-control""""))
         assertTrue(response.bodyAsText().contains(">all<"))
         assertTrue(!response.bodyAsText().contains("""data-selected-topic=""""))
+        assertTrue(!response.bodyAsText().contains("Missing required search parameter"))
     }
 
     @Test
-    fun searchRouteReportsMissingRequiredQueryParameter() = testApplicationWithRepositoryFake {
+    fun searchRouteTreatsMissingQueryParameterAsEmptyQuery() = testApplicationWithRepositoryFake {
         val response = client.post("/search") {
             contentType(ContentType.Application.FormUrlEncoded)
             setBody("topic=dummy")
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("Missing required search parameter (query)"))
+        assertTrue(response.bodyAsText().contains("dummy-repo"))
+        assertTrue(!response.bodyAsText().contains("Missing required search parameter"))
     }
 
     @Test
