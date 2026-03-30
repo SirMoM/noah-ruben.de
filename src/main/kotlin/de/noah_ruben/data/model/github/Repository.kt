@@ -1,43 +1,65 @@
 package de.noah_ruben.data.model.github
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Repository(
     val id: Int,
-    val node_id: String,
+    @SerialName("node_id")
+    val nodeId: String,
     val name: String,
-    val full_name: String,
+    @SerialName("full_name")
+    val fullName: String,
     val owner: SimpleUser,
     val private: Boolean,
     val description: String?,
     val fork: Boolean,
     val language: String?,
-    val html_url: String?,
-    val forks_count: Int,
-    val stargazers_count: Int,
-    val watchers_count: Int,
+    @SerialName("html_url")
+    val htmlUrl: String?,
+    @SerialName("forks_count")
+    val forksCount: Int,
+    @SerialName("stargazers_count")
+    val stargazersCount: Int,
+    @SerialName("watchers_count")
+    val watchersCount: Int,
     val size: Int,
-    val default_branch: String,
-    val open_issues_count: Int,
-    val is_template: Boolean,
+    @SerialName("default_branch")
+    val defaultBranch: String,
+    @SerialName("open_issues_count")
+    val openIssuesCount: Int,
+    @SerialName("is_template")
+    val isTemplate: Boolean,
     val topics: List<String>,
-    val has_issues: Boolean,
-    val has_projects: Boolean,
-    val has_wiki: Boolean,
-    val has_pages: Boolean,
-    val has_downloads: Boolean,
-    val has_discussions: Boolean,
+    @SerialName("has_issues")
+    val hasIssues: Boolean,
+    @SerialName("has_projects")
+    val hasProjects: Boolean,
+    @SerialName("has_wiki")
+    val hasWiki: Boolean,
+    @SerialName("has_pages")
+    val hasPages: Boolean,
+    @SerialName("has_downloads")
+    val hasDownloads: Boolean,
+    @SerialName("has_discussions")
+    val hasDiscussions: Boolean,
     val archived: Boolean,
     val disabled: Boolean,
     val visibility: String,
-    val pushed_at: String?,
-    val created_at: String?,
-    val updated_at: String?,
+    @SerialName("pushed_at")
+    val pushedAt: String?,
+    @SerialName("created_at")
+    val createdAt: String?,
+    @SerialName("updated_at")
+    val updatedAt: String?,
     val forks: Int,
-    val open_issues: Int,
+    @SerialName("open_issues")
+    val openIssues: Int,
     val watchers: Int,
-    val allow_forking: Boolean,
-    val web_commit_signoff_required: Boolean,
+    @SerialName("allow_forking")
+    val allowForking: Boolean,
+    @SerialName("web_commit_signoff_required")
+    val webCommitSignoffRequired: Boolean,
     val homepage: String?,
 )

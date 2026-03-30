@@ -52,19 +52,19 @@ object Cache {
                     val languages = githubClient.getRepositoryLanguages(it.name) {
                         sleep(200)
                     }
-                    if (it.created_at.isNullOrBlank() || it.pushed_at.isNullOrBlank()) throw Error("Invalid repository")
+                    if (it.createdAt.isNullOrBlank() || it.pushedAt.isNullOrBlank()) throw Error("Invalid repository")
                     Project(
-                        stars = it.stargazers_count,
+                        stars = it.stargazersCount,
                         topics = it.topics,
                         languages = languages,
-                        releases = it.created_at.toString(),
+                        releases = it.createdAt.toString(),
                         name = it.name,
                         description = it.description.orEmpty(),
-                        githubLink = it.html_url.orEmpty(),
+                        githubLink = it.htmlUrl.orEmpty(),
                         link = it.homepage.orEmpty(),
 
-                        lastModified = LocalDateTime.parse(it.pushed_at, DateTimeFormatter.ISO_DATE_TIME),
-                        created = LocalDateTime.parse(it.created_at, DateTimeFormatter.ISO_DATE_TIME),
+                        lastModified = LocalDateTime.parse(it.pushedAt, DateTimeFormatter.ISO_DATE_TIME),
+                        created = LocalDateTime.parse(it.createdAt, DateTimeFormatter.ISO_DATE_TIME),
                     )
                 }
             }
