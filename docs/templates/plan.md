@@ -3,7 +3,7 @@ status: todo
 created: YYYY-MM-DD
 completed:
 tickets:
-  - "[[ticket-slug]]"
+  - "<ticket-slug>"
 ---
 
 # Title
