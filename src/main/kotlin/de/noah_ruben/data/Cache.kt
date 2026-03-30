@@ -54,7 +54,7 @@ object Cache {
                         stars = it.stargazersCount,
                         topics = it.topics,
                         languages = languages,
-                        releases = it.createdAt.toString(),
+                        releases = it.createdAt,
                         name = it.name,
                         description = it.description.orEmpty(),
                         githubLink = it.htmlUrl.orEmpty(),

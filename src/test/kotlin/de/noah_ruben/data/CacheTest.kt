@@ -1,9 +1,12 @@
 package de.noah_ruben.data
 
 import kotlinx.coroutines.runBlocking
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class CacheTest {
 
@@ -39,5 +42,12 @@ class CacheTest {
         val result = FakeRepositoryClient().getRepositoryLanguages("dummy-repo")
 
         assertEquals(listOf("Lua"), result)
+    }
+
+    @Test
+    fun cacheDoesNotUseRedundantToStringForReleases() {
+        val cacheSource = Files.readString(Path.of("src/main/kotlin/de/noah_ruben/data/Cache.kt"))
+
+        assertFalse(cacheSource.contains("releases = it.createdAt.toString()"))
     }
 }
