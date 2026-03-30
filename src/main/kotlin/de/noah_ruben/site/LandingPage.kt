@@ -68,7 +68,7 @@ fun BODY.indexPageContent() {
                     a(href = "https://www.karriere-atlas.de/") { +"ATLAS" }
                 }
                 div {
-                    span(classes = PROFILE_LABEL) { +"Github" }
+                    span(classes = PROFILE_LABEL) { +"GitHub" }
                     +": "
                     a(href = "https://github.com/SirMoM") { +"SirMoM" }
                 }

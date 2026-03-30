@@ -18,6 +18,7 @@ object CssClasses {
         const val SUBPAGE_INDENT = SharedClasses.SUBPAGE_INDENT
         const val HTMX_INDICATOR = SharedClasses.HTMX_INDICATOR
         const val HTMX_INDICATOR_INLINE = SharedClasses.HTMX_INDICATOR_INLINE
+        const val HTMX_REQUEST = SharedClasses.HTMX_REQUEST
         const val SCREEN_READER_ONLY = SharedClasses.SCREEN_READER_ONLY
         const val CLI_WRAPPER = SharedClasses.CLI_WRAPPER
         const val CLI_INPUT_FIELD = SharedClasses.CLI_INPUT_FIELD

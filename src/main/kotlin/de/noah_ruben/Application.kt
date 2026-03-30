@@ -30,7 +30,11 @@ import kotlinx.serialization.json.Json
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-fun Application.module(repositoryClient: RepositoryClient = createRepositoryClient()) {
+fun Application.module() {
+    moduleWithRepositoryClient(createRepositoryClient())
+}
+
+fun Application.moduleWithRepositoryClient(repositoryClient: RepositoryClient) {
     Cache.githubClient = repositoryClient
     Cache.initialize()
 

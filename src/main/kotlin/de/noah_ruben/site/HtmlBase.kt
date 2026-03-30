@@ -16,8 +16,8 @@ import kotlinx.html.span
 import kotlinx.html.title
 import kotlinx.html.unsafe
 
-fun DIV.selfLink(_url: String, text: String) {
-    a(href = _url) {
+fun DIV.selfLink(url: String, text: String) {
+    a(href = url) {
         +" $text"
     }
 }

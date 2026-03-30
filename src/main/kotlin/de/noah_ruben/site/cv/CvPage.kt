@@ -7,6 +7,7 @@ import de.noah_ruben.misc.CssClasses.Form.LOADING_SPINNER
 import de.noah_ruben.misc.CssClasses.PAGE_BASE
 import de.noah_ruben.misc.CssClasses.Shared.ERROR_MESSAGE_BOX
 import de.noah_ruben.misc.CssClasses.Shared.HTMX_INDICATOR_INLINE
+import de.noah_ruben.misc.CssClasses.Shared.HTMX_REQUEST
 import de.noah_ruben.site.commandLineEmulation
 import de.noah_ruben.site.commandPrompt
 import de.noah_ruben.site.defaultBody
@@ -177,7 +178,7 @@ fun BODY.cvPageBody(pageState: CvPageState) {
                     div(classes = CV_VIEWER_LOADING) {
                         attributes["data-role"] = "loading"
                         attributes["hidden"] = ""
-                        div(classes = "$LOADING_SPINNER htmx-request") {
+                        div(classes = listOf(LOADING_SPINNER, HTMX_REQUEST).joinToString(" ")) {
                             +"Loading CV "
                             span(classes = HTMX_INDICATOR_INLINE) {
                                 img(src = "/resources/bars.svg", alt = "Loading CV...")
@@ -220,7 +221,7 @@ private fun FlowContent.cvLanguageLink(
 
     a(
         href = language.pageUrl(),
-        classes = "$CV_TOGGLE_LINK_BASE $selectedClass",
+        classes = listOf(CV_TOGGLE_LINK_BASE, selectedClass).joinToString(" "),
     ) {
         attributes["data-cv-language"] = language.token
         attributes["data-pdf-url-base"] = language.pdfUrlBase()

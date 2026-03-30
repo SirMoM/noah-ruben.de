@@ -29,6 +29,7 @@ object SharedClasses {
 
     const val HTMX_INDICATOR = "htmx-indicator"
     const val HTMX_INDICATOR_INLINE = "htmx-indicator ml-2"
+    const val HTMX_REQUEST = "htmx-request"
     const val SCREEN_READER_ONLY = "sr-only"
     const val HELP_INDENT = "pl-6"
     const val SUBPAGE_INDENT = "pl-12"
