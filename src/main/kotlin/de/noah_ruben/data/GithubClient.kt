@@ -19,7 +19,7 @@ private const val LANGUAGES_PATH = "languages"
 
 interface RepositoryClient {
     suspend fun getRepositories(): List<Repository>
-    suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String>
+    suspend fun getRepositoryLanguages(repositoryName: String): List<String>
 }
 
 fun HttpRequestBuilder.authHeader(token: String) {
@@ -57,7 +57,7 @@ class GitHubClient(private val token: String) : RepositoryClient {
         }
     }
 
-    override suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String> = with(newHttpClient()) {
+    override suspend fun getRepositoryLanguages(repositoryName: String): List<String> = with(newHttpClient()) {
         val languages: Map<String, Int> = get("$baseUrl/$REPOSITORY_PATH/$OWNER/$repositoryName/$LANGUAGES_PATH") {
             authHeader(token)
         }.body()

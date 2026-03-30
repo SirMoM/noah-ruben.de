@@ -45,7 +45,7 @@ class WiremockClient(private val url: String = BASE_URL) : RepositoryClient {
         }
     }
 
-    override suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String> = with(newHttpClient()) {
+    override suspend fun getRepositoryLanguages(repositoryName: String): List<String> = with(newHttpClient()) {
         val languages: Map<String, Int> = get("$url/$REPOSITORY_PATH/$OWNER/$repositoryName/$LANGUAGES_PATH").body()
         languages.keys.toList()
     }

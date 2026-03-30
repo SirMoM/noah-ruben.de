@@ -1,5 +1,6 @@
 package de.noah_ruben.data
 
+import kotlinx.coroutines.runBlocking
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,5 +32,12 @@ class CacheTest {
         val result = Cache.getAllLanguages()
 
         assertEquals(setOf("Lua"), result)
+    }
+
+    @Test
+    fun repositoryClientLanguagesCanBeRequestedWithoutCallback() = runBlocking {
+        val result = FakeRepositoryClient().getRepositoryLanguages("dummy-repo")
+
+        assertEquals(listOf("Lua"), result)
     }
 }

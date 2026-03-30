@@ -6,7 +6,6 @@ import de.noah_ruben.config.HealthCheckResult
 import de.noah_ruben.data.model.Project
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
-import java.lang.Thread.sleep
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -49,9 +48,7 @@ object Cache {
             val fetchedProjects = runBlocking {
                 val repositories = githubClient.getRepositories()
                 return@runBlocking repositories.map {
-                    val languages = githubClient.getRepositoryLanguages(it.name) {
-                        sleep(200)
-                    }
+                    val languages = githubClient.getRepositoryLanguages(it.name)
                     if (it.createdAt.isNullOrBlank() || it.pushedAt.isNullOrBlank()) throw Error("Invalid repository")
                     Project(
                         stars = it.stargazersCount,

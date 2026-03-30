@@ -55,5 +55,5 @@ class FakeRepositoryClient : RepositoryClient {
 
     override suspend fun getRepositories(): List<Repository> = listOf(fakeRepositoryData)
 
-    override suspend fun getRepositoryLanguages(repositoryName: String, unit: () -> Unit): List<String> = listOf("Lua")
+    override suspend fun getRepositoryLanguages(repositoryName: String): List<String> = listOf("Lua")
 }
