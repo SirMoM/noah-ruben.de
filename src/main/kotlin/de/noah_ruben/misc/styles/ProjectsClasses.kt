@@ -43,7 +43,7 @@ object ProjectsClasses {
     const val META_DETAIL_ROW = "flex flex-wrap items-center gap-2 text-sm text-ctp-subtext0"
     const val META_DETAIL_LABEL = "text-ctp-subtext1"
     const val TAGS_LIST = "flex flex-wrap items-center gap-2"
-    const val TAG_ITEM = "inline-flex items-center rounded border px-2 py-1 text-xs font-semibold uppercase tracking-wide transition-colors duration-150 hover:bg-ctp-surface1 focus:outline-none focus:ring-2 focus:ring-ctp-sapphire"
+    const val TAG_ITEM = "inline-flex items-center rounded border px-2 py-1 text-xs font-semibold uppercase tracking-wide text-ctp-text transition-colors duration-150 hover:bg-ctp-surface1 focus:outline-none focus:ring-2 focus:ring-ctp-sapphire"
     const val TOPIC_TAG = TAG_ITEM
     const val TOPICS_LIST = TAGS_LIST
     const val PROJECT_CARD_FOOTER = "flex flex-wrap items-center gap-3 pt-1 text-sm"

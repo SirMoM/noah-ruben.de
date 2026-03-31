@@ -71,6 +71,7 @@ import kotlinx.html.*
 private const val DEFAULT_PROJECTS_COMMAND = "noahruben projects"
 private const val COMMAND_PREVIEW_ID = "projects-command-preview"
 private const val RESULTS_SUMMARY_ID = "projects-results-summary"
+private const val EMPTY_DESCRIPTION_PLACEHOLDER = "\u00A0"
 
 fun HTML.projectsPage() {
     head {
@@ -178,7 +179,7 @@ fun FlowContent.projectTile(
                 p(
                     classes = PROJECT_CARD_DESCRIPTION,
                 ) {
-                    +description
+                    +description.ifBlank { EMPTY_DESCRIPTION_PLACEHOLDER }
                 }
 
                 div(
@@ -203,7 +204,7 @@ fun FlowContent.projectTile(
                 }
                 div(classes = PROJECT_CARD_ACTIONS) {
                     a(href = githubLink, classes = PROJECT_ACTION_LINK) {
-                        +"[github]"
+                        +"[GitHub]"
                     }
                     if (link.isNotBlank() && link != "#") {
                         a(href = link, classes = PROJECT_ACTION_LINK) {
@@ -221,8 +222,7 @@ fun FlowContent.languageTag(tag: String) {
         type = ButtonType.submit,
         classes = TAG_ITEM,
     ) {
-        val accent = tag.colorFromString()
-        style = "color: #$accent; border-color: #$accent; background-color: #${accent}26"
+        style = chipStyle(tag)
         attributes["form"] = "search"
         name = QP_SET_LANGUAGE
         value = tag
@@ -238,8 +238,7 @@ fun FlowContent.topicTag(
         type = ButtonType.submit,
         classes = TOPIC_TAG,
     ) {
-        val accent = topic.colorFromString()
-        style = "color: #$accent; border-color: #$accent; background-color: #${accent}26"
+        style = chipStyle(topic)
         attributes["data-topic-tag"] = topic
         attributes["form"] = "search"
         name = QP_TOGGLE_TOPIC
@@ -247,6 +246,11 @@ fun FlowContent.topicTag(
 
         +"topic:$topic"
     }
+}
+
+private fun chipStyle(value: String): String {
+    val accent = value.colorFromString()
+    return "border-color: currentColor; background-color: #${accent}26"
 }
 
 private fun FlowContent.selectedTopicButton(topic: String) {
