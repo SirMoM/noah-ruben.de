@@ -26,12 +26,10 @@ import kotlinx.html.body
 import kotlinx.html.br
 import kotlinx.html.classes
 import kotlinx.html.div
-import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.html
 import kotlinx.html.id
 import kotlinx.html.input
-import kotlinx.html.p
 import kotlinx.html.span
 import kotlinx.html.stream.createHTML
 import java.net.URLDecoder
@@ -147,24 +145,6 @@ fun FlowContent.commandLineEmulation() {
 
 fun FlowContent.cleUsage() {
     div {
-        p {
-            +"Usage: noahruben <subpage>"
-        }
-        p {
-            +"noahruben is the personal website of Noah Ruben"
-        }
-        p {
-            +"It displays information about Noah Ruben: full-stack development, open source, and game dev interests."
-        }
-
-        h1 { +"SUB-PAGES" }
-
-        div {
-            selfLink("/projects", "projects")
-            br
-            selfLink("https://github.com/SirMoM", "github")
-            br
-            selfLink("https://www.linkedin.com/in/noah-ruben-3013991b7", "linked-in")
-        }
+        websiteHelpContent(links = cliHelpLinks())
     }
 }

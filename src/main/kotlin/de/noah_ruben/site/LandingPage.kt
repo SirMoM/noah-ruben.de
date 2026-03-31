@@ -118,19 +118,10 @@ fun BODY.indexPageContent() {
         containerRole = "landing-help-command",
     )
     div(classes = HELP_INDENT) {
-        p { +"Usage: noahruben <subpage>" }
-        p { +"noahruben is the personal website of Noah Ruben" }
-        p { +"It displays information about Noah Ruben: full-stack development, open source, and game dev interests." }
-        h1 { +"SUB-PAGES" }
-        div(classes = SUBPAGE_INDENT) {
-            a(href = "/projects") { +" projects" }
-            br()
-            a(href = "/cv") { +" cv" }
-            br()
-            a(href = "https://github.com/SirMoM") { +" github" }
-            br()
-            a(href = "https://www.linkedin.com/in/noah-ruben-3013991b7") { +" linked-in" }
-        }
+        websiteHelpContent(
+            links = landingHelpLinks(),
+            subpageClasses = SUBPAGE_INDENT,
+        )
     }
     commandLineEmulation()
 }
