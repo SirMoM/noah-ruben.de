@@ -27,19 +27,16 @@ import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_HEADER
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_INDEX
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_META
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_TITLE
-import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_ACTIONS
-import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_CONTINUATION
-import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_CONTINUATION_LINE
-import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_LINE
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_PREVIEW
-import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_PROMPT
-import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_TEXT
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_CONTROL_ROW
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_QUERY_ROW
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_DIRECTION_BUTTON
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_FILTER_FORM
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_RESULTS_BAR
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_RESULTS_LIST
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_RESULTS_SUMMARY
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_RESULTS_SUMMARY_TEXT
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_SHELL
-import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_SHELL_STATUS
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_ADD_BUTTON
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_ADD_PANEL
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_TOPIC_ADD_PANEL_EMPTY
@@ -56,9 +53,15 @@ import de.noah_ruben.misc.CssClasses.ProjectPage.TAGS_LIST
 import de.noah_ruben.misc.CssClasses.ProjectPage.TAG_ITEM
 import de.noah_ruben.misc.CssClasses.ProjectPage.TOPICS_LIST
 import de.noah_ruben.misc.CssClasses.ProjectPage.TOPIC_TAG
-import de.noah_ruben.misc.CssClasses.Shared.HTMX_INDICATOR
 import de.noah_ruben.misc.CssClasses.Shared.SCREEN_READER_ONLY
 import de.noah_ruben.misc.colorFromString
+import de.noah_ruben.misc.HX_INCLUDE
+import de.noah_ruben.misc.HX_INDICATOR
+import de.noah_ruben.misc.HX_POST
+import de.noah_ruben.misc.HX_SWAP
+import de.noah_ruben.misc.HX_TARGET
+import de.noah_ruben.misc.HX_TRIGGER
+import de.noah_ruben.misc.HX_VALS
 import de.noah_ruben.misc.hxIndicator
 import de.noah_ruben.misc.hxPost
 import de.noah_ruben.misc.hxSwap
@@ -66,12 +69,15 @@ import de.noah_ruben.misc.hxTarget
 import de.noah_ruben.misc.hxTrigger
 import de.noah_ruben.misc.hxVals
 import de.noah_ruben.site.*
+import kotlinx.html.CommonAttributeGroupFacade
 import kotlinx.html.*
 
-private const val DEFAULT_PROJECTS_COMMAND = "noahruben projects"
-private const val COMMAND_PREVIEW_ID = "projects-command-preview"
+internal const val DEFAULT_PROJECTS_COMMAND = "noahruben projects"
+internal const val COMMAND_PREVIEW_ID = "projects-command-preview"
+private const val RESULTS_BAR_ID = "projects-results-bar"
 private const val RESULTS_SUMMARY_ID = "projects-results-summary"
 private const val EMPTY_DESCRIPTION_PLACEHOLDER = "\u00A0"
+private const val SEARCH_FORM_ID = "search"
 
 fun HTML.projectsPage() {
     head {
@@ -86,9 +92,7 @@ fun HTML.projectsPage() {
 }
 
 fun BODY.projectsPageBody() {
-    div(
-        classes = CONTENT_CONTAINER,
-    ) {
+    div(classes = CONTENT_CONTAINER) {
         id = SEARCH_REPLACE
         projectsShell(
             projects = Cache.getProjects(),
@@ -104,13 +108,8 @@ fun FlowContent.projectsShell(
     errorMessage: String? = null,
 ) {
     div(classes = PROJECT_SHELL) {
-        mainSearchBar(searchParameters)
-
-        div(classes = PROJECT_RESULTS_SUMMARY) {
-            id = RESULTS_SUMMARY_ID
-            attributes["aria-live"] = "polite"
-            +projects.resultsSummary()
-        }
+        projectsFilterForm(searchParameters)
+        projectsResultsBar(projects)
 
         if (errorMessage != null) {
             div(classes = EMPTY_STATE) {
@@ -120,6 +119,53 @@ fun FlowContent.projectsShell(
         }
 
         projectList(projects, searchParameters)
+    }
+}
+
+private fun FlowContent.projectsFilterForm(searchParameters: SearchParameters) {
+    form(action = SEARCH_PATH, method = FormMethod.post, classes = PROJECT_FILTER_FORM) {
+        id = SEARCH_FORM_ID
+        hxPost(SEARCH_PATH)
+        hxTarget("#$SEARCH_REPLACE")
+        hxSwap("outerHTML")
+        hxIndicator("#spinner")
+        hxTrigger("submit, change from:select delay:100ms, input changed delay:500ms from:#mainSearch, search from:#mainSearch")
+
+        input(type = InputType.hidden, name = QP_WITH_SEARCHBAR) {
+            value = true.toString()
+        }
+
+        input(type = InputType.hidden, name = QP_DIR) {
+            value = if (searchParameters.descending) "desc" else ""
+        }
+
+        searchParameters.topics.forEach { topic ->
+            input(type = InputType.hidden, name = QP_TOPIC) {
+                value = topic
+            }
+        }
+
+        div(classes = PROJECT_COMMAND_PREVIEW) {
+            id = COMMAND_PREVIEW_ID
+            desktopProjectsCommandHeader()
+            mobileProjectsFilterRows(searchParameters)
+        }
+    }
+}
+
+private fun FlowContent.projectsResultsBar(projects: List<Project>) {
+    div(classes = PROJECT_RESULTS_BAR) {
+        id = RESULTS_BAR_ID
+
+        div(classes = PROJECT_RESULTS_SUMMARY) {
+            id = RESULTS_SUMMARY_ID
+            attributes["aria-live"] = "polite"
+            span(classes = PROJECT_RESULTS_SUMMARY_TEXT) {
+                +projects.resultsSummary()
+            }
+        }
+
+        mobileProjectsResultsSummaryActions()
     }
 }
 
@@ -133,7 +179,7 @@ fun FlowContent.projectList(
             nothingFoundProjectTile(searchParameters)
         } else {
             projects.forEachIndexed { index, project ->
-                projectTile(index + 1, project, searchParameters)
+                projectTile(index + 1, project)
             }
         }
     }
@@ -142,53 +188,36 @@ fun FlowContent.projectList(
 fun FlowContent.projectTile(
     index: Int,
     project: Project,
-    searchParameters: SearchParameters,
 ) {
     with(project) {
-        div(
-            classes = PROJECT_CARD,
-        ) {
-            div(
-                classes = PROJECT_CARD_CONTENT,
-            ) {
+        div(classes = PROJECT_CARD) {
+            div(classes = PROJECT_CARD_CONTENT) {
                 div(classes = PROJECT_CARD_HEADER) {
                     span(classes = PROJECT_CARD_INDEX) {
                         +"[${index.toString().padStart(2, '0')}]"
                     }
-                    h3(
-                        classes = PROJECT_CARD_TITLE,
-                    ) {
+                    h3(classes = PROJECT_CARD_TITLE) {
                         +name
                     }
                     div(classes = PROJECT_CARD_META) {
                         span(classes = META_DETAIL_ROW) {
-                            strong(
-                                classes = META_DETAIL_LABEL,
-                            ) { +"stars:" }
+                            strong(classes = META_DETAIL_LABEL) { +"stars:" }
                             +stars.toString()
                         }
                         div(classes = META_DETAIL_ROW) {
-                            strong(
-                                classes = META_DETAIL_LABEL,
-                            ) { +"rel:" }
+                            strong(classes = META_DETAIL_LABEL) { +"rel:" }
                             +displayDate()
                         }
                     }
                 }
 
-                p(
-                    classes = PROJECT_CARD_DESCRIPTION,
-                ) {
+                p(classes = PROJECT_CARD_DESCRIPTION) {
                     +description.ifBlank { EMPTY_DESCRIPTION_PLACEHOLDER }
                 }
 
-                div(
-                    classes = PROJECT_CARD_FOOTER,
-                ) {
+                div(classes = PROJECT_CARD_FOOTER) {
                     if (languages.isNotEmpty()) {
-                        div(
-                            classes = TAGS_LIST,
-                        ) {
+                        div(classes = TAGS_LIST) {
                             languages.forEach { lang ->
                                 languageTag(lang)
                             }
@@ -219,273 +248,197 @@ fun FlowContent.projectTile(
 
 fun FlowContent.languageTag(tag: String) {
     button(
-        type = ButtonType.submit,
+        type = ButtonType.button,
         classes = TAG_ITEM,
     ) {
         style = chipStyle(tag)
-        attributes["form"] = "search"
-        name = QP_SET_LANGUAGE
-        value = tag
+        configureProjectActionRequest(projectActionVals(QP_SET_LANGUAGE, tag))
 
         +"lang:$tag"
     }
 }
 
-fun FlowContent.topicTag(
-    topic: String,
-) {
+fun FlowContent.topicTag(topic: String) {
     button(
-        type = ButtonType.submit,
+        type = ButtonType.button,
         classes = TOPIC_TAG,
     ) {
         style = chipStyle(topic)
         attributes["data-topic-tag"] = topic
-        attributes["form"] = "search"
-        name = QP_TOGGLE_TOPIC
-        value = topic
+        configureProjectActionRequest(projectActionVals(QP_TOGGLE_TOPIC, topic))
 
         +"topic:$topic"
     }
 }
 
-private fun chipStyle(value: String): String {
-    val accent = value.colorFromString()
-    return "border-color: currentColor; background-color: #${accent}26"
-}
+internal fun FlowContent.projectsTopicRow(searchParameters: SearchParameters) {
+    div(classes = PROJECT_COMMAND_CONTROL_ROW) {
+        attributes["data-filter-row"] = "topic"
 
-private fun FlowContent.selectedTopicButton(topic: String) {
-    button(
-        type = ButtonType.submit,
-        classes = PROJECT_TOPIC_SELECTED_VALUE,
-    ) {
-        attributes["aria-label"] = "Remove topic $topic"
-        attributes["data-selected-topic"] = topic
-        name = QP_REMOVE_TOPIC
-        value = topic
-
-        +topic
-    }
-}
-
-private fun FlowContent.topicAddOption(topic: String) {
-    button(
-        type = ButtonType.submit,
-        classes = PROJECT_TOPIC_ADD_BUTTON,
-    ) {
-        attributes["data-topic-option"] = topic
-        name = QP_ADD_TOPIC
-        value = topic
-
-        +topic
-    }
-}
-
-private fun FlowContent.directionToggle(searchParameters: SearchParameters) {
-    button(type = ButtonType.submit, classes = PROJECT_DIRECTION_BUTTON) {
-        id = "projects-dir-toggle"
-        attributes["aria-label"] = "Sort direction"
-        name = QP_TOGGLE_DIR
-        value = true.toString()
-
-        +if (searchParameters.descending) "--desc" else "--asc"
-    }
-}
-
-fun FlowContent.mainSearchBar(searchParameters: SearchParameters = SearchParameters.defaults()) {
-    form(action = SEARCH_PATH, method = FormMethod.post, classes = PROJECT_FILTER_FORM) {
-        id = "search"
-        hxPost(SEARCH_PATH)
-        hxTarget("#$SEARCH_REPLACE")
-        hxSwap("outerHTML")
-        hxIndicator("#spinner")
-        hxTrigger("submit, change from:select delay:100ms, input from:#mainSearch changed delay:500ms")
-
-        input(type = InputType.hidden, name = QP_WITH_SEARCHBAR) {
-            value = true.toString()
+        span(classes = SCREEN_READER_ONLY) {
+            +"Topic filter"
         }
-
-        input(type = InputType.hidden, name = QP_DIR) {
-            value = if (searchParameters.descending) "desc" else ""
-        }
-
-        searchParameters.topics.forEach { topic ->
-            input(type = InputType.hidden, name = QP_TOPIC) {
-                value = topic
+        div(classes = PROJECT_TOPIC_CONTROL) {
+            id = "projects-topic-control"
+            span(classes = PROJECT_ARGUMENT_FLAG) {
+                +"--topic"
             }
-        }
 
-        div(classes = PROJECT_COMMAND_PREVIEW) {
-            id = COMMAND_PREVIEW_ID
-
-            div(classes = PROJECT_COMMAND_LINE) {
-                span(classes = PROJECT_COMMAND_PROMPT) { +">>" }
-                code(classes = PROJECT_COMMAND_TEXT) {
-                    +DEFAULT_PROJECTS_COMMAND
-                }
-                span(classes = PROJECT_COMMAND_CONTINUATION) {
-                    +"\\"
-                }
-                div(classes = PROJECT_COMMAND_ACTIONS) {
-                    resetFiltersButton()
-                    span(classes = PROJECT_SHELL_STATUS) {
-                        span(classes = HTMX_INDICATOR) {
-                            id = "spinner"
-                            img(src = "/resources/bars.svg", alt = "")
-                            +" syncing"
+            if (searchParameters.topics.isNotEmpty()) {
+                searchParameters.topics.forEachIndexed { index, topic ->
+                    if (index > 0) {
+                        span(classes = PROJECT_TOPIC_COMMA) {
+                            +","
                         }
                     }
+                    selectedTopicButton(topic)
                 }
             }
 
-            div(classes = PROJECT_COMMAND_CONTINUATION_LINE) {
-                span(classes = SCREEN_READER_ONLY) {
-                    +"Topic filter"
-                }
-                div(classes = PROJECT_TOPIC_CONTROL) {
-                    id = "projects-topic-control"
-                    span(classes = PROJECT_ARGUMENT_FLAG) {
-                        +"--topic"
+            details(classes = PROJECT_TOPIC_PICKER) {
+                id = "projects-topic-picker"
+                summary(
+                    classes = if (searchParameters.topics.isEmpty()) {
+                        PROJECT_TOPIC_EMPTY_TRIGGER
+                    } else {
+                        PROJECT_TOPIC_ADD_TRIGGER
+                    },
+                ) {
+                    attributes["aria-label"] = if (searchParameters.topics.isEmpty()) {
+                        "Choose topics"
+                    } else {
+                        "Add topic"
                     }
-
-                    if (searchParameters.topics.isNotEmpty()) {
-                        searchParameters.topics.forEachIndexed { index, topic ->
-                            if (index > 0) {
-                                span(classes = PROJECT_TOPIC_COMMA) {
-                                    +","
-                                }
-                            }
-                            selectedTopicButton(topic)
-                        }
-                    }
-
-                    details(classes = PROJECT_TOPIC_PICKER) {
-                        id = "projects-topic-picker"
-                        summary(
-                            classes = if (searchParameters.topics.isEmpty()) {
-                                PROJECT_TOPIC_EMPTY_TRIGGER
-                            } else {
-                                PROJECT_TOPIC_ADD_TRIGGER
-                            },
-                        ) {
-                            attributes["aria-label"] = if (searchParameters.topics.isEmpty()) {
-                                "Choose topics"
-                            } else {
-                                "Add topic"
-                            }
-                            if (searchParameters.topics.isEmpty()) {
-                                span(classes = PROJECT_TOPIC_EMPTY_VALUE) {
-                                    +"all"
-                                }
-                            } else {
-                                +"(+)"
-                            }
-                        }
-
-                        div(classes = PROJECT_TOPIC_DROPDOWN) {
-                            id = "projects-topic-dropdown"
-                            val availableTopics = getAllTopics().filterNot(searchParameters.topics::contains)
-                            if (availableTopics.isEmpty()) {
-                                div(classes = PROJECT_TOPIC_ADD_PANEL_EMPTY) {
-                                    +"all topics selected"
-                                }
-                            } else {
-                                div(classes = PROJECT_TOPIC_ADD_PANEL) {
-                                    availableTopics.forEach { topic ->
-                                        topicAddOption(topic)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                label(classes = SCREEN_READER_ONLY) {
-                    htmlFor = QP_LANGUAGE
-                    +"Language"
-                }
-                div(classes = PROJECT_ARGUMENT_CONTROL) {
-                    id = "projects-language-control"
-                    span(classes = PROJECT_ARGUMENT_FLAG) {
-                        +"--language"
-                    }
-                    select(classes = PROJECT_ARGUMENT_SELECT) {
-                        name = QP_LANGUAGE
-                        id = QP_LANGUAGE
-                        option {
-                            value = LANGUAGE_PLACEHOLDER
-                            selected = searchParameters.language == LANGUAGE_PLACEHOLDER
+                    if (searchParameters.topics.isEmpty()) {
+                        span(classes = PROJECT_TOPIC_EMPTY_VALUE) {
                             +"all"
                         }
-                        getAllLanguages().forEach { language ->
-                            option {
-                                selected = searchParameters.language == language
-                                value = language
-                                +language.lowercase()
-                            }
-                        }
+                    } else {
+                        +"(+)"
                     }
                 }
 
-                label(classes = SCREEN_READER_ONLY) {
-                    htmlFor = QP_ORDER_BY
-                    +"Sort"
-                }
-                div(classes = PROJECT_ARGUMENT_CONTROL) {
-                    id = "projects-sort-control"
-                    span(classes = PROJECT_ARGUMENT_FLAG) {
-                        +"--sort"
-                    }
-                    select(classes = PROJECT_ARGUMENT_SELECT) {
-                        name = QP_ORDER_BY
-                        id = QP_ORDER_BY
-                        OrderBy.entries.forEach { orderBy ->
-                            option {
-                                value = orderBy.name
-                                selected = searchParameters.orderBy == orderBy
-                                +orderBy.name.lowercase()
+                div(classes = PROJECT_TOPIC_DROPDOWN) {
+                    id = "projects-topic-dropdown"
+                    val availableTopics = getAllTopics().filterNot(searchParameters.topics::contains)
+                    if (availableTopics.isEmpty()) {
+                        div(classes = PROJECT_TOPIC_ADD_PANEL_EMPTY) {
+                            +"all topics selected"
+                        }
+                    } else {
+                        div(classes = PROJECT_TOPIC_ADD_PANEL) {
+                            availableTopics.forEach { topic ->
+                                topicAddOption(topic)
                             }
                         }
                     }
-                }
-
-                label(classes = SCREEN_READER_ONLY) {
-                    htmlFor = "projects-dir-toggle"
-                    +"Sort direction"
-                }
-                directionToggle(searchParameters)
-                span(classes = PROJECT_COMMAND_CONTINUATION) {
-                    +"\\"
                 }
             }
+        }
+    }
+}
 
-            div(classes = PROJECT_COMMAND_CONTINUATION_LINE) {
-                label(classes = SCREEN_READER_ONLY) {
-                    htmlFor = "mainSearch"
-                    +"Query"
+internal fun FlowContent.projectsLanguageRow(searchParameters: SearchParameters) {
+    div(classes = PROJECT_COMMAND_CONTROL_ROW) {
+        attributes["data-filter-row"] = "language"
+
+        label(classes = SCREEN_READER_ONLY) {
+            htmlFor = QP_LANGUAGE
+            +"Language"
+        }
+        div(classes = PROJECT_ARGUMENT_CONTROL) {
+            id = "projects-language-control"
+            span(classes = PROJECT_ARGUMENT_FLAG) {
+                +"--language"
+            }
+            select(classes = PROJECT_ARGUMENT_SELECT) {
+                name = QP_LANGUAGE
+                id = QP_LANGUAGE
+                option {
+                    value = LANGUAGE_PLACEHOLDER
+                    selected = searchParameters.language == LANGUAGE_PLACEHOLDER
+                    +"all"
                 }
-                div(classes = PROJECT_ARGUMENT_CONTROL) {
-                    id = "projects-query-control"
-                    span(classes = PROJECT_ARGUMENT_FLAG) {
-                        +"--query"
+                getAllLanguages().forEach { language ->
+                    option {
+                        selected = searchParameters.language == language
+                        value = language
+                        +language.lowercase()
                     }
-                    input(
-                        InputType.text,
-                        name = QP_QUERY,
-                        classes = PROJECT_ARGUMENT_FIELD,
-                    ) {
-                        autoFocus = true
-                        id = "mainSearch"
-                        value = searchParameters.query
+                }
+            }
+        }
+    }
+}
+
+internal fun FlowContent.projectsSortRow(searchParameters: SearchParameters) {
+    div(classes = PROJECT_COMMAND_CONTROL_ROW) {
+        attributes["data-filter-row"] = "sort"
+
+        label(classes = SCREEN_READER_ONLY) {
+            htmlFor = QP_ORDER_BY
+            +"Sort"
+        }
+        div(classes = PROJECT_ARGUMENT_CONTROL) {
+            id = "projects-sort-control"
+            span(classes = PROJECT_ARGUMENT_FLAG) {
+                +"--sort"
+            }
+            select(classes = PROJECT_ARGUMENT_SELECT) {
+                name = QP_ORDER_BY
+                id = QP_ORDER_BY
+                OrderBy.entries.forEach { orderBy ->
+                    option {
+                        value = orderBy.name
+                        selected = searchParameters.orderBy == orderBy
+                        +orderBy.name.lowercase()
                     }
                 }
             }
         }
 
+        label(classes = SCREEN_READER_ONLY) {
+            htmlFor = "projects-dir-toggle"
+            +"Sort direction"
+        }
+        directionToggle(searchParameters)
+        desktopProjectsContinuation()
     }
 }
 
-private fun FlowContent.resetFiltersButton() {
-    button(type = ButtonType.button, classes = RESET_BUTTON) {
+internal fun FlowContent.projectsQueryRow(searchParameters: SearchParameters) {
+    div(classes = PROJECT_COMMAND_QUERY_ROW) {
+        attributes["data-filter-row"] = "query"
+
+        label(classes = SCREEN_READER_ONLY) {
+            htmlFor = "mainSearch"
+            +"Query"
+        }
+        div(classes = PROJECT_ARGUMENT_CONTROL) {
+            id = "projects-query-control"
+            span(classes = PROJECT_ARGUMENT_FLAG) {
+                +"--query"
+            }
+            input(
+                InputType.text,
+                name = QP_QUERY,
+                classes = PROJECT_ARGUMENT_FIELD,
+            ) {
+                autoFocus = true
+                id = "mainSearch"
+                placeholder = "filter projects"
+                value = searchParameters.query
+            }
+        }
+    }
+}
+
+internal fun FlowContent.resetFiltersButton(
+    context: String,
+    classes: String = RESET_BUTTON,
+) {
+    button(type = ButtonType.button, classes = classes) {
+        attributes["data-reset-context"] = context
         hxPost(SEARCH_PATH)
         hxTarget("#$SEARCH_REPLACE")
         hxSwap("outerHTML")
@@ -513,9 +466,65 @@ fun FlowContent.nothingFoundProjectTile(searchParameters: SearchParameters) {
             +"Current command: ${searchParameters.commandPreview()}"
         }
 
-        resetFiltersButton()
+        resetFiltersButton(context = "empty-state")
     }
 }
+
+private fun chipStyle(value: String): String {
+    val accent = value.colorFromString()
+    return "border-color: currentColor; background-color: #${accent}26"
+}
+
+private fun FlowContent.selectedTopicButton(topic: String) {
+    button(
+        type = ButtonType.button,
+        classes = PROJECT_TOPIC_SELECTED_VALUE,
+    ) {
+        attributes["aria-label"] = "Remove topic $topic"
+        attributes["data-selected-topic"] = topic
+        configureProjectActionRequest(projectActionVals(QP_REMOVE_TOPIC, topic))
+
+        +topic
+    }
+}
+
+private fun FlowContent.topicAddOption(topic: String) {
+    button(
+        type = ButtonType.button,
+        classes = PROJECT_TOPIC_ADD_BUTTON,
+    ) {
+        attributes["data-topic-option"] = topic
+        configureProjectActionRequest(projectActionVals(QP_ADD_TOPIC, topic))
+
+        +topic
+    }
+}
+
+private fun FlowContent.directionToggle(searchParameters: SearchParameters) {
+    button(type = ButtonType.button, classes = PROJECT_DIRECTION_BUTTON) {
+        id = "projects-dir-toggle"
+        attributes["aria-label"] = "Sort direction"
+        configureProjectActionRequest("""{"$QP_TOGGLE_DIR": true}""")
+
+        +if (searchParameters.descending) "--desc" else "--asc"
+    }
+}
+
+private fun CommonAttributeGroupFacade.configureProjectActionRequest(vals: String) {
+    attributes[HX_POST] = SEARCH_PATH
+    attributes[HX_INCLUDE] = "#$SEARCH_FORM_ID"
+    attributes[HX_TARGET] = "#$SEARCH_REPLACE"
+    attributes[HX_SWAP] = "outerHTML"
+    attributes[HX_INDICATOR] = "#spinner"
+    attributes[HX_TRIGGER] = "click"
+    attributes[HX_VALS] = vals
+}
+
+private fun projectActionVals(param: String, value: String): String =
+    """{"$param": "${value.escapeJsonValue()}"}"""
+
+private fun String.escapeJsonValue(): String =
+    replace("\\", "\\\\").replace("\"", "\\\"")
 
 private fun SearchParameters.commandPreview(): String {
     val parts = mutableListOf(DEFAULT_PROJECTS_COMMAND)

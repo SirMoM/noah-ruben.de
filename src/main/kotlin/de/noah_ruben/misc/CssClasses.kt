@@ -52,7 +52,9 @@ object CssClasses {
         const val PROJECT_COMMAND_PREVIEW = ProjectsClasses.PROJECT_COMMAND_PREVIEW
         const val PROJECT_COMMAND_LINE = ProjectsClasses.PROJECT_COMMAND_LINE
         const val PROJECT_COMMAND_ACTIONS = ProjectsClasses.PROJECT_COMMAND_ACTIONS
-        const val PROJECT_COMMAND_CONTINUATION_LINE = ProjectsClasses.PROJECT_COMMAND_CONTINUATION_LINE
+        const val PROJECT_COMMAND_CONTROLS = ProjectsClasses.PROJECT_COMMAND_CONTROLS
+        const val PROJECT_COMMAND_CONTROL_ROW = ProjectsClasses.PROJECT_COMMAND_CONTROL_ROW
+        const val PROJECT_COMMAND_QUERY_ROW = ProjectsClasses.PROJECT_COMMAND_QUERY_ROW
         const val PROJECT_COMMAND_CONTINUATION = ProjectsClasses.PROJECT_COMMAND_CONTINUATION
         const val PROJECT_COMMAND_PROMPT = ProjectsClasses.PROJECT_COMMAND_PROMPT
         const val PROJECT_COMMAND_TEXT = ProjectsClasses.PROJECT_COMMAND_TEXT
@@ -77,7 +79,10 @@ object CssClasses {
         const val PROJECT_TOPIC_ADD_PANEL = ProjectsClasses.PROJECT_TOPIC_ADD_PANEL
         const val PROJECT_TOPIC_ADD_BUTTON = ProjectsClasses.PROJECT_TOPIC_ADD_BUTTON
         const val PROJECT_TOPIC_ADD_PANEL_EMPTY = ProjectsClasses.PROJECT_TOPIC_ADD_PANEL_EMPTY
+        const val PROJECT_RESULTS_BAR = ProjectsClasses.PROJECT_RESULTS_BAR
         const val PROJECT_RESULTS_SUMMARY = ProjectsClasses.PROJECT_RESULTS_SUMMARY
+        const val PROJECT_RESULTS_SUMMARY_TEXT = ProjectsClasses.PROJECT_RESULTS_SUMMARY_TEXT
+        const val PROJECT_RESULTS_SUMMARY_ACTIONS = ProjectsClasses.PROJECT_RESULTS_SUMMARY_ACTIONS
         const val PROJECT_RESULTS_LIST = ProjectsClasses.PROJECT_RESULTS_LIST
         const val PROJECT_CARD = ProjectsClasses.PROJECT_CARD
         const val PROJECT_CARD_CONTENT = ProjectsClasses.PROJECT_CARD_CONTENT
@@ -96,6 +101,8 @@ object CssClasses {
         const val PROJECT_CARD_ACTIONS = ProjectsClasses.PROJECT_CARD_ACTIONS
         const val PROJECT_ACTION_LINK = ProjectsClasses.PROJECT_ACTION_LINK
         const val RESET_BUTTON = ProjectsClasses.RESET_BUTTON
+        const val PROJECT_HEADER_RESET_BUTTON = ProjectsClasses.PROJECT_HEADER_RESET_BUTTON
+        const val PROJECT_RESULTS_RESET_BUTTON = ProjectsClasses.PROJECT_RESULTS_RESET_BUTTON
         const val EMPTY_STATE = ProjectsClasses.EMPTY_STATE
         const val EMPTY_STATE_TITLE = ProjectsClasses.EMPTY_STATE_TITLE
         const val EMPTY_STATE_MESSAGE = ProjectsClasses.EMPTY_STATE_MESSAGE
