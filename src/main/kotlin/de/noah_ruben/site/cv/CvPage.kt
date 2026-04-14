@@ -25,7 +25,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.html.*
 
-private const val CV_TOGGLE_ROW = "fixed right-4 top-20 z-40 flex flex-wrap justify-end gap-3"
+private const val CV_TOGGLE_ROW = "relative z-10 mt-4 flex w-full flex-wrap justify-start gap-3 md:fixed md:right-4 md:top-20 md:z-40 md:mt-0 md:w-auto md:justify-end"
 private const val CV_TOGGLE_LINK_BASE = "inline-flex rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200"
 private const val CV_TOGGLE_LINK_ACTIVE = "border-ctp-blue bg-ctp-blue text-ctp-base"
 private const val CV_TOGGLE_LINK_INACTIVE = "border-ctp-overlay1 bg-ctp-base text-ctp-text hover:bg-ctp-surface0"
@@ -146,6 +146,7 @@ fun BODY.cvPageBody(pageState: CvPageState) {
             textRole = "cv-command-text",
         )
         div(classes = CV_TOGGLE_ROW) {
+            id = "cv-language-toggle-row"
             CvLanguage.entries.forEach { language ->
                 cvLanguageLink(
                     language = language,

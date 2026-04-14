@@ -20,7 +20,7 @@ object SharedClasses {
     const val FILTER_CONTROLS_LAYOUT = "flex flex-wrap gap-4 items-end mb-4"
     const val FILTER_ITEM_LAYOUT = "flex-col"
 
-    const val TOGGLE_BUTTON = "fixed right-4 top-4 z-50 inline-flex items-center gap-1 rounded-full border border-ctp-overlay1 bg-ctp-base p-1 text-sm font-semibold text-ctp-text"
+    const val TOGGLE_BUTTON = "mb-4 self-end inline-flex shrink-0 items-center gap-1 rounded-full border border-ctp-overlay1 bg-ctp-base p-1 text-sm font-semibold text-ctp-text"
     const val TOGGLE_BUTTON_ICON = "inline-flex h-8 w-8 items-center justify-center rounded-full transition-all [&_svg]:h-5 [&_svg]:w-5"
     const val TOGGLE_BUTTON_ICON_MOON = "text-ctp-overlay0 opacity-70 data-[theme=dark]:bg-ctp-surface1 data-[theme=dark]:text-ctp-blue data-[theme=dark]:opacity-100"
     const val TOGGLE_BUTTON_ICON_SUN = "text-ctp-overlay0 opacity-70 data-[theme=light]:bg-ctp-surface1 data-[theme=light]:text-ctp-yellow data-[theme=light]:opacity-100"

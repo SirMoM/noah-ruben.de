@@ -31,6 +31,33 @@ const expectCvPrompt = async (page: Page, language: "eng" | "ger"): Promise<void
   await expect(page.locator('[data-role="cv-command-text"]')).toHaveText(`noahruben cv ${language}`);
 };
 
+const expectNoVerticalOverlap = async (page: Page, upperSelector: string, lowerSelector: string): Promise<void> => {
+  const upper = page.locator(upperSelector);
+  const lower = page.locator(lowerSelector);
+  const upperBox = await upper.boundingBox();
+  const lowerBox = await lower.boundingBox();
+
+  expect(upperBox).toBeTruthy();
+  expect(lowerBox).toBeTruthy();
+  expect(upperBox!.y + upperBox!.height).toBeLessThanOrEqual(lowerBox!.y + 1);
+};
+
+const expectCvPrimaryContentBelowToggles = async (page: Page): Promise<void> => {
+  const pageError = page.locator("div.text-ctp-red.font-bold.p-4.border.border-ctp-red.rounded.mb-4").first();
+
+  if ((await pageError.count()) > 0 && (await pageError.isVisible())) {
+    await expectNoVerticalOverlap(
+      page,
+      "#cv-language-toggle-row",
+      "div.text-ctp-red.font-bold.p-4.border.border-ctp-red.rounded.mb-4",
+    );
+    return;
+  }
+
+  await expect(getViewer(page)).toBeVisible();
+  await expectNoVerticalOverlap(page, "#cv-language-toggle-row", "#cv-pdf-viewer");
+};
+
 const waitForViewerReady = async (page: Page): Promise<void> => {
   await page.waitForFunction(() => {
     const viewer = document.querySelector("#cv-pdf-viewer");
@@ -210,4 +237,24 @@ test("cv viewer shows a visible error when pdf loading fails", async ({ page }, 
   await expect(viewer).toHaveAttribute("data-viewer-ready", "false");
   await expect(cli).toBeVisible();
   await captureStep(page, testInfo, "cv-load-error");
+});
+
+test("cv mobile layout keeps language toggles clear of error and viewer content", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  await page.goto("/cv?lang=fra");
+
+  const toggleRow = page.locator("#cv-language-toggle-row");
+  const pageError = page.locator('[class*="border-ctp-red"]').filter({ hasText: "Unsupported CV language" }).first();
+
+  await expect(toggleRow).toBeVisible();
+  await expect(pageError).toBeVisible();
+  await expectNoVerticalOverlap(page, "#cv-language-toggle-row", '[class*="border-ctp-red"]');
+  await captureStep(page, testInfo, "cv-mobile-invalid-language");
+
+  await page.goto("/cv?lang=eng");
+
+  await expect(toggleRow).toBeVisible();
+  await expectCvPrimaryContentBelowToggles(page);
+  await captureStep(page, testInfo, "cv-mobile-viewer-layout");
 });
