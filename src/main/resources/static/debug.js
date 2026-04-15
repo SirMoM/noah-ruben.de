@@ -1,12 +1,17 @@
 /**
  * @typedef {object} HealthData
+ * @property {string} bootId
+ * @property {number} debugHealthPollIntervalMs
  * @property {string} startupTime
  * @property {string} overallStatus
+ * @property {string} version
  */
 
 (() => {
+    const DEFAULT_HEALTH_POLL_INTERVAL_MS = 1500;
     const FLASH_CLASS = "noahruben-debug-flash";
     const FLASH_STYLE_ID = "noahruben-debug-flash-style";
+    const MIN_HEALTH_POLL_INTERVAL_MS = 100;
     const PANEL_ID = "noahruben-debug-panel";
     const debugParam = new URLSearchParams(window.location.search).get("debug");
     const enabled = shouldEnable(debugParam);
@@ -18,12 +23,19 @@
     /** @type {HTMLPreElement | null} */
     let panel = null;
     let visible = debugParam === "1" || debugParam === "true" || debugParam === "on";
+    let healthPollIntervalMs = DEFAULT_HEALTH_POLL_INTERVAL_MS;
+    let healthPollTimeout = null;
+    let healthRequestInFlight = false;
+    let initialBootId = null;
+    let reloadInProgress = false;
 
     const state = {
+        bootId: "-",
         health: "idle",
         lastCommand: "-",
         lastHtmx: "-",
         startupTime: "-",
+        version: "-",
     };
 
     function shouldEnable(param) {
@@ -58,6 +70,29 @@
         }
 
         return document.title.trim() || "unknown";
+    }
+
+    function normalizeHealthPollInterval(value) {
+        const interval = Number(value);
+        if (!Number.isFinite(interval) || interval < MIN_HEALTH_POLL_INTERVAL_MS) {
+            return DEFAULT_HEALTH_POLL_INTERVAL_MS;
+        }
+
+        return Math.round(interval);
+    }
+
+    function scheduleHealthRefresh(delay = healthPollIntervalMs) {
+        if (reloadInProgress) {
+            return;
+        }
+
+        if (healthPollTimeout !== null) {
+            window.clearTimeout(healthPollTimeout);
+        }
+
+        healthPollTimeout = window.setTimeout(() => {
+            void refreshHealth();
+        }, Math.max(0, delay));
     }
 
     function ensureFlashStyle() {
@@ -164,6 +199,8 @@
             `view    ${currentView()}`,
             `theme   ${currentTheme()}`,
             `health  ${state.health}`,
+            `version ${state.version}`,
+            `boot    ${state.bootId}`,
             `startup ${state.startupTime}`,
             `command ${state.lastCommand}`,
             `htmx    ${state.lastHtmx}`,
@@ -173,6 +210,11 @@
     }
 
     async function refreshHealth() {
+        if (healthRequestInFlight || reloadInProgress) {
+            return;
+        }
+
+        healthRequestInFlight = true;
         try {
             const response = await fetch("/health", {
                 cache: "no-store",
@@ -187,14 +229,34 @@
 
             /** @type {HealthData} */
             const data = await response.json();
+            const nextBootId = typeof data.bootId === "string" && data.bootId.length > 0
+                ? data.bootId
+                : null;
+
             state.health = data.overallStatus || "unknown";
             state.startupTime = data.startupTime || "-";
+            state.version = data.version || "-";
+            state.bootId = nextBootId || "-";
+            healthPollIntervalMs = normalizeHealthPollInterval(data.debugHealthPollIntervalMs);
+
+            if (initialBootId !== null && nextBootId !== null && nextBootId !== initialBootId) {
+                reloadInProgress = true;
+                window.location.reload();
+                return;
+            }
+
+            if (initialBootId === null && nextBootId !== null) {
+                initialBootId = nextBootId;
+            }
         } catch {
             state.health = "unreachable";
             state.startupTime = "-";
+        } finally {
+            healthRequestInFlight = false;
         }
 
         render();
+        scheduleHealthRefresh();
     }
 
     function toggle() {
@@ -265,10 +327,7 @@
     function init() {
         bindEvents();
         render();
-
-        if (visible) {
-            void refreshHealth();
-        }
+        scheduleHealthRefresh(0);
     }
 
     if (document.readyState === "loading") {

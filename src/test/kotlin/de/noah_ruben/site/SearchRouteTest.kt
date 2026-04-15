@@ -33,6 +33,8 @@ class SearchRouteTest {
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("0 results"))
+        assertTrue(response.bodyAsText().contains("Nothing found"))
+        assertTrue(response.bodyAsText().contains("No projects matched the current filter state."))
     }
 
     @Test

@@ -156,3 +156,44 @@ test("debug helper shows runtime diagnostics and visible flash for projects and 
   await expect(panel).toBeVisible();
   await expect.poll(async () => await panel.getAttribute("data-last-htmx")).toContain("/command");
 });
+
+test("debug helper reloads the page when the backend boot id changes", async ({ page }) => {
+  let healthRequestCount = 0;
+
+  await page.addInitScript(() => {
+    const key = "__noahrubenLoadCount";
+    const current = Number(sessionStorage.getItem(key) ?? "0");
+    sessionStorage.setItem(key, String(current + 1));
+  });
+
+  await page.route("**/health", async (route) => {
+    healthRequestCount += 1;
+    const bootId = healthRequestCount < 2
+      ? "11111111-1111-1111-1111-111111111111"
+      : "22222222-2222-2222-2222-222222222222";
+
+    await route.fulfill({
+      body: JSON.stringify({
+        bootId,
+        checks: {
+          application: {
+            message: "Application is running.",
+            status: "ok",
+          },
+        },
+        debugHealthPollIntervalMs: 50,
+        overallStatus: "ok",
+        startupTime: "2026-04-14T12:00:00",
+        version: "test",
+      }),
+      contentType: "application/json",
+      status: 200,
+    });
+  });
+
+  await page.goto("/projects");
+
+  await expect.poll(async () => Number(await page.evaluate(
+    () => sessionStorage.getItem("__noahrubenLoadCount") ?? "0",
+  ))).toBe(2);
+});

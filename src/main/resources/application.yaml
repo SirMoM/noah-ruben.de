@@ -9,8 +9,12 @@ ktor:
     application:
         modules:
             - de.noah_ruben.ApplicationKt.module
+app:
+    version: "${APP_VERSION:dev}"
 github:
     mode: "$GITHUB_MODE:wiremock"
     token: "$GITHUB_TOKEN:"
     url: "$GITHUB_URL:"
+debug:
+    healthPollIntervalMs: "${DEBUG_HEALTH_POLL_INTERVAL_MS:1500}"
 cv: "${CV_PATH:/cv}"

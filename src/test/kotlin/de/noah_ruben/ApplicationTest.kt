@@ -1,7 +1,6 @@
 package de.noah_ruben
 
 import de.noah_ruben.config.ApplicationInfo
-import de.noah_ruben.config.appInfo
 import de.noah_ruben.data.FakeRepositoryClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -22,6 +21,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import java.util.UUID
 
 fun testApplicationWithRepositoryFake(
     configOverrides: Map<String, String> = emptyMap(),
@@ -34,6 +34,8 @@ fun testApplicationWithRepositoryFake(
             put("github.mode", baseConfig.property("github.mode").getString())
             put("github.token", baseConfig.property("github.token").getString())
             put("github.url", baseConfig.property("github.url").getString())
+            put("app.version", baseConfig.property("app.version").getString())
+            put("debug.healthPollIntervalMs", baseConfig.property("debug.healthPollIntervalMs").getString())
             configOverrides.forEach { (key, value) -> put(key, value) }
         }
         this.config = config
@@ -86,7 +88,9 @@ class ApplicationTest {
             val body = body<ApplicationInfo>()
 
             assertNotNull(body.startupTime)
-            assertEquals(appInfo.version, body.version)
+            assertEquals("test", body.version)
+            assertEquals(1500, body.debugHealthPollIntervalMs)
+            assertEquals(body.bootId, UUID.fromString(body.bootId).toString())
             assertEquals("degraded", body.overallStatus)
             assertEquals("ok", body.checks.getValue("application").status)
             assertEquals("degraded", body.checks.getValue("cvAssets").status)
@@ -119,6 +123,28 @@ class ApplicationTest {
                 assertTrue(body.checks.getValue("cvAssets").message.contains(cvRoot.absolutePathString()))
                 assertEquals("ok", body.checks.getValue("cache").status)
             }
+        }
+    }
+
+    @Test
+    fun testHealthCheckUsesConfiguredVersionAndPollInterval() = testApplicationWithRepositoryFake(
+        configOverrides = mapOf(
+            "app.version" to "dev-local",
+            "debug.healthPollIntervalMs" to "2750",
+        ),
+    ) {
+        val client = createClient {
+            install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
+                json()
+            }
+        }
+
+        client.get("/health").apply {
+            assertEquals(HttpStatusCode.OK, status)
+            val body = body<ApplicationInfo>()
+
+            assertEquals("dev-local", body.version)
+            assertEquals(2750, body.debugHealthPollIntervalMs)
         }
     }
 }

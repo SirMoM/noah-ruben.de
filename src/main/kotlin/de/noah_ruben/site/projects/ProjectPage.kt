@@ -44,8 +44,6 @@ enum class OrderBy {
     Popularity,
 }
 
-// TODO not found wenn keine projecte found
-// Topic und languages begrenzen ?
 data class SearchParameters(
     val query: String,
     val topics: List<String>,
