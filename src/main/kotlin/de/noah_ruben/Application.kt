@@ -4,11 +4,13 @@ import de.noah_ruben.config.configureHTTP
 import de.noah_ruben.config.configureMonitoring
 import de.noah_ruben.config.exceptionHandling
 import de.noah_ruben.data.Cache
+import de.noah_ruben.data.blog.initializeBlogIngestion
 import de.noah_ruben.data.FakeRepositoryClient
 import de.noah_ruben.data.GitHubClient
 import de.noah_ruben.data.RepositoryClient
 import de.noah_ruben.data.WiremockClient
 import de.noah_ruben.site.commandLineEmulation
+import de.noah_ruben.site.blog.blogRouting
 import de.noah_ruben.site.cv.cvPageRouting
 import de.noah_ruben.site.cv.logCvAssetsStartupStatus
 import de.noah_ruben.site.defaultBody
@@ -43,6 +45,7 @@ fun Application.moduleWithRepositoryClient(repositoryClient: RepositoryClient) {
     configureHTTP()
     configureMonitoring()
     logCvAssetsStartupStatus(environment.config)
+    initializeBlogIngestion()
 
     // Routing
     landingPage()
@@ -50,6 +53,7 @@ fun Application.moduleWithRepositoryClient(repositoryClient: RepositoryClient) {
     staticRouting()
     projectsPageRouting()
     cvPageRouting()
+    blogRouting()
 }
 
 fun Application.staticRouting() {

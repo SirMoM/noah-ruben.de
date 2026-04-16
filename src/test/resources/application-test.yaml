@@ -9,3 +9,7 @@ github:
     url: "localhost:42069"
 debug:
     healthPollIntervalMs: "1500"
+blog:
+    sourceDir: "build/test-blog/source"
+    outputDir: "build/test-blog/output"
+    databasePath: "build/test-blog/blog.sqlite"

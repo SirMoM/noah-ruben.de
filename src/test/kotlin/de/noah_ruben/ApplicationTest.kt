@@ -14,6 +14,7 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectories
+import kotlin.io.path.createTempFile
 import kotlin.io.path.createTempDirectory
 import kotlin.io.path.div
 import kotlin.io.path.writeBytes
@@ -36,6 +37,9 @@ fun testApplicationWithRepositoryFake(
             put("github.url", baseConfig.property("github.url").getString())
             put("app.version", baseConfig.property("app.version").getString())
             put("debug.healthPollIntervalMs", baseConfig.property("debug.healthPollIntervalMs").getString())
+            put("blog.sourceDir", baseConfig.property("blog.sourceDir").getString())
+            put("blog.outputDir", baseConfig.property("blog.outputDir").getString())
+            put("blog.databasePath", baseConfig.property("blog.databasePath").getString())
             configOverrides.forEach { (key, value) -> put(key, value) }
         }
         this.config = config
@@ -47,6 +51,29 @@ fun testApplicationWithRepositoryFake(
 }
 
 class ApplicationTest {
+
+    @Test
+    fun testBlogConfigOverridesBootApplication() {
+        val blogSourceDir = createTempDirectory("blog-source-")
+        val blogOutputDir = createTempDirectory("blog-output-")
+        val blogDatabasePath = createTempFile("blog-db-", ".sqlite")
+
+        blogSourceDir.toFile().deleteOnExit()
+        blogOutputDir.toFile().deleteOnExit()
+        blogDatabasePath.toFile().deleteOnExit()
+
+        testApplicationWithRepositoryFake(
+            configOverrides = mapOf(
+                "blog.sourceDir" to blogSourceDir.absolutePathString(),
+                "blog.outputDir" to blogOutputDir.absolutePathString(),
+                "blog.databasePath" to blogDatabasePath.absolutePathString(),
+            ),
+        ) {
+            client.get("/blog").apply {
+                assertEquals(HttpStatusCode.OK, status)
+            }
+        }
+    }
 
     @Test
     fun testStaticResources() = testApplicationWithRepositoryFake {

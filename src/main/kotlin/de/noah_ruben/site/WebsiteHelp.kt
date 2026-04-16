@@ -13,6 +13,7 @@ data class WebsiteHelpLink(
 )
 
 fun landingHelpLinks(): List<WebsiteHelpLink> = listOf(
+    WebsiteHelpLink("/blog", "blog"),
     WebsiteHelpLink("/projects", "projects"),
     WebsiteHelpLink("/cv", "cv"),
     WebsiteHelpLink("https://github.com/SirMoM", "GitHub"),
@@ -20,6 +21,7 @@ fun landingHelpLinks(): List<WebsiteHelpLink> = listOf(
 )
 
 fun cliHelpLinks(): List<WebsiteHelpLink> = listOf(
+    WebsiteHelpLink("/blog", "blog"),
     WebsiteHelpLink("/projects", "projects"),
     WebsiteHelpLink("https://github.com/SirMoM", "GitHub"),
     WebsiteHelpLink("https://www.linkedin.com/in/noah-ruben-3013991b7", "linked-in"),

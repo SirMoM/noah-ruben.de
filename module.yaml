@@ -27,6 +27,12 @@ dependencies:
 
   - org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.4.1
   - org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0
+  - org.jetbrains.exposed:exposed-core:1.1.1
+  - org.jetbrains.exposed:exposed-dao:1.1.1
+  - org.jetbrains.exposed:exposed-jdbc:1.1.1
+  - org.xerial:sqlite-jdbc:3.50.2.0
+  - org.commonmark:commonmark:0.27.1
+  - org.commonmark:commonmark-ext-yaml-front-matter:0.27.1
   - ch.qos.logback:logback-classic:1.5.32
 
 test-dependencies:
