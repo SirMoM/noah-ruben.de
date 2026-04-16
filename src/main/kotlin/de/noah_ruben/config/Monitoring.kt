@@ -8,12 +8,12 @@ import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
 import java.util.UUID
+import kotlin.time.Clock
 
 private const val DEFAULT_APP_VERSION = "dev"
 private const val DEFAULT_DEBUG_HEALTH_POLL_INTERVAL_MS = 1500

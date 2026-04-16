@@ -152,7 +152,6 @@ fun HTML.landingPageHtml() {
     }
 }
 
-@HtmlTagMarker
 inline fun HTML.defaultBody(crossinline block: BODY.() -> Unit = {}): Unit = BODY(emptyMap(), consumer).visit(block)
 
 fun HTML.landingpage() {
