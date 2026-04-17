@@ -2,9 +2,8 @@ package de.noah_ruben.misc.styles
 
 object LandingClasses {
     const val PROFILE_CONTAINER = "flex items-center"
-    const val PROFILE_PICTURE = "m-4 shrink-0 aspect-square rounded-full accent-bg lg:w-1/4 w-2/5"
-    const val PROFILE_PICTURE_LINK = "$PROFILE_PICTURE block overflow-hidden"
-    const val PROFILE_PICTURE_IMAGE = "block h-full w-full object-cover"
+    const val PROFILE_PICTURE = "m-4 block shrink-0 aspect-square overflow-hidden rounded-full accent-bg lg:w-1/4 w-2/5 object-cover cursor-pointer transition-transform duration-150 hover:scale-[1.02]"
+    const val PROFILE_PICTURE_IMAGE = PROFILE_PICTURE
     const val PROFILE_DETAILS_CONTAINER = "lg:w-5/6 w-2/3 text-xl grow"
     const val COLOR_GRID = "inline-grid flex-none grid-cols-8 grid-rows-2 mt-4 [&>div]:h-10 [&>div]:w-10 [&>div]:border [&>div]:border-black [&>div]:dark:border-black [&>div]:transition-all [&>div]:duration-150 [&>div:hover]:scale-110 [&>div:hover]:border-black [&>div:hover]:dark:border-black"
     const val ABOUT_ME = "p-6 leading-relaxed"

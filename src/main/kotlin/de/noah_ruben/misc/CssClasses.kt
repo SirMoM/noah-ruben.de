@@ -27,7 +27,6 @@ object CssClasses {
 
     object LandingPage {
         const val PROFILE_CONTAINER = LandingClasses.PROFILE_CONTAINER
-        const val PROFILE_PICTURE_LINK = LandingClasses.PROFILE_PICTURE_LINK
         const val PROFILE_PICTURE_IMAGE = LandingClasses.PROFILE_PICTURE_IMAGE
         const val PROFILE_DETAILS_CONTAINER = LandingClasses.PROFILE_DETAILS_CONTAINER
 

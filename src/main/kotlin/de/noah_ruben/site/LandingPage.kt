@@ -11,7 +11,6 @@ import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_DIVIDER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_HEADER
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_LABEL
 import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE_IMAGE
-import de.noah_ruben.misc.CssClasses.LandingPage.PROFILE_PICTURE_LINK
 import de.noah_ruben.misc.CssClasses.LandingPage.SECTION_DIVIDER
 import de.noah_ruben.misc.CssClasses.LandingPage.SYSTEM_SUMMARY_HEADING
 import de.noah_ruben.misc.CssClasses.PAGE_BASE
@@ -45,7 +44,7 @@ fun BODY.indexPageContent() {
         containerRole = "landing-command",
     )
     div(classes = PROFILE_CONTAINER) {
-        vanGoghPortrait()
+        profilePortrait()
         div(classes = PROFILE_DETAILS_CONTAINER) {
             div {
                 div(classes = PROFILE_HEADER) {
@@ -126,17 +125,15 @@ fun BODY.indexPageContent() {
     commandLineEmulation()
 }
 
-private fun FlowContent.vanGoghPortrait() {
-    a(
-        href = "https://commons.wikimedia.org/wiki/File:Van_Gogh_self-portrait.svg",
-        classes = PROFILE_PICTURE_LINK,
+private fun FlowContent.profilePortrait() {
+    img(
+        src = "/resources/images/noah-ruben-profile.jpg",
+        alt = "Portrait of Noah Ruben",
+        classes = PROFILE_PICTURE_IMAGE,
     ) {
-        title = "Vincent van Gogh, Public domain, via Wikimedia Commons"
-        img(
-            src = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Van_Gogh_self-portrait.svg/120px-Van_Gogh_self-portrait.svg.png",
-            alt = "Self-portrait of Vincent van Gogh, vector traced",
-            classes = PROFILE_PICTURE_IMAGE,
-        )
+        attributes["data-role"] = "landing-profile-image"
+        attributes["data-original-src"] = "/resources/images/noah-ruben-profile.jpg"
+        onClick = "window.runLandingProfileEffect && window.runLandingProfileEffect(this)"
     }
 }
 
@@ -149,6 +146,7 @@ fun HTML.landingPageHtml() {
         classes = setOf(PAGE_BASE)
         themeToggleButton()
         indexPageContent()
+        script { src = "/resources/landing-profile-effects.js" }
     }
 }
 
@@ -163,5 +161,6 @@ fun HTML.landingpage() {
         classes = setOf(PAGE_BASE)
         themeToggleButton()
         indexPageContent()
+        script { src = "/resources/landing-profile-effects.js" }
     }
 }
