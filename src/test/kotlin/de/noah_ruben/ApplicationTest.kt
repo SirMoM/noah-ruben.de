@@ -36,6 +36,7 @@ fun testApplicationWithRepositoryFake(
             put("github.url", baseConfig.property("github.url").getString())
             put("app.version", baseConfig.property("app.version").getString())
             put("debug.healthPollIntervalMs", baseConfig.property("debug.healthPollIntervalMs").getString())
+            put("debug.flashEnabled", baseConfig.property("debug.flashEnabled").getString())
             configOverrides.forEach { (key, value) -> put(key, value) }
         }
         this.config = config
@@ -145,6 +146,26 @@ class ApplicationTest {
 
             assertEquals("dev-local", body.version)
             assertEquals(2750, body.debugHealthPollIntervalMs)
+        }
+    }
+
+    @Test
+    fun testDebugConfigScriptEnablesFlashByDefault() = testApplicationWithRepositoryFake {
+        client.get("/debug-config.js").apply {
+            assertEquals(HttpStatusCode.OK, status)
+            assertTrue(bodyAsText().contains("flashEnabled: true"))
+        }
+    }
+
+    @Test
+    fun testDebugConfigScriptUsesConfiguredFlashFlag() = testApplicationWithRepositoryFake(
+        configOverrides = mapOf(
+            "debug.flashEnabled" to "false",
+        ),
+    ) {
+        client.get("/debug-config.js").apply {
+            assertEquals(HttpStatusCode.OK, status)
+            assertTrue(bodyAsText().contains("flashEnabled: false"))
         }
     }
 }

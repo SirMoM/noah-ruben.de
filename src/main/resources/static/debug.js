@@ -15,6 +15,7 @@
     const PANEL_ID = "noahruben-debug-panel";
     const debugParam = new URLSearchParams(window.location.search).get("debug");
     const enabled = shouldEnable(debugParam);
+    const flashEnabled = window.__noahrubenDebugConfig?.flashEnabled !== false;
 
     if (!enabled) {
         return;
@@ -116,6 +117,10 @@
     }
 
     function flashSwapTarget(target) {
+        if (!flashEnabled) {
+            return;
+        }
+
         if (!(target instanceof HTMLElement)) {
             return;
         }

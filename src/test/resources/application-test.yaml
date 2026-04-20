@@ -9,3 +9,4 @@ github:
     url: "localhost:42069"
 debug:
     healthPollIntervalMs: "1500"
+    flashEnabled: "true"
