@@ -17,5 +17,4 @@ github:
     url: "$GITHUB_URL:"
 debug:
     healthPollIntervalMs: "${DEBUG_HEALTH_POLL_INTERVAL_MS:1500}"
-    flashEnabled: "${DEBUG_FLASH_ENABLED:false}"
 cv: "${CV_PATH:/cv}"

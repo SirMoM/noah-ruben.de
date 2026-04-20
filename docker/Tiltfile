@@ -1,5 +1,18 @@
+config.define_bool('enable_observability_stack')
+cfg = config.parse()
+
+enable_observability_stack = cfg.get('enable_observability_stack', False)
+compose_profiles = ['website']
+if enable_observability_stack:
+    compose_profiles.append('observability')
+
 os.putenv('ENV_FILE', 'wm.env')
-os.putenv('COMPOSE_PROFILES', 'website')
+os.putenv('COMPOSE_PROFILES', ','.join(compose_profiles))
+os.putenv('OTEL_EXPORTER_OTLP_ENDPOINT', 'http://edot-collector:4317' if enable_observability_stack else '')
+os.putenv('OTEL_EXPORTER_OTLP_PROTOCOL', 'grpc')
+os.putenv('OTEL_TRACES_EXPORTER', 'otlp' if enable_observability_stack else 'none')
+os.putenv('OTEL_METRICS_EXPORTER', 'otlp' if enable_observability_stack else 'none')
+os.putenv('OTEL_LOGS_EXPORTER', 'otlp' if enable_observability_stack else 'none')
 
 docker_compose('compose.yaml', env_file='wm.env')
 
@@ -39,6 +52,24 @@ dc_resource(
     trigger_mode=TRIGGER_MODE_AUTO,
     labels=['mock'],
 )
+
+if enable_observability_stack:
+    dc_resource(
+        'elasticsearch',
+        labels=['observability'],
+    )
+
+    dc_resource(
+        'edot-collector',
+        resource_deps=['elasticsearch'],
+        labels=['observability'],
+    )
+
+    dc_resource(
+        'kibana',
+        resource_deps=['elasticsearch'],
+        labels=['observability'],
+    )
 
 local_resource(
     'wiremock-reload',

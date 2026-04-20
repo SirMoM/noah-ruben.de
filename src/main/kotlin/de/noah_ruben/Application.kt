@@ -2,6 +2,7 @@ package de.noah_ruben
 
 import de.noah_ruben.config.configureHTTP
 import de.noah_ruben.config.configureMonitoring
+import de.noah_ruben.config.configureObservability
 import de.noah_ruben.config.exceptionHandling
 import de.noah_ruben.data.Cache
 import de.noah_ruben.data.FakeRepositoryClient
@@ -15,23 +16,18 @@ import de.noah_ruben.site.defaultBody
 import de.noah_ruben.site.defaultHeader
 import de.noah_ruben.site.landingPage
 import de.noah_ruben.site.projects.projectsPageRouting
-import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
-import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.application.install
 import io.ktor.server.html.respondHtml
 import io.ktor.server.http.content.staticResources
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.response.respondRedirect
-import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.html.*
 import kotlinx.serialization.json.Json
-
-private const val DEFAULT_DEBUG_FLASH_ENABLED = true
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -44,6 +40,7 @@ fun Application.moduleWithRepositoryClient(repositoryClient: RepositoryClient) {
     Cache.initialize()
 
     configuringSerialization()
+    configureObservability()
     exceptionHandling()
     configureHTTP()
     configureMonitoring()
@@ -65,14 +62,6 @@ fun Application.staticRouting() {
 
         get("/favicon.ico") {
             call.respondRedirect("/resources/favicon.ico", permanent = false)
-        }
-
-        get("/debug-config.js") {
-            call.respondText(
-                text = debugConfigScript(environment.config.debugFlashEnabled()),
-                contentType = ContentType.parse("application/javascript"),
-                status = HttpStatusCode.OK,
-            )
         }
 
         get("/gh") {
@@ -127,15 +116,3 @@ private fun Application.createRepositoryClient(): RepositoryClient {
         else -> throw IllegalStateException("Unknown github.mode '$mode'. Valid values: github, wiremock, fake.")
     }
 }
-
-private fun ApplicationConfig.debugFlashEnabled(): Boolean = propertyOrNull("debug.flashEnabled")
-    ?.getString()
-    ?.trim()
-    ?.toBooleanStrictOrNull()
-    ?: DEFAULT_DEBUG_FLASH_ENABLED
-
-private fun debugConfigScript(flashEnabled: Boolean): String = """
-    window.__noahrubenDebugConfig = Object.freeze({
-      flashEnabled: $flashEnabled,
-    });
-""".trimIndent()

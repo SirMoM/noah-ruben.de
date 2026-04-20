@@ -13,6 +13,7 @@ typealias ProjectsCache = Pair<LocalDateTime, List<Project>>
 
 object Cache {
     lateinit var githubClient: RepositoryClient
+    var telemetry: CacheTelemetry = OtelCacheTelemetry.create()
 
     private val logger = LoggerFactory.getLogger(Cache::class.java)
     private var projectsCache: ProjectsCache
@@ -41,6 +42,7 @@ object Cache {
         val (lastCached: LocalDateTime, projects: List<Project>) = projectsCache
 
         if (projects.isEmpty() || lastCached.isBefore(LocalDateTime.now().minusMinutes(15))) {
+            val refreshStartedAt = System.nanoTime()
             logger.info("Cache miss for projects! Last fetch: $lastCached")
 
             try {
@@ -68,17 +70,26 @@ object Cache {
                 }
 
                 projectsCache = (LocalDateTime.now() to fetchedProjects)
+                telemetry.recordAccess(CacheAccessResult.MISS)
+                telemetry.recordRefresh(CacheRefreshResult.SUCCESS, System.nanoTime() - refreshStartedAt)
+                telemetry.recordProjectCount(fetchedProjects.size)
                 logger.debug("Put projects into cache {}", projectsCache.first)
                 return fetchedProjects
             } catch (exception: Throwable) {
                 if (projects.isNotEmpty()) {
+                    telemetry.recordAccess(CacheAccessResult.STALE_FALLBACK)
+                    telemetry.recordRefresh(CacheRefreshResult.FAILURE, System.nanoTime() - refreshStartedAt)
+                    telemetry.recordProjectCount(projects.size)
                     logger.warn("Refreshing projects cache failed. Returning {} cached project(s) from {}", projects.size, lastCached, exception)
                     return projects
                 }
 
+                telemetry.recordRefresh(CacheRefreshResult.FAILURE, System.nanoTime() - refreshStartedAt)
                 throw IllegalStateException("Project cache is empty and refresh failed.", exception)
             }
         } else {
+            telemetry.recordAccess(CacheAccessResult.HIT)
+            telemetry.recordProjectCount(projects.size)
             logger.debug("Cache hit for projects. Using cache from {}!", lastCached)
             return projects
         }

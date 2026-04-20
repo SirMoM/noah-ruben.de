@@ -17,6 +17,7 @@ class CacheTest {
     @BeforeTest
     fun init() {
         Cache.githubClient = FakeRepositoryClient()
+        Cache.telemetry = NoopCacheTelemetry
         setProjectsCache(lastCached = LocalDateTime.now().minusMinutes(16), projects = emptyList())
         Cache.initialize()
     }
@@ -100,6 +101,41 @@ class CacheTest {
 
         assertEquals("Project cache is empty and refresh failed.", error.message)
     }
+
+    @Test
+    fun freshCacheHitRecordsTelemetry() {
+        val telemetry = RecordingCacheTelemetry()
+        Cache.telemetry = telemetry
+
+        val projects = Cache.getProjects()
+
+        assertEquals(1, projects.size)
+        assertEquals(listOf(CacheAccessResult.HIT), telemetry.accessResults)
+        assertEquals(emptyList(), telemetry.refreshResults)
+        assertEquals(listOf(1), telemetry.projectCounts)
+    }
+
+    @Test
+    fun staleCacheRefreshFailureRecordsFallbackTelemetry() {
+        primeCacheWith("cached-repo")
+        val cachedProjects = Cache.getProjects()
+        setProjectsCache(lastCached = LocalDateTime.now().minusMinutes(16), projects = cachedProjects)
+
+        val telemetry = RecordingCacheTelemetry()
+        Cache.telemetry = telemetry
+        Cache.githubClient = object : RepositoryClient {
+            override suspend fun getRepositories(): List<Repository> = error("backend unavailable")
+
+            override suspend fun getRepositoryLanguages(repositoryName: String): List<String> = error("backend unavailable")
+        }
+
+        val projectsAfterFailedRefresh = Cache.getProjects()
+
+        assertEquals(listOf("cached-repo"), projectsAfterFailedRefresh.map { it.name })
+        assertEquals(listOf(CacheAccessResult.STALE_FALLBACK), telemetry.accessResults)
+        assertEquals(listOf(CacheRefreshResult.FAILURE), telemetry.refreshResults)
+        assertEquals(listOf(1), telemetry.projectCounts)
+    }
 }
 
 private fun namedRepositoryClient(repositoryName: String): RepositoryClient = object : RepositoryClient {
@@ -164,4 +200,22 @@ private fun primeCacheWith(repositoryName: String) {
     Cache.githubClient = namedRepositoryClient(repositoryName)
     setProjectsCache(lastCached = LocalDateTime.now().minusMinutes(16), projects = emptyList())
     Cache.initialize()
+}
+
+private class RecordingCacheTelemetry : CacheTelemetry {
+    val accessResults = mutableListOf<CacheAccessResult>()
+    val refreshResults = mutableListOf<CacheRefreshResult>()
+    val projectCounts = mutableListOf<Int>()
+
+    override fun recordAccess(result: CacheAccessResult) {
+        accessResults += result
+    }
+
+    override fun recordRefresh(result: CacheRefreshResult, durationNanos: Long) {
+        refreshResults += result
+    }
+
+    override fun recordProjectCount(count: Int) {
+        projectCounts += count
+    }
 }

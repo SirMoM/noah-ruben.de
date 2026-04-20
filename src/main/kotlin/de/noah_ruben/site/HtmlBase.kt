@@ -42,7 +42,6 @@ fun HEAD.defaultHeader() {
     link(rel = "icon", type = "image/png", href = "/resources/android-chrome-192x192.png") {
         sizes = "192x192"
     }
-    script { src = "/debug-config.js" }
     script { src = "/resources/debug.js" }
     meta(charset = "UTF-8")
     meta(name = "viewport", content = "width=device-width, initial-scale=1.0")

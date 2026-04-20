@@ -16,6 +16,7 @@ dependencies:
   - io.ktor:ktor-server-cors-jvm
   - io.ktor:ktor-server-default-headers-jvm
   - io.ktor:ktor-server-http-redirect-jvm
+  - io.ktor:ktor-server-call-id-jvm
   - io.ktor:ktor-server-call-logging-jvm
   - io.ktor:ktor-server-metrics-jvm
   - io.ktor:ktor-server-content-negotiation-jvm
@@ -27,6 +28,7 @@ dependencies:
 
   - org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.4.1
   - org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0
+  - io.opentelemetry:opentelemetry-api:1.60.1
   - ch.qos.logback:logback-classic:1.5.32
 
 test-dependencies:

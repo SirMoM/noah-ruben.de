@@ -1,13 +1,16 @@
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [call-id=%X{call-id} trace_id=%X{trace_id} span_id=%X{span_id}] - %msg%n</pattern>
         </encoder>
     </appender>
-    <root level="trace">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
+    <logger name="de.noah_ruben" level="DEBUG"/>
     <logger name="org.eclipse.jetty" level="WARN"/>
     <logger name="io.netty" level="WARN"/>
     <logger name="io.ktor" level="WARN"/>
+    <logger name="okhttp3" level="WARN"/>
+    <logger name="io.opentelemetry.exporter" level="WARN"/>
 </configuration>

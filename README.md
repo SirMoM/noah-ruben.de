@@ -105,18 +105,38 @@ Run from `docker/`:
 tilt up
 ```
 
+Optional observability stack:
+
+- Edit [docker/tilt_config.json](/Users/i13az81/dev/uni/noah-ruben.de/.worktrees/codex-otel-observability/docker/tilt_config.json)
+- Set `"enable_observability_stack": true`
+- Run `tilt up` from `docker/`
+
 Resources:
 
 - `website-image-build` — builds the Docker image automatically when sources change.
 - `website` — starts the container. Requires one manual trigger on first start (`tilt trigger website`), then reloads automatically whenever `website-image-build` completes.
 - `wiremock-website` — starts Wiremock; starts and reloads automatically.
 - `wiremock-reload` — restarts Wiremock when `wm/` mappings change.
+- `elasticsearch`, `edot-collector`, and `kibana` — only appear when the observability stack is enabled in `docker/tilt_config.json`.
 
 Quick health check (after `website` is running):
 
 ```bash
-curl -sf http://localhost:42081/health
+tilt get uiresources -o json --port 6969 | jq '.items[] | {name:.metadata.name, status:.status.runtimeStatus}'
 ```
+
+### OpenTelemetry in Tilt
+
+The website container includes the OpenTelemetry Java agent by default, but exporters stay disabled unless the observability profile is enabled through `docker/tilt_config.json`.
+
+When enabled:
+
+- the website exports OTLP logs, metrics, and traces to `edot-collector`
+- `edot-collector` forwards them to local Elasticsearch
+- Kibana is available at `http://localhost:5601`
+- Elasticsearch is available at `http://localhost:9200`
+
+`OTEL_SERVICE_NAME` stays fixed to `noah-ruben.de`, and console logs include `call-id`, `trace_id`, and `span_id` fields when present.
 
 Stop everything:
 

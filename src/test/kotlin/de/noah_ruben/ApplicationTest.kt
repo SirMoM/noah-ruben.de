@@ -2,9 +2,11 @@ package de.noah_ruben
 
 import de.noah_ruben.config.ApplicationInfo
 import de.noah_ruben.data.FakeRepositoryClient
+import io.ktor.client.request.header
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -21,6 +23,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 import java.util.UUID
 
 fun testApplicationWithRepositoryFake(
@@ -36,7 +39,6 @@ fun testApplicationWithRepositoryFake(
             put("github.url", baseConfig.property("github.url").getString())
             put("app.version", baseConfig.property("app.version").getString())
             put("debug.healthPollIntervalMs", baseConfig.property("debug.healthPollIntervalMs").getString())
-            put("debug.flashEnabled", baseConfig.property("debug.flashEnabled").getString())
             configOverrides.forEach { (key, value) -> put(key, value) }
         }
         this.config = config
@@ -67,6 +69,25 @@ class ApplicationTest {
     fun testGh() = testApplicationWithRepositoryFake {
         client.get("/gh").apply {
             assertEquals(HttpStatusCode.OK, status)
+        }
+    }
+
+    @Test
+    fun testRequestIdIsEchoedWhenProvided() = testApplicationWithRepositoryFake {
+        client.get("/gh") {
+            header(HttpHeaders.XRequestId, "request-123")
+        }.apply {
+            assertEquals(HttpStatusCode.OK, status)
+            assertEquals("request-123", headers[HttpHeaders.XRequestId])
+        }
+    }
+
+    @Test
+    fun testRequestIdIsGeneratedWhenMissing() = testApplicationWithRepositoryFake {
+        client.get("/gh").apply {
+            assertEquals(HttpStatusCode.OK, status)
+            assertNotNull(headers[HttpHeaders.XRequestId])
+            assertFalse(headers[HttpHeaders.XRequestId]!!.isBlank())
         }
     }
 
@@ -146,26 +167,6 @@ class ApplicationTest {
 
             assertEquals("dev-local", body.version)
             assertEquals(2750, body.debugHealthPollIntervalMs)
-        }
-    }
-
-    @Test
-    fun testDebugConfigScriptEnablesFlashByDefault() = testApplicationWithRepositoryFake {
-        client.get("/debug-config.js").apply {
-            assertEquals(HttpStatusCode.OK, status)
-            assertTrue(bodyAsText().contains("flashEnabled: true"))
-        }
-    }
-
-    @Test
-    fun testDebugConfigScriptUsesConfiguredFlashFlag() = testApplicationWithRepositoryFake(
-        configOverrides = mapOf(
-            "debug.flashEnabled" to "false",
-        ),
-    ) {
-        client.get("/debug-config.js").apply {
-            assertEquals(HttpStatusCode.OK, status)
-            assertTrue(bodyAsText().contains("flashEnabled: false"))
         }
     }
 }

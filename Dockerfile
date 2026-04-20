@@ -31,9 +31,14 @@ FROM container-registry.oracle.com/graalvm/jdk:21 AS website
 
 WORKDIR /app
 
+ARG OTEL_JAVAAGENT_VERSION=2.23.0
+
 COPY --from=compile /workspace/website.jar ./website.jar
+ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_JAVAAGENT_VERSION}/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
 
 RUN jar xf ./website.jar && rm ./website.jar
+
+ENV JAVA_TOOL_OPTIONS="-javaagent:/app/opentelemetry-javaagent.jar"
 
 EXPOSE 42081
 
