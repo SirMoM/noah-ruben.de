@@ -9,6 +9,7 @@
     const WASM_MODULE_SRC = "/resources/gasm-effects/test.wasm";
     const state = {
         busy: false,
+        bootId: 0,
         runtime: null,
         originalImage: null,
         originalSrc: null,
@@ -17,6 +18,15 @@
     /** @type {LandingEffectsTestHooks} */
     const testHooks = window.__noahrubenLandingEffectsTest ?? { nextEffectName: null };
     window.__noahrubenLandingEffectsTest = testHooks;
+
+    function resetRuntime(bootId) {
+        if (bootId && state.bootId !== bootId) {
+            return;
+        }
+
+        state.runtime = null;
+        window.goMI = undefined;
+    }
 
     /**
      * Loads and boots the Go WASM runtime once, then waits for `goMI` to become available.
@@ -30,6 +40,7 @@
 
         if (!state.runtime) {
             state.runtime = (async () => {
+                const bootId = ++state.bootId;
                 if (!window.Go) {
                     await new Promise((resolve, reject) => {
                         const existing = document.querySelector(`script[src="${WASM_EXEC_SRC}"]`);
@@ -49,9 +60,13 @@
 
                 const go = new window.Go();
                 const wasm = await WebAssembly.instantiateStreaming(fetch(WASM_MODULE_SRC), go.importObject);
-                Promise.resolve(go.run(wasm.instance)).catch((error) => {
-                    console.error("[landing-profile-effects] Go runtime exited unexpectedly.", error);
-                });
+                Promise.resolve(go.run(wasm.instance))
+                    .catch((error) => {
+                        console.error("[landing-profile-effects] Go runtime exited unexpectedly.", error);
+                    })
+                    .finally(() => {
+                        resetRuntime(bootId);
+                    });
 
                 await new Promise((resolve, reject) => {
                     let attempts = 0;
@@ -70,7 +85,7 @@
                     poll();
                 });
             })().catch((error) => {
-                state.runtime = null;
+                resetRuntime();
                 throw error;
             });
         }
@@ -107,9 +122,8 @@
      * @returns {{ canvas: HTMLCanvasElement, context: CanvasRenderingContext2D }}
      */
     function renderOriginal(img, original) {
-        const rect = img.getBoundingClientRect();
-        const width = Math.max(1, Math.round(rect.width || img.clientWidth || original.naturalWidth));
-        const height = Math.max(1, Math.round(rect.height || img.clientHeight || original.naturalHeight));
+        const width = Math.max(1, Math.round(img.clientWidth || img.width || original.naturalWidth));
+        const height = Math.max(1, Math.round(img.clientHeight || img.height || original.naturalHeight));
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
         if (!context) {
@@ -179,6 +193,7 @@
                 imgElement.src = canvas.toDataURL("image/png");
                 imgElement.alt = `${BASE_ALT_TEXT} with ${effect} effect applied`;
             } catch (error) {
+                resetRuntime();
                 console.error("[landing-profile-effects] Failed to manipulate landing portrait.", error);
                 const source = imgElement.getAttribute("data-original-src");
                 if (source) {
