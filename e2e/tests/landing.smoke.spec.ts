@@ -23,11 +23,29 @@ test("landing smoke covers theme persistence and key navigation", async ({ page 
       window as typeof window & {
         __noahrubenLandingEffectsTest: { nextEffectName: string | null };
       }
-    ).__noahrubenLandingEffectsTest.nextEffectName = "ascii";
+    ).__noahrubenLandingEffectsTest.nextEffectName = "greyscale";
   });
   await landingProfileImage(page).click();
   await expect(landingProfileImage(page)).toHaveAttribute("src", /data:image\/png;base64,/);
-  await expect(landingProfileImage(page)).toHaveAttribute("alt", /ascii effect applied/);
+  await expect(landingProfileImage(page)).toHaveAttribute("alt", /greyscale effect applied/);
+  await page.evaluate(() => {
+    (
+      window as typeof window & {
+        __noahrubenLandingEffectsTest: { nextEffectName: string | null };
+      }
+    ).__noahrubenLandingEffectsTest.nextEffectName = "ascii";
+  });
+  await landingProfileImage(page).click();
+  await expect(landingProfileImage(page)).toHaveAttribute("alt", "Portrait of Noah Ruben");
+  await page.evaluate(() => {
+    (
+      window as typeof window & {
+        __noahrubenLandingEffectsTest: { nextEffectName: string | null };
+      }
+    ).__noahrubenLandingEffectsTest.nextEffectName = "text";
+  });
+  await landingProfileImage(page).click();
+  await expect(landingProfileImage(page)).toHaveAttribute("alt", /text effect applied/);
   await captureStep(page, testInfo, "landing-home");
 
   await page.locator('a[href="/projects"]').first().click();
