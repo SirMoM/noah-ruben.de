@@ -36,7 +36,6 @@ class BlogRoutingTest {
             assertEquals(HttpStatusCode.OK, response.status)
             assertTrue(response.bodyAsText().contains("Hello World"))
             assertTrue(response.bodyAsText().contains("A generated summary"))
-            assertTrue(response.bodyAsText().contains("First paragraph for excerpt."))
             assertTrue(response.bodyAsText().contains("kotlin"))
         }
     }

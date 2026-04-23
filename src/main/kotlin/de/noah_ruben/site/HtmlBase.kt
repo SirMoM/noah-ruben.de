@@ -107,6 +107,36 @@ fun HEAD.defaultHeader() {
     link(rel = "stylesheet", href = "https://fonts.cdnfonts.com/css/cascadia-code")
 }
 
+fun HEAD.defaultBlogCodeHeader() {
+    script {
+        src = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
+        attributes["crossorigin"] = "anonymous"
+    }
+    script {
+        unsafe {
+            +"""
+                (function () {
+                  function highlight(scope) {
+                    if (!window.hljs) return;
+                    var root = scope instanceof Element ? scope : document;
+                    root.querySelectorAll("pre code").forEach(function (block) {
+                      window.hljs.highlightElement(block);
+                    });
+                  }
+
+                  document.addEventListener("DOMContentLoaded", function () {
+                    highlight(document);
+                  });
+
+                  document.addEventListener("htmx:afterSwap", function (event) {
+                    highlight(event.target);
+                  });
+                })();
+            """.trimIndent()
+        }
+    }
+}
+
 fun FlowContent.themeToggleButton() {
     button(classes = TOGGLE_BUTTON) {
         id = "theme-toggle"
