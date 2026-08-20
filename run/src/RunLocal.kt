@@ -10,7 +10,7 @@ fun runLocal(
     githubToken: String,
     githubUrl: String,
 ) {
-    val command = listOf("./amper", "run")
+    val command = listOf("./kotlin", "run")
 
     println(command.joinToString(" "))
 

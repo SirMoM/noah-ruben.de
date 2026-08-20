@@ -1,5 +1,5 @@
 product: jvm/amper-plugin
 
+description: Tailwind CSS generation plugin
 pluginInfo:
   id: tailwind
-  description: Tailwind CSS generation plugin

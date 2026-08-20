@@ -6,6 +6,7 @@ tasks:
       packageLock: ${module.rootDir}/tailwind/package-lock.json
       kotlinSources: ${module.rootDir}/src/main/kotlin
       generatedResourceDir: ${taskOutputDir}
-    markOutputsAs:
-      - path: ${action.generatedResourceDir}
-        kind: jvm-resources
+
+generated:
+  resources:
+    - directory: ${tasks.generateTailwind.action.generatedResourceDir}

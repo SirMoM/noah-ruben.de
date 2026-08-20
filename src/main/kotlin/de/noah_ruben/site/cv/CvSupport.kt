@@ -59,11 +59,10 @@ enum class CvMode(
     ;
 
     companion object {
-        fun fromQueryParameter(rawMode: String?): CvMode =
-            when (rawMode?.trim()?.lowercase()) {
-                Light.token -> Light
-                else -> Dark
-            }
+        fun fromQueryParameter(rawMode: String?): CvMode = when (rawMode?.trim()?.lowercase()) {
+            Light.token -> Light
+            else -> Dark
+        }
     }
 }
 
@@ -190,36 +189,31 @@ fun logCvAssetsStartupStatus(config: ApplicationConfig) {
 fun buildCvPageState(
     config: ApplicationConfig,
     language: CvLanguage,
-): CvPageState {
-    return try {
-        CvPdfResolver(config).validate(language)
-        CvPageState(
-            selectedLanguage = language,
-        )
-    } catch (error: CvConfigurationException) {
-        CvPageState(
-            selectedLanguage = language,
-            errorMessage = error.message,
-        )
-    } catch (error: CvFileUnavailableException) {
-        CvPageState(
-            selectedLanguage = language,
-            errorMessage = error.message,
-        )
-    }
+): CvPageState = try {
+    CvPdfResolver(config).validate(language)
+    CvPageState(
+        selectedLanguage = language,
+    )
+} catch (error: CvConfigurationException) {
+    CvPageState(
+        selectedLanguage = language,
+        errorMessage = error.message,
+    )
+} catch (error: CvFileUnavailableException) {
+    CvPageState(
+        selectedLanguage = language,
+        errorMessage = error.message,
+    )
 }
 
-fun unsupportedCvLanguageMessage(rawLanguage: String): String =
-    "Unsupported CV language '$rawLanguage'. Use 'eng' or 'ger'."
+fun unsupportedCvLanguageMessage(rawLanguage: String): String = "Unsupported CV language '$rawLanguage'. Use 'eng' or 'ger'."
 
-private fun CvMode.description(): String =
-    when (this) {
-        CvMode.Dark -> "dark"
-        CvMode.Light -> "light"
-    }
+private fun CvMode.description(): String = when (this) {
+    CvMode.Dark -> "dark"
+    CvMode.Light -> "light"
+}
 
-private fun CvMode.matches(fileName: String): Boolean =
-    when (this) {
-        CvMode.Dark -> fileName.contains("dark", ignoreCase = true)
-        CvMode.Light -> fileName.contains("_light", ignoreCase = true)
-    }
+private fun CvMode.matches(fileName: String): Boolean = when (this) {
+    CvMode.Dark -> fileName.contains("dark", ignoreCase = true)
+    CvMode.Light -> fileName.contains("_light", ignoreCase = true)
+}

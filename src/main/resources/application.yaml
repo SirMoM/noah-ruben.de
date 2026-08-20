@@ -14,7 +14,7 @@ app:
 github:
     mode: "$GITHUB_MODE:wiremock"
     token: "$GITHUB_TOKEN:"
-    url: "$GITHUB_URL:"
+    url: "$GITHUB_URL:http://localhost:42069"
 debug:
     healthPollIntervalMs: "${DEBUG_HEALTH_POLL_INTERVAL_MS:1500}"
-cv: "${CV_PATH:/cv}"
+cv: "${CV_PATH:/Users/Noah.Ruben/dev/pers/cv/out}"

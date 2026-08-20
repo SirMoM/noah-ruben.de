@@ -12,9 +12,8 @@ data class HealthCheckResult(
     val message: String,
 )
 
-fun overallHealthStatus(checks: Map<String, HealthCheckResult>): String =
-    when {
-        checks.values.any { it.status == HEALTH_DOWN } -> HEALTH_DOWN
-        checks.values.any { it.status == HEALTH_DEGRADED } -> HEALTH_DEGRADED
-        else -> HEALTH_OK
-    }
+fun overallHealthStatus(checks: Map<String, HealthCheckResult>): String = when {
+    checks.values.any { it.status == HEALTH_DOWN } -> HEALTH_DOWN
+    checks.values.any { it.status == HEALTH_DEGRADED } -> HEALTH_DEGRADED
+    else -> HEALTH_OK
+}
