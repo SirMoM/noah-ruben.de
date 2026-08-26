@@ -1,0 +1,30 @@
+name: "noah-ruben.de"
+services:
+  website:
+    profiles: [website]
+    image: "website:latest"
+    depends_on:
+      wiremock-website:
+        condition: service_healthy
+    environment:
+      GITHUB_URL: "http://wiremock-website:8080"
+      CV_PATH: "/cv"
+    ports:
+      - "42081:42081"
+    volumes:
+      - ${CV_DIR:-/Users/i13az81/dev/uni/pers/cv/out}:/cv
+    env_file:
+        - ${ENV_FILE:-.env}
+  wiremock-website:
+    image: "wiremock/wiremock:latest"
+    container_name: wiremock-website
+    entrypoint: ["/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose"]
+    volumes:
+      - ../wm:/home/wiremock
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/__admin/mappings"]
+      interval: 5s
+      timeout: 3s
+      retries: 20

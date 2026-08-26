@@ -1,0 +1,24 @@
+ktor:
+    deployment:
+        port: 42081
+        watch:
+            - classes
+            - resources
+            - static
+    development: true
+    application:
+        modules:
+            - de.noah_ruben.ApplicationKt.module
+app:
+    version: "${APP_VERSION:dev}"
+github:
+    mode: "$GITHUB_MODE:wiremock"
+    token: "$GITHUB_TOKEN:"
+    url: "$GITHUB_URL:"
+debug:
+    healthPollIntervalMs: "${DEBUG_HEALTH_POLL_INTERVAL_MS:1500}"
+cv: "${CV_PATH:/cv}"
+blog:
+    sourceDir: "${BLOG_SOURCE_DIR:content/blog}"
+    outputDir: "${BLOG_OUTPUT_DIR:var/blog}"
+    databasePath: "${BLOG_DATABASE_PATH:var/blog/blog.sqlite}"

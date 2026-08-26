@@ -1,0 +1,9 @@
+{
+  "request": {
+    "method": "ANY",
+    "urlPattern": "/this/will/never-be-called"
+  },
+  "response": {
+      "proxyBaseUrl": "https://api.github.com"
+  }
+}

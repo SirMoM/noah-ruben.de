@@ -1,0 +1,49 @@
+os.putenv('ENV_FILE', 'wm.env')
+os.putenv('COMPOSE_PROFILES', 'website')
+
+docker_compose('compose.yaml', env_file='wm.env')
+
+website_deps = [
+    '../Dockerfile',
+    '../amper',
+    '../amper.bat',
+    '../module.yaml',
+    '../project.yaml',
+    '../run',
+    '../src/main/kotlin',
+    '../src/main/resources',
+    '../tailwind/module.yaml',
+    '../tailwind/package-lock.json',
+    '../tailwind/package.json',
+    '../tailwind/plugin.yaml',
+    '../tailwind/src',
+    '../tailwind/style.css',
+]
+
+custom_build(
+    'website:latest',
+    'docker build -t $EXPECTED_REF -f Dockerfile .',
+    deps=website_deps,
+    disable_push=True,
+    dir='..',
+)
+
+dc_resource(
+    'website',
+    resource_deps=['wiremock-website'],
+    labels=['website'],
+)
+
+dc_resource(
+    'wiremock-website',
+    trigger_mode=TRIGGER_MODE_AUTO,
+    labels=['mock'],
+)
+
+local_resource(
+    'wiremock-reload',
+    'docker compose -f compose.yaml --env-file wm.env restart wiremock-website',
+    deps=['../wm'],
+    trigger_mode=TRIGGER_MODE_AUTO,
+    labels=['mock'],
+)

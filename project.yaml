@@ -1,0 +1,9 @@
+modules:
+  - ./ktlint
+  - ./run
+  - ./tailwind
+
+plugins:
+  - ./ktlint
+  - ./run
+  - ./tailwind

@@ -1,0 +1,7 @@
+tasks:
+  ktlint:
+    action: !com.dvag.noah.ruben.build.quality.runKtlint
+      moduleRootDir: ${module.rootDir}
+      patterns:
+        - src/**/*.kt
+        - "!src/main/kotlin/com/dvag/noah/ruben/generated/**"

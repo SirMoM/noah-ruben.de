@@ -1,0 +1,68 @@
+product: jvm/app
+layout: maven-like
+
+repositories:
+  - https://repo1.maven.org/maven2
+
+dependencies:
+  - $ktor.client.contentNegotiation
+  - $ktor.client.core
+  - $ktor.client.cio
+  - $ktor.serialization.kotlinx.json
+
+  - io.ktor:ktor-server-core-jvm
+  - io.ktor:ktor-server-host-common-jvm
+  - io.ktor:ktor-server-status-pages-jvm
+  - io.ktor:ktor-server-cors-jvm
+  - io.ktor:ktor-server-default-headers-jvm
+  - io.ktor:ktor-server-http-redirect-jvm
+  - io.ktor:ktor-server-call-logging-jvm
+  - io.ktor:ktor-server-metrics-jvm
+  - io.ktor:ktor-server-content-negotiation-jvm
+  - $ktor.server.netty
+
+  - io.ktor:ktor-serialization-jackson-jvm
+  - io.ktor:ktor-server-html-builder-jvm
+  - io.ktor:ktor-server-config-yaml-jvm
+
+  - org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.7.1-0.6.x-compat
+  - org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0
+  - org.jetbrains.exposed:exposed-core:1.2.0
+  - org.jetbrains.exposed:exposed-dao:1.2.0
+  - org.jetbrains.exposed:exposed-jdbc:1.2.0
+  - org.xerial:sqlite-jdbc:3.50.2.0
+  - org.commonmark:commonmark:0.27.1
+  - org.commonmark:commonmark-ext-yaml-front-matter:0.27.1
+  - ch.qos.logback:logback-classic:1.5.32
+
+test-dependencies:
+  - $kotlin.test
+  - $ktor.server.testHost
+
+settings:
+  jvm:
+    release: 21
+    mainClass: de.noah_ruben.ApplicationKt
+  kotlin:
+    languageVersion: "2.3"
+    serialization: enabled
+    powerAssert:
+      enabled: true
+      functions:
+        - kotlin.test.assertTrue
+        - kotlin.test.assertFalse
+        - kotlin.test.assertEquals
+        - kotlin.test.assertNotEquals
+        - kotlin.test.assertContentEquals
+        - kotlin.test.assertNotNull
+  ktor:
+    enabled: true
+    version: 3.4.1
+
+plugins:
+  ktlint:
+    enabled: true
+  run:
+    enabled: true
+  tailwind:
+    enabled: true
