@@ -63,7 +63,7 @@ fun Application.staticRouting() {
         }
 
         get("/favicon.ico") {
-            call.respondRedirect("/resources/favicon.ico", permanent = false)
+            call.respondRedirect("/resources/favicon.ico", permanent = true)
         }
 
         get("/gh") {
