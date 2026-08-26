@@ -1,5 +1,6 @@
 product: jvm/amper-plugin
 description: Ktlint plugin for Amper
 
+description: Ktlint plugin for Amper
 pluginInfo:
   id: ktlint

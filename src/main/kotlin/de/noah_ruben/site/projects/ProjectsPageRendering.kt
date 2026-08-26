@@ -27,8 +27,8 @@ import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_HEADER
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_INDEX
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_META
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_CARD_TITLE
-import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_PREVIEW
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_CONTROL_ROW
+import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_PREVIEW
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_COMMAND_QUERY_ROW
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_DIRECTION_BUTTON
 import de.noah_ruben.misc.CssClasses.ProjectPage.PROJECT_FILTER_FORM
@@ -54,7 +54,6 @@ import de.noah_ruben.misc.CssClasses.ProjectPage.TAG_ITEM
 import de.noah_ruben.misc.CssClasses.ProjectPage.TOPICS_LIST
 import de.noah_ruben.misc.CssClasses.ProjectPage.TOPIC_TAG
 import de.noah_ruben.misc.CssClasses.Shared.SCREEN_READER_ONLY
-import de.noah_ruben.misc.colorFromString
 import de.noah_ruben.misc.HX_INCLUDE
 import de.noah_ruben.misc.HX_INDICATOR
 import de.noah_ruben.misc.HX_POST
@@ -62,6 +61,7 @@ import de.noah_ruben.misc.HX_SWAP
 import de.noah_ruben.misc.HX_TARGET
 import de.noah_ruben.misc.HX_TRIGGER
 import de.noah_ruben.misc.HX_VALS
+import de.noah_ruben.misc.colorFromString
 import de.noah_ruben.misc.hxIndicator
 import de.noah_ruben.misc.hxPost
 import de.noah_ruben.misc.hxSwap
@@ -69,8 +69,8 @@ import de.noah_ruben.misc.hxTarget
 import de.noah_ruben.misc.hxTrigger
 import de.noah_ruben.misc.hxVals
 import de.noah_ruben.site.*
-import kotlinx.html.CommonAttributeGroupFacade
 import kotlinx.html.*
+import kotlinx.html.CommonAttributeGroupFacade
 
 internal const val DEFAULT_PROJECTS_COMMAND = "noahruben projects"
 internal const val COMMAND_PREVIEW_ID = "projects-command-preview"
@@ -520,11 +520,9 @@ private fun CommonAttributeGroupFacade.configureProjectActionRequest(vals: Strin
     attributes[HX_VALS] = vals
 }
 
-private fun projectActionVals(param: String, value: String): String =
-    """{"$param": "${value.escapeJsonValue()}"}"""
+private fun projectActionVals(param: String, value: String): String = """{"$param": "${value.escapeJsonValue()}"}"""
 
-private fun String.escapeJsonValue(): String =
-    replace("\\", "\\\\").replace("\"", "\\\"")
+private fun String.escapeJsonValue(): String = replace("\\", "\\\\").replace("\"", "\\\"")
 
 private fun SearchParameters.commandPreview(): String {
     val parts = mutableListOf(DEFAULT_PROJECTS_COMMAND)

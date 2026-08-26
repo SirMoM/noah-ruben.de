@@ -1,5 +1,6 @@
 product: jvm/amper-plugin
 description: Local run helper plugin
 
+description: Local run helper plugin
 pluginInfo:
   id: run
